@@ -1,0 +1,29 @@
+# Sistema operativo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editores e IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code (configuración local por usuario)
+.claude/settings.local.json
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Dependencias
+node_modules/
+vendor/
+
+# Builds y artefactos
+dist/
+build/
+out/
+coverage/
+*.log
