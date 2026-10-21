@@ -1,6 +1,7 @@
 # TDChronos 2.0 — Sistema de cronometraje, resultados y liga de carreras
 
 > Documento de entrega del proyecto final (Entrega 1). La especificación completa del sistema (PRD, SRS, ADRs, backlog, DoD, invariantes, pruebas y roadmap) vive en [spec/README.md](spec/README.md); los prompts del curso, en [prompts.md](prompts.md).
+> **Autores:** Oscar Ramon Lobo Altuve (oscarescalando@gmail.com) · Gabriel Toro (gabrieltoro77@gmail.com).
 
 ## Índice
 
