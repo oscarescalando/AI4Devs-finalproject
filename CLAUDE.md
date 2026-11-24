@@ -11,8 +11,11 @@ TDChronos 2.0: plataforma de cronometraje, resultados en vivo y liga de carreras
 - `spec/` — fuente única de verdad: PRD (01), SRS (02), ADRs 010–018 (03-arquitectura/), épicas EP-24…27 con issues ISSUE-105…158 (04-backlog/), DoD G1–G15 (05), invariantes INV-01…14 (06), estrategia de pruebas (07), roadmap F1–F4 (08).
 - **Migraciones del núcleo (ISSUE-157)**: `persons`+`accounts` (persona ≠ cuenta), `events`/`races`/`waves`/`categories`, `entries` con UNIQUE dorsal/persona-evento y CHECK XOR, `timing_marks` append-only con triggers que rechazan UPDATE/DELETE, `entry_adjustments`, `timing_mark_corrections`, `results`. PK `bigint` + ULID `char(26)` público (trait `App\Models\Concerns\HasPublicUlid`); sin tablas de liga (v2).
 - **API `/api/v1` (ISSUE-156)**: `GET /time`, `POST /events/{ulid}/timing-marks` (idempotente por `client_mark_id`, transaccional por lote) y `GET /events/{ulid}/entries` (roster público). Auth Sanctum con abilities `device:marks`/`device:roster`; controladores → Actions (ADR-012).
+- **UI TALL (ISSUE-106)**: Livewire 4 + Volt + Alpine + Tailwind 4 vía Vite. Convención: **pantallas = componentes Volt funcionales** en `resources/views/livewire/`; **CRUD con acciones = clases Livewire** en `app/Livewire/`. Layouts anónimos en `resources/views/components/layouts/`.
+- **Pantalla pública `/e/{slug}`** (ISSUE-137, corte 1): clasificación en vivo con sondeo `wire:poll.4s` al leaderboard, filtros por categoría/distancia, resaltado de llegadas nuevas, reloj, modo kiosco y sin PII (INV-06). Landing `/` con los eventos.
+- **Motor de resultados (ISSUE-158)**: `RecalculateEventResults` + job `afterCommit` por cada lote de marcas; `results` solo se escribe desde el motor (regla Pest Arch).
 - Seeders 100 % sintéticos: evento demo `vuela-caracas-21k` con 114 inscritos y admin bootstrap (`admin@tdchronos.test`).
-- Calidad: Pest (26 tests: esquema + API + arquitectura) contra MySQL real, Larastan nivel 8 limpio, Pint aplicado.
+- Calidad: Pest (46 tests: esquema + API + resultados + pantalla + arquitectura) contra MySQL real, Larastan nivel 8 limpio, Pint aplicado.
 
 `spec/README.md` §5 mapea cada tipo de artefacto al archivo donde vive; §3 define el ciclo SDD; §4 recoge las reglas de oro del arranque limpio.
 
@@ -58,6 +61,10 @@ npm run build                   # o npm run dev
 ```
 
 La BD de desarrollo es `tdchronos` (MySQL 8.0 de Laragon); Pest usa `tdchronos_testing`. Admin demo: `admin@tdchronos.test` / `tdchronos-admin-2026` (sintético).
+
+```bash
+php artisan serve          # y abrir /  o  /e/vuela-caracas-21k
+```
 
 ## Git y commits
 

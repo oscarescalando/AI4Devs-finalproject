@@ -3,6 +3,13 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.5.0] - 2026-11-23
+### 🚀 Agregado
+- Base TALL (ISSUE-106): Livewire 4 + Volt + Alpine sobre el Tailwind 4 del esqueleto, `VoltServiceProvider` y convención documentada (pantallas = Volt funcional; CRUD = clases Livewire).
+- **Pantalla pública de clasificación** `/e/{slug}` (ISSUE-137, versión mínima del corte 1): componente Volt con sondeo `wire:poll.4s` al leaderboard, filtros por categoría y distancia, resaltado de llegadas nuevas, reloj en vivo, modo kiosco, cero PII y landing `/` con los eventos del calendario.
+- `FormatDuration` (ISSUE-118 parcial): formato único `h:mm:ss` desde ms con soporte > 24 h, décimas opcionales y diferencias negativas, con pruebas.
+- Suite a 46 tests (esquema + API + resultados + pantalla pública + arquitectura).
+
 ## [0.4.0] - 2026-11-23
 ### 🚀 Agregado
 - Motor de resultados del servidor (ISSUE-158): `RecalculateEventResults` computa `net_ms = primera llegada − salida real + Σ ajustes` con `RANK() OVER` por carrera, género y categoría (aritmética SQL a prueba de desbordes), reemplaza la tabla derivada `results` en una transacción y marca provisional/official según el estado del evento. Job en cola `afterCommit` disparado por cada lote de marcas — la respuesta de la marca nunca espera al recálculo (INV-07/INV-08).
