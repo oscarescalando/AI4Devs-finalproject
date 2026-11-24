@@ -2,10 +2,14 @@
 
 > **Fecha:** 2026-10-19 · **Estado:** backlog vigente · Documento de especificación de TDChronos 2.0
 >
-> Backlog de la reconstrucción: **4 épicas nuevas (EP-24…EP-27)** con las issues **ISSUE-105…155**, que materializan la
+> Backlog de la reconstrucción: **4 épicas nuevas (EP-24…EP-27)** con las issues **ISSUE-105…158**, que materializan la
 > decisión **Livewire/TALL** para toda la UI web. El backlog heredado del corpus de origen (EP-01…EP-23, ISSUE-001…104,
 > SAAS-1xx…5xx; repositorio del sistema, sin URL) **no se reproduce aquí**: se cita por su ID únicamente como referencia
 > de trazabilidad. La numeración continúa la del corpus de origen (ISSUE-105+, EP-24+).
+> **Las piezas heredadas que necesita el primer corte ya viven en este repositorio**: el endpoint idempotente de marcas
+> (ISSUE-156, primer corte de la heredada ISSUE-067), las migraciones del núcleo con pruebas de esquema (ISSUE-157) y el
+> motor de resultados del servidor (ISSUE-158, primer corte de la heredada ISSUE-074) — lo que una IA o una persona que
+> lea el repo necesita para construir el camino completo de la meta está completo aquí.
 >
 > Documentos hermanos (índice en [../README.md](../README.md)): casos de uso (numeración heredada CU-01…26, sin cambios),
 > decisiones de arquitectura en [../03-arquitectura/](../03-arquitectura/), DoD en [../05-dod.md](../05-dod.md) y fases
@@ -15,9 +19,9 @@
 
 | Métrica | Valor |
 |---|---|
-| Issues nuevas | **51** — ISSUE-105…155 |
+| Issues nuevas | **54** — ISSUE-105…158 |
 | Épicas nuevas | 4 — EP-24…EP-27 |
-| P0 nuevas | 18 (ver §6) |
+| P0 nuevas | 21 (ver §6) |
 | Issues heredadas ajustadas por la decisión TALL | ~20 (§3) — ninguna pierde alcance de dominio |
 | Esfuerzo máx. de las nuevas (orden de magnitud) | ~292 días-persona (misma metodología del backlog heredado) |
 
@@ -147,6 +151,9 @@ Issues nuevas que no pertenecen a una sola pantalla (continúan la numeración I
 | ISSUE-153 | dompdf y planillas de inscripción PDF | feature | P2 | M | Planillas de inscripción en PDF (RF-36): planilla por inscripción y en blanco, plantilla por organizador, descarga desde la inscripción; dompdf como dependencia declarada | ISSUE-129 |
 | ISSUE-154 | Importador XLSX transaccional con previsualización | feature | P1 | L | Ejecución **transaccional por lotes** con mapeo de columnas, previsualización, informe por fila y sin contraseñas por defecto (alineado con ISSUE-028 heredada); UI Livewire de carga y resultado sobre el motor de ISSUE-089/090 heredadas (que se mantienen); cubre CU-12/RF-64 | ISSUE-089, ISSUE-090, ISSUE-110 |
 | ISSUE-155 | Checklist de arranque limpio | docs | P1 | S | Lista verificable de que la base de datos nace de migraciones desde cero, los seeders son sintéticos sin datos reales de personas, no hay secretos en el repositorio (`.env.example` con marcadores, gitleaks) y no queda código muerto ni rutas fantasma | — |
+| ISSUE-156 | Endpoint idempotente de marcas del servidor | feature | P0 | M | `POST /api/v1/events/{e}/timing-marks`: lotes transaccionales, deduplicación por `client_mark_id`, asignación a inscripción por `(event_id, bib)`, huérfanas y respuesta por marca. **Trae al repo el primer corte de ISSUE-067 heredada** | ISSUE-157 |
+| ISSUE-157 | Migraciones del núcleo con pruebas de esquema | feature | P0 | M | Migraciones del núcleo to-be (ADR-015) con **pruebas de esquema escritas antes**: UNIQUE dorsal-evento y persona-evento, CHECK persona XOR equipo, `client_mark_id` UNIQUE, `timing_marks` append-only, FKs físicas | ISSUE-105 |
+| ISSUE-158 | Motor de resultados del servidor | feature | P0 | L | Cálculo de la clasificación en jobs del servidor (`RANK()` sobre `net_ms = llegada − salida + Σ ajustes`), resultados derivados nunca editados a mano y conciliación en vivo ↔ oficial. **Trae al repo el primer corte de ISSUE-074 heredada** | ISSUE-157 |
 
 **Checklist verificable de ISSUE-155:**
 
@@ -157,27 +164,75 @@ Issues nuevas que no pertenecen a una sola pantalla (continúan la numeración I
 - Sin código muerto ni rutas fantasma: toda ruta declara controlador y acción (chequeo estático en CI, ISSUE-115).
 - Se usa como checklist de arranque en cada despliegue inicial de entorno.
 
+**Núcleo del primer corte (ISSUE-156…158).** Las piezas del servidor que el primer corte necesita y que antes solo
+existían como dependencias del corpus heredado. Con ellas, el camino de la meta queda definido de principio a fin
+dentro de este repositorio.
+
+### ISSUE-156 — Endpoint idempotente de marcas del servidor
+
+| Tipo | Prioridad | Estimación | Labels | Depende de |
+|---|---|---|---|---|
+| feature | P0 | M | `api`, `backend`, `cronometraje`, `rebuild` | ISSUE-157 |
+
+**Descripción.** El servidor que recibe los lotes de la estación: `POST /api/v1/events/{event}/timing-marks` acepta lotes de hasta 100 marcas dentro de una transacción; cada marca se deduplica por `client_mark_id` (UUIDv7, UNIQUE en base de datos), se asigna a su inscripción por `(event_id, bib)` o queda huérfana si el dorsal no existe, y la respuesta reporta el estado por marca (`assigned` / `orphan` / `duplicate`) con el `entry_id` asignado. Token de dispositivo Sanctum con ability `device:marks`; sin límite de tasa para estaciones autenticadas; 401/403 documentados para que el cliente conserve su cola. Trae al repositorio el alcance del primer corte de la heredada ISSUE-067 (que conserva su alcance v1 completo: consultas, correcciones por API, lectores de chips).
+
+**Criterios de aceptación**
+- [ ] Reenviar el mismo lote (o la misma marca suelta) no crea un segundo registro y devuelve el mismo resultado por marca (INV-02, prueba de idempotencia extremo a extremo).
+- [ ] Dorsal existente → `assigned` con `entry_id`; dorsal desconocido → `orphan` con `entry_id` null; reenvío → `duplicate`.
+- [ ] El lote se aplica en una única transacción: o se persiste completo o nada.
+- [ ] Auth por token con `device:marks`; respuesta 401/403 sin efectos secundarios (INV-08: la marca nunca falla por el broadcast).
+- [ ] Prueba de flujo completa: lote nuevo → reenvío sin duplicados → huérfana por dorsal desconocido.
+
+### ISSUE-157 — Migraciones del núcleo con pruebas de esquema
+
+| Tipo | Prioridad | Estimación | Labels | Depende de |
+|---|---|---|---|---|
+| feature | P0 | M | `database`, `backend`, `rebuild` | ISSUE-105 |
+
+**Descripción.** Las migraciones del núcleo del modelo to-be (ADR-015, con la enmienda de arranque limpio) con sus **pruebas de esquema escritas antes que las migraciones**: `regions`, `organizations`, `persons`, `accounts`, `teams`, `team_user`, `events`, `races`, `waves`, `categories`, `entries`, `entry_adjustments`, `timing_marks` (append-only), `timing_mark_corrections` y `results`. Reglas: PK `bigint unsigned` + ULID `char(26)` público UNIQUE (el entero nunca sale al exterior), `datetime(3)` para instantes y `bigint` ms para duraciones, FKs físicas con `ON DELETE` definido, `UNIQUE` y `CHECK` explícitos, `utf8mb4`. Sin tablas de liga (v2).
+
+**Criterios de aceptación**
+- [ ] Prueba de esquema sobre `information_schema`: `UNIQUE (event_id, bib)`, `UNIQUE (event_id, person_id)`, CHECK persona XOR equipo, `client_mark_id` UNIQUE, FKs físicas presentes (INV-03/04/05/09).
+- [ ] `timing_marks` es append-only **a nivel base de datos**: UPDATE o DELETE directo es rechazado (trigger o equivalente); la marca nunca se modifica (INV-01).
+- [ ] ULID público presente y UNIQUE en cada tabla del núcleo; los ids enteros no aparecen en ninguna salida.
+- [ ] `migrate:fresh --seed` y `migrate:rollback` probados en la PR (criterio G6): todas las migraciones reversibles.
+
+### ISSUE-158 — Motor de resultados del servidor
+
+| Tipo | Prioridad | Estimación | Labels | Depende de |
+|---|---|---|---|---|
+| feature | P0 | L | `backend`, `resultados`, `rebuild` | ISSUE-157 |
+
+**Descripción.** El cálculo de la clasificación en el servidor, del que cuelga la pantalla pública: job que computa `net_ms = llegada − salida + Σ ajustes` y las posiciones general/género/categoría con `RANK() OVER`, escribiendo la tabla derivada `results` que nunca se edita a mano (INV-07). Recalcula al llegar cada marca (en cola) y al cerrar el evento produce el resultado oficial. Trae al repositorio el alcance del primer corte de la heredada ISSUE-074 (que conserva su alcance v1: puntos de liga, deltas parciales, publicación oficial con reversiones).
+
+**Criterios de aceptación**
+- [ ] Posiciones y diferencias provienen solo del servidor; prueba de conciliación: lo mostrado en vivo coincide con el resultado oficial al cerrar.
+- [ ] `net_ms` incorpora la hora real de salida de la oleada y los ajustes acumulados (incluye caso > 24 h).
+- [ ] Recalculo por marca en cola; sin bloqueo de la captura (la marca responde aunque el job espere).
+- [ ] `results` jamás se escribe fuera del job (regla de arquitectura Pest Arch).
+
 ---
 
 ## 6. Priorización y secuencia
 
-**P0 del backlog nuevo (18).** Lo sin lo cual la reconstrucción no arranca o el día de carrera no es seguro:
+**P0 del backlog nuevo (21).** Lo sin lo cual la reconstrucción no arranca o el día de carrera no es seguro:
 
 | Grupo | Issues |
 |---|---|
 | Fundaciones (EP-24) | ISSUE-105 (esqueleto), ISSUE-106 (base TALL), ISSUE-108 (auth sesiones), ISSUE-110 (kit CRUD), ISSUE-111 (carga/error) |
+| Núcleo del primer corte (§5) | ISSUE-156 (endpoint idempotente de marcas), ISSUE-157 (migraciones del núcleo), ISSUE-158 (motor de resultados) |
 | Tiempo real (EP-26) | ISSUE-141 (contrato), ISSUE-142 (puente Echo), ISSUE-144 (canales autorizados), ISSUE-145 (caos) |
 | Estación offline (EP-27) | ISSUE-148 (captura IndexedDB), ISSUE-149 (sync idempotente), ISSUE-150 (reloj offset) |
 | Pantallas críticas (EP-25) | ISSUE-130 (captura de llegada), ISSUE-132/133 (salidas), ISSUE-134/135 (registros y corrección), ISSUE-137 (ranking) |
 
 **Secuencia por fases** (detalle temporal en [../08-roadmap.md](../08-roadmap.md)):
 
-1. **Fase F1 — fundaciones y operación crítica.** EP-24 completa → EP-26 completa (afterCommit + caos) → EP-27 completa (estación offline). De EP-25 se **adelanta la rebanada de paridad crítica** (ISSUE-130, 132, 133, 134, 135, 137) en su versión mínima verificable, porque el caos de EP-26 y el piloto de EP-27 necesitan pantallas reales contra las que medir. Completa F1: captura de marca tolerante a caídas de WS y de red, con pantallas operativas mínimas.
-2. **Fase F2 — paridad completa y MVP heredado.** Resto de EP-25 (ISSUE-119…129, 131, 136, 138…140) + el MVP del backlog heredado (EP-05: ISSUE-048…052; EP-06: ISSUE-055…058; EP-07: ISSUE-060…062 y 064…066; EP-08: ISSUE-067…068 y 070…071; EP-09: ISSUE-074…077; EP-11: ISSUE-084…086 y 088; ISSUE-099, 101, 102) + ISSUE-153…155. Cierre con ISSUE-140 (paridad firmada) e ISSUE-145/152 (caos y piloto) como puertas de salida.
+1. **Fase F1 — fundaciones y operación crítica.** EP-24 completa → **núcleo del primer corte (ISSUE-157 migraciones → ISSUE-156 endpoint de marcas → ISSUE-158 motor de resultados)** → EP-26 completa (afterCommit + caos) → EP-27 completa (estación offline). De EP-25 se **adelanta la rebanada de paridad crítica** (ISSUE-130, 132, 133, 134, 135, 137) en su versión mínima verificable, porque el caos de EP-26 y el piloto de EP-27 necesitan pantallas reales contra las que medir. Completa F1: captura de marca tolerante a caídas de WS y de red, con pantallas operativas mínimas.
+2. **Fase F2 — paridad completa y MVP heredado.** Resto de EP-25 (ISSUE-119…129, 131, 136, 138…140) + el MVP del backlog heredado (EP-05: ISSUE-048…052; EP-06: ISSUE-055…058; EP-07: ISSUE-060…062 y 064…066; EP-08: ISSUE-067…068 — el primer corte de la 067 ya vive aquí como ISSUE-156 — y 070…071; EP-09: ISSUE-074…077 — el motor del primer corte ya vive aquí como ISSUE-158 —; EP-11: ISSUE-084…086 y 088; ISSUE-099, 101, 102) + ISSUE-153…155. Cierre con ISSUE-140 (paridad firmada) e ISSUE-145/152 (caos y piloto) como puertas de salida.
 3. **Fase F3 — v1.** Importaciones (ISSUE-154 + ISSUE-091 heredada), liga (ISSUE-081…082), operación (runbook, backups, observabilidad) y las P2 heredadas (053, 059, 063, 078, 079, 088 ya en F2, 100, 103, 104). La migración de datos heredados queda **fuera de alcance** (enmienda a ADR-015, 2026-10-20): base de datos nueva creada íntegramente por migraciones desde cero; seeders con datos sintéticos; usuarios nuevos (admin bootstrap + seeders); sin conexión ni migración de datos heredados.
 4. **Fase posterior — SaaS multitenant (ADR-016).** EP-15…EP-23 en el orden del roadmap heredado del anexo SaaS, con los ajustes de §3 aplicados (portal público como área Livewire del monolito).
 
-**Regla de dependencia con el backlog heredado:** una pantalla de EP-25 nunca precede a su issue de dominio heredada (p. ej. ISSUE-129 requiere ISSUE-060; ISSUE-137 requiere ISSUE-074). Las dependencias exactas están en cada issue de las épicas nuevas.
+**Regla de dependencia con el backlog heredado:** una pantalla de EP-25 nunca precede a su issue de dominio heredada (p. ej. ISSUE-129 requiere ISSUE-060; ISSUE-137 requiere ISSUE-158, ahora en este backlog). Las dependencias exactas están en cada issue de las épicas nuevas.
 
 ---
 

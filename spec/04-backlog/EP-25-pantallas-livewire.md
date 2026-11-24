@@ -147,9 +147,9 @@
 
 | Tipo | Prioridad | Estimación | Labels | Depende de |
 |---|---|---|---|---|
-| feature | P1 | M | `feature`, `frontend`, `livewire`, `eventos`, `rebuild` | ISSUE-110, ISSUE-048, ISSUE-074 |
+| feature | P1 | M | `feature`, `frontend`, `livewire`, `eventos`, `rebuild` | ISSUE-110, ISSUE-048, ISSUE-158 |
 
-**Descripción.** Pantalla de eventos (paridad: listado con badges de condición, formulario, acciones por fila hacia Categorías/Oleadas/Distancias/Inscripciones/Clasificación) sobre la máquina de estados de ISSUE-048 heredada (`draft → registration → live → finished → closed`). El cierre del evento (CU-23) es una **acción con confirmación** que dispara el cálculo oficial de resultados en job (ISSUE-074 heredada, RF-56), no un recálculo acoplado a la request.
+**Descripción.** Pantalla de eventos (paridad: listado con badges de condición, formulario, acciones por fila hacia Categorías/Oleadas/Distancias/Inscripciones/Clasificación) sobre la máquina de estados de ISSUE-048 heredada (`draft → registration → live → finished → closed`). El cierre del evento (CU-23) es una **acción con confirmación** que dispara el cálculo oficial de resultados en job (ISSUE-158 en este backlog, RF-56), no un recálculo acoplado a la request.
 
 **Criterios de aceptación**
 - [ ] Transiciones de fase validadas server-side; botón de cierre solo en la fase que corresponde y con confirmación explícita (auditoría, ISSUE-045 heredada).
@@ -248,12 +248,12 @@
 
 | Tipo | Prioridad | Estimación | Labels | Depende de |
 |---|---|---|---|---|
-| feature | P0 | M | `feature`, `frontend`, `livewire`, `cronometraje`, `tiempo-real`, `rebuild` | ISSUE-128, ISSUE-067, ISSUE-144 |
+| feature | P0 | M | `feature`, `frontend`, `livewire`, `cronometraje`, `tiempo-real`, `rebuild` | ISSUE-128, ISSUE-156, ISSUE-144 |
 
 **Descripción.** Pantalla de captura de llegada en vivo del panel (RF-37): campo dorsal + observación + Enter. Toda pulsación crea una marca en `timing_marks` vía el servicio de asignación de ISSUE-068 heredada; nunca se escribe `end_at` directo en `registrations`. Feedback de paridad: alerta roja "número no encontrado, inválido o ya registrado" que se oculta al teclear, y resultado sonoro/visual del estado (asignada/huérfana/duplicada). El broadcast es afterCommit en cola: si Reverb está caído la marca igualmente responde 200 (criterio central de EP-26). Esta pantalla es la versión conectada; la estación offline ([EP-27](EP-27-estacion-offline-pwa.md)) la reemplaza en la meta los días de carrera.
 
 **Criterios de aceptación**
-- [ ] Cada Enter crea una marca persistida con auditoría; respuesta < 300 ms p95 en LAN (alineado con ISSUE-067).
+- [ ] Cada Enter crea una marca persistida con auditoría; respuesta < 300 ms p95 en LAN (alineado con ISSUE-156).
 - [ ] Dorsal inexistente/vacío/repetido → marca registrada como huérfana o duplicada con feedback correcto (pruebas por estado).
 - [ ] Con Reverb detenido la captura responde 200 y la fila aparece al reconectar (prueba de caos EP-26/ISSUE-145).
 - [ ] El campo queda limpio y enfocado tras cada captura; marca huérfana sin teclear "0" (RF-38).
@@ -367,9 +367,9 @@
 
 | Tipo | Prioridad | Estimación | Labels | Depende de |
 |---|---|---|---|---|
-| feature | P0 | L | `feature`, `frontend`, `livewire`, `clasificacion`, `tiempo-real`, `rebuild` | ISSUE-074, ISSUE-075, ISSUE-142 |
+| feature | P0 | L | `feature`, `frontend`, `livewire`, `clasificacion`, `tiempo-real`, `rebuild` | ISSUE-158, ISSUE-075, ISSUE-142 |
 
-**Descripción.** Modo Clasificación de la pantalla de Ranking como pantalla de proyección (paridad: fondo oscuro, cabecera fija con branding, reloj, filtros de categoría/género/oleada/distancia/dorsal, columna de diferencia con el primero, filas rojas DSQ, resaltado de llegadas ≤ 30 s, modo fullscreen con estilos aislados — RF-55). Cambios estructurales: (1) las posiciones (general/categoría/género) se calculan **en el backend** con el servicio de resultados de ISSUE-074 heredada (RF-51); (2) cero `eval` o construcción dinámica de código en cliente (chequeo estático en CI); (3) el endpoint de ranking **sin PII** — solo nombre, organización, categoría y tiempos (RF-52; complementa ISSUE-004 heredada); (4) actualización por delta del canal del evento < 2 s (RF-54), sin recargar la colección completa.
+**Descripción.** Modo Clasificación de la pantalla de Ranking como pantalla de proyección (paridad: fondo oscuro, cabecera fija con branding, reloj, filtros de categoría/género/oleada/distancia/dorsal, columna de diferencia con el primero, filas rojas DSQ, resaltado de llegadas ≤ 30 s, modo fullscreen con estilos aislados — RF-55). Cambios estructurales: (1) las posiciones (general/categoría/género) se calculan **en el backend** con el servicio de resultados de ISSUE-158 en este backlog (RF-51); (2) cero `eval` o construcción dinámica de código en cliente (chequeo estático en CI); (3) el endpoint de ranking **sin PII** — solo nombre, organización, categoría y tiempos (RF-52; complementa ISSUE-004 heredada); (4) actualización por delta del canal del evento < 2 s (RF-54), sin recargar la colección completa.
 
 **Criterios de aceptación**
 - [ ] Posiciones, diferencia y tiempo neto provienen del backend y coinciden con el cálculo oficial al cerrar (prueba de conciliación).

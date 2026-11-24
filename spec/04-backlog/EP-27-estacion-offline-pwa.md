@@ -4,7 +4,7 @@
 
 **Objetivo:** que la meta de los días de carrera funcione aunque caiga la red: captura local en IndexedDB con idempotencia (`client_mark_id`), sincronización en segundo plano sin duplicados, operación solo con teclado y reloj con desfase corregido (ADR-014). La estación es una PWA instalable servida por el monolito; su captura **no** pasa por Livewire porque debe funcionar sin servidor: consume `/api/v1` con token de dispositivo como cliente de integración de primera parte (ADR-012).
 
-**Relación con el backlog heredado:** esta épica **amplía el alcance heredado de ISSUE-069** (estación de meta PWA offline-first); sus criterios se conservan y formalizan aquí. Se mantienen intactas las issues de backend que la estación consume: ISSUE-067 (bitácora `timing_marks` append-only + API idempotente por lotes), ISSUE-068 (motor de asignación marca → inscripción), ISSUE-070 (correcciones auditadas) e ISSUE-073 (fotos vía proxy). ISSUE-071 (bitácora en vivo) se construye como pantalla Livewire en EP-25 (ISSUE-134). El flujo offline conectado de la meta en el panel es ISSUE-130; esta épica lo reemplaza operativamente en la meta.
+**Relación con el backlog heredado:** esta épica **amplía el alcance heredado de ISSUE-069** (estación de meta PWA offline-first); sus criterios se conservan y formalizan aquí. Se mantienen intactas las issues de backend que la estación consume: ISSUE-067 (bitácora `timing_marks` append-only + API idempotente por lotes — **su primer corte vive en este backlog como ISSUE-156**), ISSUE-068 (motor de asignación marca → inscripción), ISSUE-070 (correcciones auditadas) e ISSUE-073 (fotos vía proxy). ISSUE-071 (bitácora en vivo) se construye como pantalla Livewire en EP-25 (ISSUE-134). El flujo offline conectado de la meta en el panel es ISSUE-130; esta épica lo reemplaza operativamente en la meta.
 
 | Issue | Tipo | Prio | Est. | Título |
 |---|---|---|---|---|
@@ -22,7 +22,7 @@
 
 | Tipo | Prioridad | Estimación | Labels | Depende de |
 |---|---|---|---|---|
-| chore | P1 | M | `chore`, `frontend`, `pwa`, `offline`, `cronometraje`, `rebuild` | ISSUE-114, ISSUE-067 |
+| chore | P1 | M | `chore`, `frontend`, `pwa`, `offline`, `cronometraje`, `rebuild` | ISSUE-114, ISSUE-156 |
 
 **Descripción.** Pantalla dedicada de la estación de meta, instalable como PWA. Layout de estación (tipografía grande, alto contraste, operable 100 % con teclado), selección persistente de evento/estación, pantalla "sin conexión" con estado, y arranque directo a la última estación usada. Sobre la PWA base de ISSUE-114 (EP-24). Amplía el alcance heredado de ISSUE-069.
 
@@ -30,7 +30,7 @@
 - [ ] Instalable en Chrome/Edge y arrancable sin red (abre el shell y la última estación configurada).
 - [ ] La identidad de la estación (evento, punto de cronometraje, dispositivo) persiste entre sesiones.
 - [ ] Operable sin ratón desde el primer segundo; el foco queda en el campo de dorsal tras cualquier acción.
-- [ ] Emparejamiento con token de dispositivo (abilities `device:marks`, ISSUE-067 heredada) mostrado una sola vez en la configuración.
+- [ ] Emparejamiento con token de dispositivo (abilities `device:marks`, contrato de ISSUE-156) mostrado una sola vez en la configuración.
 
 ---
 
@@ -57,9 +57,9 @@
 
 | Tipo | Prioridad | Estimación | Labels | Depende de |
 |---|---|---|---|---|
-| feature | P0 | M | `feature`, `offline`, `cronometraje`, `api`, `rebuild` | ISSUE-148, ISSUE-067 |
+| feature | P0 | M | `feature`, `offline`, `cronometraje`, `api`, `rebuild` | ISSUE-148, ISSUE-156 |
 
-**Descripción.** Cliente de sincronización de la estación contra `POST /api/v1/events/{e}/timing-marks` (contrato de ISSUE-067 heredada, que se mantiene): lotes de hasta 100 marcas, idempotencia por `client_mark_id` (reenviar nunca duplica), resultado por marca (`assigned` / `orphan` / `duplicate`), reintento con backoff ante fallos, y sincronización en segundo plano con disparo manual forzado. Indicadores permanentes: conexión, pendientes, última sincronización.
+**Descripción.** Cliente de sincronización de la estación contra `POST /api/v1/events/{e}/timing-marks` (contrato de ISSUE-156 en este backlog; la heredada ISSUE-067 se mantiene para su alcance v1): lotes de hasta 100 marcas, idempotencia por `client_mark_id` (reenviar nunca duplica), resultado por marca (`assigned` / `orphan` / `duplicate`), reintento con backoff ante fallos, y sincronización en segundo plano con disparo manual forzado. Indicadores permanentes: conexión, pendientes, última sincronización.
 
 **Criterios de aceptación**
 - [ ] Reenvío del mismo `client_mark_id` responde con el mismo resultado sin duplicar (prueba de idempotencia de extremo a extremo).
@@ -81,7 +81,7 @@
 
 **Criterios de aceptación**
 - [ ] Desfase visible en la pantalla de estación en todo momento; alerta > 1 s o salto brusco (pruebas con reloj manipulado).
-- [ ] Marca guardada con hora corregida verificable contra la hora del servidor (prueba de conciliación con ISSUE-067).
+- [ ] Marca guardada con hora corregida verificable contra la hora del servidor (prueba de conciliación con ISSUE-156).
 - [ ] Offline: captura sigue operando con el último offset y la marca queda etiquetada con la antigüedad de la medición.
 - [ ] La corrección manual de hora del sistema operativo entre mediciones dispara la alerta (prueba).
 
