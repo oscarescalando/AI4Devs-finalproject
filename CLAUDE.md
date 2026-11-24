@@ -8,7 +8,7 @@ TDChronos 2.0: plataforma de cronometraje, resultados en vivo y liga de carreras
 
 **Este repositorio aún no contiene código de aplicación.** La Entrega 1 es especificación pura (Specification-Driven Development); la construcción de código arranca con la fase F1 del roadmap. Lo que existe:
 
-- `spec/` — fuente única de verdad del producto y la arquitectura: PRD (01), SRS (02), ADRs 010–018 (03-arquitectura/), épicas EP-24…27 con issues ISSUE-105…155 (04-backlog/), DoD G1–G15 (05), invariantes INV-01…14 (06), estrategia de pruebas (07), roadmap fases F1–F4 e hitos M0–M6 (08).
+- `spec/` — fuente única de verdad del producto y la arquitectura: PRD (01), SRS (02), ADRs 010–018 (03-arquitectura/), épicas EP-24…27 con issues ISSUE-105…158 (04-backlog/), DoD G1–G15 (05), invariantes INV-01…14 (06), estrategia de pruebas (07), roadmap fases F1–F4 e hitos M0–M6 (08).
 - `readme.md` — documento de entrega con la plantilla AI4Devs (arquitectura, modelo de datos, OpenAPI de `/api/v1`, HU y tickets de ejemplo).
 - `prompts.md` — prompts del curso, uno por sección del readme.
 
@@ -57,10 +57,10 @@ php artisan migrate:fresh --seed  # deja un entorno demo utilizable
 
 ## Git y commits
 
-- Una rama `feature/entrega-N-<iniciales>` por entrega (actual: `feature/entrega-1-ol-gt`), integrada a `main` por PR; el código seguirá una PR por épica. Toda PR debe cumplir la DoD G1–G15.
+- Una rama `feature/entrega-N-<iniciales>` por entrega (actual: `feature/entrega-2-ol-gt`), integrada a `main` por PR; el código seguirá una PR por épica. Toda PR debe cumplir la DoD G1–G15.
 - Conventional Commits **en español y sin metadatos de autoría** (nada de Co-Authored-By, Signed-off-by ni «Generated with»). Un hook PreToolUse (`.claude/hooks/validate-commit.sh`) bloquea cualquier `git commit` con esos trailers y escanea el stage en busca de secretos.
 - El flujo completo de commit (verificar cambios, escanear secretos, redactar mensaje, bump SemVer, CHANGELOG, push) está automatizado en el skill `commit`.
 
 ## Nota sobre `.claude/`
 
-Los agentes (`agente-python`, `agente-laravel`, `agente-documentacion`, `orquestador`) y los skills `arq-planificar` y `docs-*` proceden del proyecto anterior del curso (microservicio de pagos) y mencionan rutas que aquí no existen (`payment_service/`, `docs/python`, `docs/laravel`): no apliques esas referencias de archivos. Vigente de esa configuración: el hook `validate-commit.sh`, el skill `commit` y los permisos de git de `settings.json`.
+Vigente y adaptado a este repositorio: el hook `validate-commit.sh` (bloquea autoría y secretos en commits), el skill `commit` (flujo completo de commit), el skill `spec-gestionar` (control de cambios de `spec/` con su mapa de artefactos) y el skill `memoria-gestionar`. Los agentes y skills del proyecto anterior del curso (microservicio de pagos) fueron eliminados en la entrega 2 tras el feedback de la entrega 1.

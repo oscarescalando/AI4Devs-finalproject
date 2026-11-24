@@ -27,3 +27,6 @@ build/
 out/
 coverage/
 *.log
+
+# Datos de sesión locales de ZCode
+.zcode/

@@ -3,6 +3,15 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.2.0] - 2026-11-23
+### 📝 Documentación
+- Correcciones del feedback de la entrega 1 (revisión LIDR): alcance recortado a un **primer corte** explícito en `readme.md` (evento sembrado → estación offline → clasificación en servidor → pantalla pública), con cada funcionalidad marcada como [Corte 1]/[v2]/[Simulado], y bocetos de la pantalla de estación y de la clasificación pública.
+- Modelo de datos: clave primaria unificada en el diagrama (`bigint` PK + ULID `char(26)` público UNIQUE, el entero nunca sale al exterior) y liga movida a un diagrama v2 sin la relación "vía standings".
+- API: endpoints nuevos de emparejamiento de la estación (`POST /station/pairing`) y descarga del roster de inscritos (`GET /events/{e}/entries`) en `readme.md` y `spec/02-srs.md` §5.3.
+- Invariante INV-06 precisada: nombre y club públicos por diseño, iniciales/pseudónimo para menores.
+- Backlog: issues nuevas ISSUE-156 (endpoint idempotente de marcas), ISSUE-157 (migraciones del núcleo con pruebas de esquema) e ISSUE-158 (motor de resultados) — traen al repo las piezas heredadas que necesita el primer corte; ISSUE-149 reclasificada como cliente de la estación.
+- `.claude/` limpiado: eliminados agentes y skills del proyecto anterior de pagos; `spec-gestionar` reescrito para las rutas de `spec/`.
+
 ## [0.1.1] - 2026-10-20
 ### 📝 Documentación
 - `readme.md`: línea de autores en el encabezado del documento, alineada con `spec/README.md` (Oscar Ramon Lobo Altuve · Gabriel Toro, con sus emails).

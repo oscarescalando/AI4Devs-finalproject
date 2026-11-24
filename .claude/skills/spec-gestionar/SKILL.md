@@ -1,98 +1,89 @@
 ---
 name: spec-gestionar
 description: >-
-  Control de cambios y versionado de las especificaciones (docs/SPEC.md y docs/CONTEXT.md):
-  aplica cambios controlados con trazabilidad (quién/cuándo/por qué), versiona el spec,
-  mantiene la igualdad semántica del glosario y valida que ningún cambio contradiga
-  ADRs existentes. Activar con "cambiar el spec", "actualizar SPEC", "añadir término al
-  glosario", "versionar spec" o antes de un cambio de regla de negocio.
+  Control de cambios de la especificación de TDChronos 2.0 (carpeta spec/): aplica cambios
+  controlados y trazables sobre PRD, SRS, ADRs, backlog, DoD, invariantes, pruebas y roadmap;
+  mantiene la numeración estable de los identificadores y valida que ningún cambio contradiga
+  un ADR aceptado. Activar con "cambiar la spec", "actualizar la especificación", "añadir un
+  issue al backlog", "tocar una invariante" o antes de cualquier cambio de regla de negocio.
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
-# Gestión de Specs (control de cambios y versionado)
+# Gestión de la especificación (spec/) — TDChronos 2.0
 
-Modifica `docs/SPEC.md` y `docs/CONTEXT.md` de forma **controlada y trazable**. El SPEC es
-la verdad: los cambios son deliberados, nunca side-effects.
+Modifica `spec/` de forma **controlada y trazable**. La spec es la fuente única de verdad del
+producto: los cambios son deliberados, nunca side-effects.
+
+## Mapa de artefactos
+
+| Artefacto | Archivo |
+|---|---|
+| Producto, personas, HU | `spec/01-prd.md` |
+| Requisitos (RF/RNF), modelo de datos, contrato API | `spec/02-srs.md` |
+| Decisiones de arquitectura (ADR-010…) | `spec/03-arquitectura/` |
+| Épicas e issues (EP-24…, ISSUE-105…) | `spec/04-backlog/` |
+| Definition of Done (G1–G15) | `spec/05-dod.md` |
+| Invariantes de dominio (INV-01…14) | `spec/06-invariantes.md` |
+| Estrategia de pruebas | `spec/07-tests.md` |
+| Roadmap (F1–F4, M0–M6) | `spec/08-roadmap.md` |
+| Documento de entrega | `readme.md` (raíz) |
+| Guía de agentes | `CLAUDE.md` (raíz) |
 
 ## Reglas duras
 
-1. **Contradicción = stop:** si el cambio contradice un ADR aceptado o una SC-1..SC-4,
-   DETENTE y repórtalo (se necesita ADR nuevo o decisión del usuario).
-2. **Glosario puro:** `CONTEXT.md` no contiene implementación ni decisiones — sólo
-   términos (definición, contexto, sinónimos a evitar, ejemplo, relacionados).
-3. **Glosario antes del SPEC:** todo término nuevo del cambio se define PRIMERO en
-   `CONTEXT.md`; el SPEC usa sólo vocabulario del glosario (igualdad semántica).
-4. **Un cambio = una intención:** no mezclar secciones no relacionadas en la misma edición.
-5. **Numérico/moneda en el SPEC siempre con el vocabulario canónico** (monto, nota de
-   cobro, solicitud, consumer…) — nunca sinónimos.
+1. **Contradicción = stop:** si el cambio contradice un ADR aceptado o una invariante,
+   DETENTE y repórtalo — se necesita un ADR nuevo o una **enmienda registrada** en el propio
+   ADR (como la de arranque limpio de ADR-015, 2026-10-20). Nunca edites en silencio.
+2. **Los identificadores nunca se renumeran** (RF/RNF/HU/CU/EP/ISSUE/ADR/G/M/O/INV): las
+   series continúan las del corpus de origen; lo obsoleto se marca, no se elimina ni se
+   reordena.
+3. **Un cambio = una intención:** no mezclar secciones no relacionadas en la misma edición.
+4. **Criterios medibles:** toda issue o criterio nuevo debe ser observable en una prueba,
+   una revisión o una medición; si no lo es, se reescribe hasta que lo sea.
+5. **Lo que no está en el repo no existe:** cualquier dependencia del "corpus de origen"
+   heredado que el primer corte necesite se trae como issue nueva de `spec/04-backlog/`
+   (patrón ISSUE-156…158).
 
-## Protocolo de cambio de SPEC
+## Protocolo de cambio
 
 ### 1. Registrar la intención
-Al inicio de la edición, anota en el propio cambio (commit message + entrada de CHANGELOG):
-**qué regla cambia, de qué versión del SPEC viene, y por qué** (issue/incidente/ADR).
+Anota en el commit y en `CHANGELOG.md`: **qué cambia, de qué documento viene y por qué**
+(feedback de entrega, issue, ADR).
 
-### 2. Sección + severidad
-| Tipo de cambio | Sección | Efecto |
+### 2. Qué archivo toca cada cambio
+
+| Tipo de cambio | Archivo principal | Cascada |
 |---|---|---|
-| Nuevo comportamiento observable | §3 Funcionalidades | minor (feature) |
-| Cambio de flujo/pasos | §4 Flujos | minor o patch |
-| Cambio de regla de negocio | §3 + "Domain rules" de CLAUDE.md | minor; **breaking** si invalida flujos legítimos previos → major |
-| Cambio de no funcional (SLA/límites) | §6 | según impacto |
-| Actor nuevo | §2 Actores | minor |
-| Visión/alcance | §1 | mayor — requiere decisión explícita |
+| Requisito funcional/nuevo comportamiento | `spec/02-srs.md` §3 | PRD si cambia alcance; issue de backlog si hay que construirlo |
+| Regla no funcional (SLA/límites) | `spec/02-srs.md` §4 | — |
+| Modelo de datos / contrato API | `spec/02-srs.md` §5 + `readme.md` §3–4 | ADR-015 si toca principios; invariantes si toca reglas |
+| Decisión de arquitectura | ADR nuevo en `spec/03-arquitectura/` | SRS §2, readme §2, CLAUDE.md |
+| Issue nueva | `spec/04-backlog/` (épica o §5 del README) | Actualizar contadores/resumen del README del backlog |
+| Invariante | `spec/06-invariantes.md` | Requiere ADR/enmienda; readme y SRS citándola |
+| Fases/hitos | `spec/08-roadmap.md` | README del backlog (secuencia) |
 
-**Caso especial documentado:** un fix que cambia comportamiento que era defecto (p. ej.
-EP-8: fechas >60 d antes liquidaban a tasa histórica) se marca expresamente como
-**"cambio intencional de comportamiento (es el fix)"** en CHANGELOG — no es breaking
-silencioso, es corrección con comunicado.
+### 3. Cascada obligatoria tras editar
+- [ ] `readme.md` — el documento de entrega siempre refleja la spec (o la discrepancia es un bug).
+- [ ] `CLAUDE.md` — si cambia arquitectura, reglas de oro o estado del repo.
+- [ ] `CHANGELOG.md` + `VERSION` — el cambio de spec viaja con el versionado del repo.
+- [ ] `prompts.md` — solo si el cambio responde a un prompt nuevo del curso.
 
-### 3. Versionado del SPEC
-El SPEC no lleva SemVer propio: **viaja con el SemVer del servicio** (CHANGELOG). Para
-trazabilidad, el changelog de cada versión lista las secciones del SPEC tocadas
-(«`SPEC.md` §2.2/§3.1/§4»), como hace la entrada v2.7.0.
-
-### 4. Cascada obligatoria tras editar
-- [ ] `CLAUDE.md` — regla de dominio / fila del mapa espejo si aplica.
-- [ ] `docs/TASKS.md` — checklist si añade funcionalidad.
-- [ ] READMEs de AMBAS impls (mismo comportamiento, ejemplos).
-- [ ] `docs/python/` + `docs/laravel/` si toca tasa/caché/deuda/errores.
-- [ ] Tests: la matriz de casos del nuevo comportamiento debe existir en **ambas suites**
-      (verificado por el orquestador).
-
-## Protocolo de glosario
-
-Nuevo término (`docs/CONTEXT.md`, sección correcta Actores/Entidades/Técnicos/Dominino):
-
-```markdown
-### <Término>
-**Definición:** <una frase>
-**Contexto:** <dónde se usa>
-**Sinónimos a evitar:** <...>
-**Ejemplo:** <concreto>
-**Relacionados:** <...>
-```
-
-- Término con significado cambiado: marcar el viejo `(obsoleto, usar <nuevo>)` y crear el
-  nuevo — nunca redefinir en silencio.
-- Verificar contra el SPEC que no quede el sinónimo viejo vivo (grep).
-
-## Validaciones de cierre
+### 4. Validaciones de cierre
 
 ```bash
-# sin sinónimos vetados en el SPEC
-grep -niE '<sinónimos a evitar del cambio>' docs/SPEC.md
-# secciones citadas existen
-grep -n '^## ' docs/SPEC.md
-# ADRs no contradichos (revisión manual de los citados)
+# los IDs citados existen y no quedaron duplicados
+grep -rn "ISSUE-15[6-9]" spec/ | head
+# los enlaces relativos de spec/ resuelven
+grep -rn "](\.\./" spec/ | head
+# ADRs citados no contradichos (revisión manual de los tocados)
 ```
 
 ## Salida
 
 ```markdown
 # Cambio de spec aplicado
-- SPEC: <secciones + resumen>
-- Glosario: <términos añadidos/obsoletos>
-- SemVer estimado: <tipo> — razón
-- Cascada: <artefactos actualizados / pendientes (owner)>
+- spec: <archivos + secciones + resumen>
+- Identificadores: <ninguno renumerado; nuevos: …>
+- Cascada: <readme/CLAUDE/CHANGELOG actualizados | pendientes (owner)>
+- ADR/enmienda: <no aplica | <cuál y por qué>
 ```

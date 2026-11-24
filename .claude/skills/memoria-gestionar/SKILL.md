@@ -17,7 +17,7 @@ Mantiene el contexto entre sesiones: qué debe recordarse, con qué formato, y q
 ## Dónde vive la memoria
 
 ```
-~/.claude/projects/-Users-oscarlobo-DesarrolloIA-specMicroServicioPago/memory/
+~/.claude/projects/<ruta-de-este-proyecto>/memory/
 ├── MEMORY.md          # índice (1 línea por memoria) — lo único cargado cada sesión
 └── <slug>.md          # una memoria = un hecho = un archivo
 ```
