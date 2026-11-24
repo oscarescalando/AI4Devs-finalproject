@@ -30,3 +30,21 @@ coverage/
 
 # Datos de sesión locales de ZCode
 .zcode/
+
+# Laravel
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/.phpunit.cache
+.phpunit.result.cache
+.env.backup
+.env.production
+/auth.json
+Homestead.json
+Homestead.yaml
+_ide_helper.php
+
+# Cache generada del framework
+/bootstrap/cache/
