@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\EntryRosterController;
+use App\Http\Controllers\Api\PublicLeaderboardController;
 use App\Http\Controllers\Api\ServerTimeController;
 use App\Http\Controllers\Api\TimingMarkController;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
     Route::get('/time', ServerTimeController::class);
+
+    // Público, sin PII (INV-06): la pantalla en vivo lo sondea (corte 1).
+    Route::get('/public/events/{eventUlid}/leaderboard', PublicLeaderboardController::class);
 
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('/events/{eventUlid}/timing-marks', [TimingMarkController::class, 'store'])

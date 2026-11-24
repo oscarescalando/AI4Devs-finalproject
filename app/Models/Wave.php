@@ -18,6 +18,8 @@ final class Wave extends Model
 {
     use HasPublicUlid;
 
+    protected $dateFormat = 'Y-m-d H:i:s.v'; // INV-10: precision de milisegundos
+
     protected $fillable = ['ulid', 'race_id', 'name', 'scheduled_start_at', 'actual_start_at'];
 
     protected function casts(): array

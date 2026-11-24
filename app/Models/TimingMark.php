@@ -15,6 +15,8 @@ final class TimingMark extends Model
 {
     use HasPublicUlid;
 
+    protected $dateFormat = 'Y-m-d H:i:s.v'; // INV-10: precision de milisegundos
+
     protected $fillable = ['ulid', 'event_id', 'entry_id', 'client_mark_id', 'captured_at', 'device_time_ms', 'source'];
 
     public const UPDATED_AT = null; // append-only (INV-01)

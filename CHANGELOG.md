@@ -3,6 +3,13 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.4.0] - 2026-11-23
+### 🚀 Agregado
+- Motor de resultados del servidor (ISSUE-158): `RecalculateEventResults` computa `net_ms = primera llegada − salida real + Σ ajustes` con `RANK() OVER` por carrera, género y categoría (aritmética SQL a prueba de desbordes), reemplaza la tabla derivada `results` en una transacción y marca provisional/official según el estado del evento. Job en cola `afterCommit` disparado por cada lote de marcas — la respuesta de la marca nunca espera al recálculo (INV-07/INV-08).
+- Leaderboard público `GET /api/v1/public/events/{ulid}/leaderboard`: sin login ni PII (INV-06), menores con iniciales, contrato `v`/`seq` para el sondeo de la pantalla en vivo y `Cache-Control` corto.
+- Precisión de milisegundos garantizada en `timing_marks.captured_at` y las horas de oleada (`dateFormat` con `.v`).
+- Tests del motor (net con ajustes, empates RANK, clasificación por carrera, > 24 h, disparo por marca, conciliación en vivo ↔ oficial) y del leaderboard (PII, menores, seq creciente); regla de arquitectura: `results` solo desde el motor. Suite: 36 tests.
+
 ## [0.3.0] - 2026-11-23
 ### 🚀 Agregado
 - Esqueleto Laravel 13 / PHP 8.4 del monolito en la raíz del repo (ISSUE-105): Sanctum con abilities para dispositivos, aliases `ability`/`abilities`, sesión database sobre `accounts`, timezone `America/Caracas`, locale de Faker `es_VE`.

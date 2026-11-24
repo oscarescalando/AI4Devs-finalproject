@@ -8,6 +8,7 @@ use App\Models\Concerns\HasPublicUlid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/** @property Entry $entry */
 final class Result extends Model
 {
     use HasPublicUlid;

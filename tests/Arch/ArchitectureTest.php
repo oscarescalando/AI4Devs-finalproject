@@ -27,3 +27,16 @@ arch('las Actions no responden HTTP')
 arch('los modelos no conocen la capa HTTP')
     ->expect('Illuminate\Http\Request')
     ->not->toBeUsedIn('App\Models');
+
+arch('results solo se lee/escribe desde el motor de resultados')
+    ->expect('App\Models\Result')
+    ->not->toBeUsedIn('App\Http\Controllers')
+    ->and('App\Models\Result')
+    ->not->toBeUsedIn('App\Actions\Timing')
+    ->and('App\Models\Result')
+    ->not->toBeUsedIn('App\Actions\Registration');
+
+arch('el job de resultados delega en su Action de dominio')
+    ->expect('App\Jobs')
+    ->classes()
+    ->toBeFinal();

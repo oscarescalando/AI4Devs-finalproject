@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Timing;
 
+use App\Jobs\Results\RecalculateEventResultsJob;
 use App\Models\Entry;
 use App\Models\Event;
 use App\Models\TimingMark;
@@ -29,7 +30,7 @@ final class RecordTimingMarkBatch
     {
         $event = Event::query()->where('ulid', $eventUlid)->firstOrFail();
 
-        return DB::transaction(function () use ($event, $marks): array {
+        $results = DB::transaction(function () use ($event, $marks): array {
             $requested = collect($marks)->keyBy('client_mark_id');
 
             // Lo que ya existe (reenvío) responde duplicate con su resultado persistido.
@@ -81,6 +82,12 @@ final class RecordTimingMarkBatch
 
             return $results;
         });
+
+        // Recalculo de la clasificación en cola, tras el commit: nunca
+        // bloquea la respuesta de la marca (INV-08).
+        RecalculateEventResultsJob::dispatch($event->id)->afterCommit();
+
+        return $results;
     }
 
     /**
