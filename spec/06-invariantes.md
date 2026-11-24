@@ -58,11 +58,11 @@ Reglas de uso:
 
 ### INV-06 — Cero PII en superficies y payloads públicos
 
-**Enunciado.** Las pantallas públicas, los endpoints públicos de `/api/v1` y los payloads del canal público de tiempo real no contienen documento de identidad, fecha de nacimiento, email ni teléfono. Los listados internos enmascaran el documento. Las exportaciones con PII quedan auditadas.
+**Enunciado.** Las pantallas públicas, los endpoints públicos de `/api/v1` y los payloads del canal público de tiempo real no contienen documento de identidad, fecha de nacimiento, email ni teléfono. **Declaración explícita de publicidad:** el **nombre del atleta y su club/organización son públicos por diseño** — son el producto informativo del evento (clasificaciones, llegadas y roster de la estación); «cero PII» significa cero PII *sensible* (documento, nacimiento, contacto), no la anonimización del nombre. **Menores de edad:** cuando la persona sea menor según su `birthdate` y la fecha del evento, las superficies públicas muestran **iniciales o pseudónimo**, nunca el nombre completo. Los listados internos enmascaran el documento. Las exportaciones con PII quedan auditadas.
 
-**Fuente.** [02-srs.md](02-srs.md) §4 (RNF-13) y §5.2 (payload del canal público); criterio G9 de [05-dod.md](05-dod.md); [03-arquitectura/ADR-013-tiempo-real-reverb.md](03-arquitectura/ADR-013-tiempo-real-reverb.md); HU-52.
+**Fuente.** [02-srs.md](02-srs.md) §4 (RNF-13) y §5.2 (payload del canal público); criterio G9 de [05-dod.md](05-dod.md); [03-arquitectura/ADR-013-tiempo-real-reverb.md](03-arquitectura/ADR-013-tiempo-real-reverb.md); HU-52; declaración de publicidad por diseño (readme §4, revisión de la entrega 1).
 
-**Verificación.** Prueba automática de ausencia de PII sobre respuestas públicas y payloads de broadcast (en CI); suite Playwright de pantallas públicas sin sesión.
+**Verificación.** Prueba automática de ausencia de PII sobre respuestas públicas y payloads de broadcast (en CI), que incluye: nombre completo ausente cuando la persona es menor (iniciales/pseudónimo en su lugar); suite Playwright de pantallas públicas sin sesión.
 
 ### INV-07 — Posiciones y puntos calculados en el servidor
 
@@ -137,7 +137,7 @@ Reglas de uso:
 | INV-03 | `UNIQUE (event_id, bib)` | SRS §3.8, §5.1; ADR-015 |
 | INV-04 | `UNIQUE (event_id, person_id)` | SRS §3.8, §5.1 |
 | INV-05 | `CHECK`: persona XOR equipo en la inscripción | SRS §3.8, §5.1; ADR-015 |
-| INV-06 | Cero PII en superficies y payloads públicos | SRS §4 (RNF-13), §5.2; G9; ADR-013 |
+| INV-06 | Cero PII sensible en públicos; nombre y club públicos por diseño; menores con iniciales/pseudónimo | SRS §4 (RNF-13), §5.2; G9; ADR-013 |
 | INV-07 | Posiciones y puntos calculados en el servidor | SRS §3.11–3.12, §5.1; ADR-011/012 |
 | INV-08 | Broadcast después del commit (`afterCommit`) | ADR-013; SRS §5.2 (RF-74) |
 | INV-09 | Integridad referencial declarada (FK/UNIQUE/CHECK) | ADR-015; SRS §5.1 |

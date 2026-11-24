@@ -51,7 +51,7 @@ https://github.com/oscarescalando/AI4Devs-finalproject
 Dar a organizadores y cronometradores una plataforma que garantice la **integridad de los tiempos y la privacidad de los atletas**:
 
 - Cero marcas perdidas o duplicadas, incluso con cortes de red o de servicios (invariantes INV-02, INV-08 e INV-12 de [spec/06-invariantes.md](spec/06-invariantes.md)).
-- Cero datos personales (documento, fecha de nacimiento) en superficies públicas (INV-06).
+- Cero PII sensible (documento, fecha de nacimiento, contacto) en superficies públicas; nombre y club son públicos por diseño, con iniciales/pseudónimo para menores (INV-06).
 - Operación completa en sede **sin Internet** (nodo local) con estación de meta offline.
 - Clasificación en vivo en menos de 2 segundos desde la marca hasta la pantalla.
 - Base mantenible y verificable: stack con soporte, monolito modular con decisiones registradas como ADRs ([spec/03-arquitectura/](spec/03-arquitectura/README.md)), cobertura ≥ 80 % en el dominio crítico y CI como condición de merge ([spec/07-tests.md](spec/07-tests.md)).
@@ -60,17 +60,19 @@ Dar a organizadores y cronometradores una plataforma que garantice la **integrid
 
 ### **1.2. Características y funcionalidades principales:**
 
-- **Eventos y configuración**: fases del evento, carreras/distancias, categorías por rango de edad (individual/equipo) con recategorización en lote y previsualización, oleadas con reprogramación en bloque y hora programada + real.
-- **Directorio**: organizaciones/clubes y regiones, personas y cuentas separadas (persona ≠ cuenta) con roles e invitaciones, equipos con miembros y detección de duplicados.
-- **Inscripciones y dorsales**: alta individual y de equipo con unicidad persona-evento, ajustes acumulables de penalización/bonificación, asignación automática de dorsal, importación XLSX con previsualización e informe de filas rechazadas, planillas PDF de inscripción (dompdf).
-- **Salida**: check-in con contadores en vivo, salidas por oleada con deshacer sin sobrescribir la hora programada.
-- **Cronometraje offline**: estación de meta instalable como PWA, captura local en IndexedDB (< 50 ms), Enter sin dorsal = marca huérfana, sincronización idempotente por lotes, reloj con desfase corregido y doble estación de respaldo.
-- **Correcciones auditadas**: marcas inmutables (append-only), bitácora en vivo, reasignación/ajuste/anulación con motivo, previsualización y reversión.
-- **Clasificación y resultados**: cálculo en el servidor (posiciones general/categoría/género con `RANK()` en job), leaderboard en vivo por deltas < 2 s, pantallas públicas sin login y sin datos personales, modo kiosco y publicación de resultados oficiales.
-- **Liga configurable**: campeonatos y esquemas de puntos en base de datos (cero IDs en código), tabla pública de standings.
-- **Tiempo real**: Reverb con canales por evento (público sin PII y privado operativo), payloads versionados con `seq` y resincronización, degradación a polling si el websocket cae — la marca nunca falla por un fallo de broadcast.
-- **Operación**: panel de salud (cola, Reverb, backups), backups cifrados automáticos, runbook, logs estructurados y métricas.
-- **Acceso**: menú y botones generados desde los permisos reales del servidor (spatie/laravel-permission), tokens de dispositivo para estaciones y 2FA para administración (v2).
+**Alcance del primer corte (lo que se construye primero).** Un único camino completo de evento: el organizador **siembra el evento con seeders** (carreras, categorías, oleadas e inscritos con dorsales ya cargados — así la estación tiene con qué cruzar los dorsales), la **estación de meta offline** captura y sincroniza sin duplicar, el **servidor calcula la clasificación** y la **pantalla pública** la muestra en vivo sin iniciar sesión. El tiempo real arranca con sondeo periódico (2–5 s) y sube a Reverb cuando el flujo completo funcione — es el plan B ya previsto. Quedan para la **segunda versión**: la liga y sus standings, la importación XLSX, las planillas PDF, las correcciones con previsualización, el panel de salud, los backups cifrados y la doble estación. La tabla de marcas inmutable existe **desde el primer corte** (es el diferencial del sistema y es barata). En la lista siguiente, cada funcionalidad se marca como **[Corte 1]**, **[v2]** o **[Simulado]** (sembrado por seeders en el corte 1, con su pantalla de gestión en v2):
+
+- **[Simulado → v2] Eventos y configuración**: fases del evento, carreras/distancias, categorías por rango de edad (individual/equipo) con recategorización en lote y previsualización, oleadas con reprogramación en bloque y hora programada + real. *En el corte 1 el evento llega sembrado por seeders.*
+- **[Simulado → v2] Directorio**: organizaciones/clubes y regiones, personas y cuentas separadas (persona ≠ cuenta) con roles e invitaciones, equipos con miembros y detección de duplicados. *En el corte 1, personas, clubes y equipos sintéticos por seeders.*
+- **[Simulado → v2] Inscripciones y dorsales**: alta individual y de equipo con unicidad persona-evento, ajustes acumulables de penalización/bonificación, asignación automática de dorsal, importación XLSX con previsualización e informe de filas rechazadas, planillas PDF de inscripción (dompdf). *En el corte 1 las inscripciones y dorsales se siembran.*
+- **[v2] Salida**: check-in con contadores en vivo, salidas por oleada con deshacer sin sobrescribir la hora programada. *En el corte 1 la hora real de salida de cada oleada se siembra.*
+- **[Corte 1] Cronometraje offline**: estación de meta instalable como PWA, captura local en IndexedDB (< 50 ms), Enter sin dorsal = marca huérfana, sincronización idempotente por lotes, reloj con desfase corregido y doble estación de respaldo. *La doble estación es v2.*
+- **[v2] Correcciones auditadas**: marcas inmutables (append-only), bitácora en vivo, reasignación/ajuste/anulación con motivo, previsualización y reversión. *La inmutabilidad de la marca existe desde el corte 1; la corrección con previsualización es v2.*
+- **[Corte 1] Clasificación y resultados**: cálculo en el servidor (posiciones general/categoría/género con `RANK()` en job), leaderboard en vivo por deltas < 2 s, pantallas públicas sin login y sin datos personales, modo kiosco y publicación de resultados oficiales. *Modo kiosco y publicación oficial son v2.*
+- **[v2] Liga configurable**: campeonatos y esquemas de puntos en base de datos (cero IDs en código), tabla pública de standings.
+- **[Corte 1 · sondeo] Tiempo real**: Reverb con canales por evento (público sin PII y privado operativo), payloads versionados con `seq` y resincronización, degradación a polling si el websocket cae — la marca nunca falla por un fallo de broadcast. *El corte 1 arranca con sondeo periódico; Reverb se activa cuando el flujo funciona.*
+- **[v2] Operación**: panel de salud (cola, Reverb, backups), backups cifrados automáticos, runbook, logs estructurados y métricas.
+- **[Corte 1 · estación] Acceso**: menú y botones generados desde los permisos reales del servidor (spatie/laravel-permission), tokens de dispositivo para estaciones y 2FA para administración (v2). *Del corte 1: emparejamiento y token de la estación; el panel completo por permisos es v2.*
 
 Detalle completo por requisito: [spec/02-srs.md](spec/02-srs.md) §3 (RF) y §4 (RNF).
 
@@ -89,6 +91,39 @@ Principios de experiencia:
 - Pantallas públicas sin login, responsive de móvil 360 px a TV 4K, con modo kiosco y branding por evento.
 - Tiempos `h:mm:ss` con soporte > 24 h y décimas opcionales; fechas `dd/mm/aaaa`; zona horaria del evento (`America/Caracas`).
 - Accesibilidad WCAG 2.1 AA; historial de cambios a un clic desde cualquier inscripción o marca.
+
+**Boceto de la pantalla de la estación de meta** (solo teclado, color por resultado, estados de conexión siempre visibles):
+
+```text
+┌──────────────────────────────────────────────┐
+│ TDChronos · Meta · 21K                       │
+│ ● En vivo · 0 pendientes · última sync 10:41 │  ← estado de conexión + cola
+│                                              │
+│        ┌────────────────────────┐            │
+│        │  128▌                  │            │  ← dorsal + Enter; foco siempre aquí
+│        └────────────────────────┘            │
+│                                              │
+│ Última: 128 · ASIGNADA  10:41:57.3  (verde)  │  ← verde asignada · ámbar duplicada
+│ Reloj: 10:42:15 · desfase 0.3 s              │     roja desconocida · gris pendiente
+└──────────────────────────────────────────────┘
+```
+
+**Boceto de la clasificación pública** (`/e/{slug}`, sin login, móvil a TV):
+
+```text
+┌──────────────────────────────────────────────┐
+│ 21K VuelaCaracas · EN VIVO ●      10:42:15   │
+│ 134 llegadas · actualiza cada 5 s            │
+├──────┬─────────────┬────────┬──────┬─────────┤
+│ Pos  │ Atleta      │ Club   │ Cat  │ Tiempo  │
+├──────┼─────────────┼────────┼──────┼─────────┤
+│  12  │ Ana Pérez   │ CZU    │ F30-39│ 1:30:32│  ← fila nueva resaltada ≤ 2 s
+│  13  │ Luis Mora   │ GUA    │ M40-49│ 1:31:04│
+│  14  │ Sofía Ríos  │ ANDES  │ F20-29│ 1:31:58│
+├──────┴─────────────┴────────┴──────┴─────────┤
+│ [Categoría ▾] [Género ▾] [21K · 10K · 5K]   │
+└──────────────────────────────────────────────┘
+```
 
 Capturas y videotutorial: se adjuntarán con el MVP de la nueva interfaz.
 
@@ -236,7 +271,6 @@ Modelo to-be canónico definido en [spec/02-srs.md](spec/02-srs.md) §5.1 y [spe
 erDiagram
     regions ||--o{ organizations : "region_id"
     organizations ||--o{ teams : "organization_id"
-    organizations }o--o{ championships : "liga por puntos"
     persons ||--o| accounts : "accounts.person_id UNIQUE"
     persons ||--o{ team_user : "person_id"
     teams ||--o{ team_user : "team_id"
@@ -254,36 +288,39 @@ erDiagram
     entries |o--o{ results : "entry_id derivado"
     entries |o--o{ timing_marks : "entry_id asignada"
     timing_marks ||--o{ timing_mark_corrections : "timing_mark_id"
-    championships ||--o{ scoring_schemes : "championship_id"
-    scoring_schemes ||--o{ scoring_rules : "scheme_id"
 
     events {
-        char ulid PK "ULID publico"
+        bigint id PK "entera, nunca sale al exterior"
+        char ulid UK "identificador publico"
         varchar name UK
         varchar slug UK "rutas publicas /e/{slug}"
         date date
     }
     races {
-        char ulid PK
-        char event_id FK
+        bigint id PK
+        char ulid UK
+        bigint event_id FK
         varchar name "carrera o distancia"
     }
     waves {
-        char ulid PK
-        char race_id FK
+        bigint id PK
+        char ulid UK
+        bigint race_id FK
         datetime scheduled_start_at "hora programada"
         datetime actual_start_at "hora real"
     }
     categories {
-        char ulid PK
-        char event_id FK
+        bigint id PK
+        char ulid UK
+        bigint event_id FK
         varchar name
         bool for_teams "individual o equipo"
         int min_age
         int max_age
     }
     persons {
-        char ulid PK
+        bigint id PK
+        char ulid UK
         varchar document "enmascarado en listados"
         varchar first_name
         varchar last_name
@@ -291,67 +328,76 @@ erDiagram
         char gender
     }
     accounts {
-        char ulid PK
-        char person_id FK "UNIQUE, persona distinta de cuenta"
+        bigint id PK
+        char ulid UK
+        bigint person_id FK "UNIQUE, persona distinta de cuenta"
         varchar email UK
         varchar password "Argon2id o bcrypt"
     }
     organizations {
-        char ulid PK
-        char region_id FK
+        bigint id PK
+        char ulid UK
+        bigint region_id FK
         varchar name "club u organizacion"
     }
     regions {
-        char ulid PK
+        bigint id PK
+        char ulid UK
         varchar name
     }
     teams {
-        char ulid PK
-        char organization_id FK
+        bigint id PK
+        char ulid UK
+        bigint organization_id FK
         varchar name
     }
     team_user {
-        char team_id FK
-        char person_id FK
+        bigint team_id FK
+        bigint person_id FK
     }
     entries {
-        char ulid PK
-        char event_id FK
-        char category_id FK
-        char race_id FK
-        char wave_id FK
-        char person_id FK "xor team_id CHECK"
-        char team_id FK "xor person_id CHECK"
+        bigint id PK
+        char ulid UK
+        bigint event_id FK
+        bigint category_id FK
+        bigint race_id FK
+        bigint wave_id FK
+        bigint person_id FK "xor team_id CHECK"
+        bigint team_id FK "xor person_id CHECK"
         int bib "UNIQUE event_id mas bib"
         varchar status
     }
     entry_adjustments {
-        char ulid PK
-        char entry_id FK
+        bigint id PK
+        char ulid UK
+        bigint entry_id FK
         varchar type "penalty bonus historical"
         bigint delta_ms
         varchar reason
     }
     timing_marks {
-        char ulid PK
-        char event_id FK
-        char entry_id FK "null igual a huerfana"
+        bigint id PK
+        char ulid UK
+        bigint event_id FK
+        bigint entry_id FK "null igual a huerfana"
         char client_mark_id UK "UUIDv7 idempotencia"
         datetime captured_at "con offset corregido"
         bigint device_time_ms
         varchar status "append-only"
     }
     timing_mark_corrections {
-        char ulid PK
-        char timing_mark_id FK
+        bigint id PK
+        char ulid UK
+        bigint timing_mark_id FK
         varchar operation "ajustar reasignar anular"
         varchar reason "motivo obligatorio"
-        char account_id FK "quien corrige"
+        bigint account_id FK "quien corrige"
         json before_after "auditoria"
     }
     results {
-        char ulid PK
-        char entry_id FK
+        bigint id PK
+        char ulid UK
+        bigint entry_id FK
         bigint net_ms "llegada menos salida mas ajustes"
         int rank_general
         int rank_gender
@@ -359,19 +405,32 @@ erDiagram
         int points
         varchar status "derivado nunca editado a mano"
     }
+```
+
+**Clave primaria unificada:** `bigint` autoincremental como PK y foránea en todas las relaciones; el **ULID `char(26)`** es columna UNIQUE y **identificador público** — el único que viaja por rutas, API y broadcasts. El identificador entero nunca sale al exterior.
+
+**Liga por puntos (v2, fuera del primer corte):** el diseño de `championships` + `scoring_schemes` + `scoring_rules` se mantiene; su relación con organizaciones y resultados (tabla de standings) se cierra al diseñar la segunda versión:
+
+```mermaid
+erDiagram
+    championships ||--o{ scoring_schemes : "championship_id"
+    scoring_schemes ||--o{ scoring_rules : "scheme_id"
     championships {
-        char ulid PK
+        bigint id PK
+        char ulid UK
         varchar name
         varchar status
     }
     scoring_schemes {
-        char ulid PK
-        char championship_id FK
+        bigint id PK
+        char ulid UK
+        bigint championship_id FK
         varchar name
     }
     scoring_rules {
-        char ulid PK
-        char scheme_id FK
+        bigint id PK
+        char ulid UK
+        bigint scheme_id FK
         varchar scope "individual o equipo"
         int position_from
         int position_to
@@ -386,7 +445,7 @@ Principios estructurales del modelo (detalle en [spec/02-srs.md](spec/02-srs.md)
 - **Resultados derivados**: `results` se calcula desde marcas + oleadas + ajustes; nada se edita a mano (INV-07).
 - **Ajustes como filas acumulables**: `entry_adjustments` (penalización/bonificación).
 - **Oleadas con hora programada y real**: `waves.scheduled_start_at` + `waves.actual_start_at`.
-- **Liga configurable**: `championships` + `scoring_schemes` + `scoring_rules` — cero IDs en código.
+- **Liga configurable (v2)**: `championships` + `scoring_schemes` + `scoring_rules` — cero IDs en código; fuera del primer corte (diagrama aparte más arriba).
 - **Integridad en la base de datos**: FKs físicas, `UNIQUE (event_id, bib)` y `(event_id, person_id)`, `CHECK` persona xor equipo (INV-03, INV-04, INV-05, INV-09).
 - **Identificadores**: PK `bigint unsigned` + **ULID** `char(26)` público; `client_mark_id` UUIDv7.
 - **Tiempo en milisegundos**: `datetime(3)` instantes, `bigint` ms duraciones, soporte > 24 h (INV-10).
@@ -397,7 +456,7 @@ Principios estructurales del modelo (detalle en [spec/02-srs.md](spec/02-srs.md)
 |---|---|---|---|
 | `events` | Evento del calendario | `ulid` público, `name` UNIQUE, `slug` UNIQUE (rutas públicas), `date` | Padre de carreras, categorías, oleadas, inscripciones y marcas |
 | `persons` + `accounts` | Atleta (persona) y su cuenta de acceso | `accounts.person_id` UNIQUE; documento enmascarado en listados; contraseña Argon2id/bcrypt | 1:1 entre persona y cuenta; 1:N con inscripciones individuales |
-| `organizations` + `regions` | Club/organización y su región | `name`, `region_id` | 1:N con equipos; N:M con campeonatos (liga) |
+| `organizations` + `regions` | Club/organización y su región | `name`, `region_id` | 1:N con equipos (la relación con la liga se define en v2) |
 | `teams` + `team_user` | Equipo y sus miembros | Membresía con par `(team_id, person_id)` | N:1 con organizaciones; 1:N con inscripciones de equipo |
 | `races` | Carrera/distancia del evento | `event_id`, `name` | 1:N con oleadas e inscripciones |
 | `waves` | Oleada de salida | `scheduled_start_at` (programada) y `actual_start_at` (real) | N:1 con carreras; 1:N con inscripciones |
@@ -407,7 +466,7 @@ Principios estructurales del modelo (detalle en [spec/02-srs.md](spec/02-srs.md)
 | `timing_marks` | Marca de meta (append-only) | `client_mark_id` UUIDv7 UNIQUE (idempotencia); `captured_at` con offset corregido; `entry_id` null = huérfana | Solo inserciones (INV-01); 1:N con correcciones |
 | `timing_mark_corrections` | Corrección auditada | `operation` (ajustar/reasignar/anular), `reason` obligatorio, auditoría antes/después con quién, cuándo e IP/estación | N:1 con marcas |
 | `results` | Resultado derivado | `net_ms`, posiciones general/género/categoría, puntos; calculado en job con `RANK()`, nunca editado a mano | N:1 con inscripciones |
-| `championships` + `scoring_schemes` + `scoring_rules` | Liga configurable | Esquemas y reglas de puntos en base de datos (rangos de posición → puntos, por individual/equipo) | N:1 encadenadas; N:M con organizaciones vía standings |
+| `championships` + `scoring_schemes` + `scoring_rules` | Liga configurable **(v2, fuera del primer corte)** | Esquemas y reglas de puntos en base de datos (rangos de posición → puntos, por individual/equipo) | N:1 encadenadas; la tabla de standings y su relación con organizaciones/resultados se diseñan con la v2 |
 
 Tablas de soporte: roles/permisos spatie (`model_has_roles` con `team_id = event_id`), `activity_log`, `import_batches`/`import_rows`, `exports`, `personal_access_tokens`, `sessions`, `jobs`/`failed_jobs`.
 
@@ -417,7 +476,7 @@ Tablas de soporte: roles/permisos spatie (`model_has_roles` con `team_id = event
 
 La UI web **no consume la API**: los componentes Livewire invocan las Actions del dominio (ADR-012, [spec/03-arquitectura/ADR-012-api-solo-no-web.md](spec/03-arquitectura/ADR-012-api-solo-no-web.md)). La API `/api/v1` existe para consumidores no-web: la estación de cronometraje, la app móvil y el visor de llegadas (v2) e integraciones. REST JSON, OpenAPI 3.1 generada con Scramble y publicada en `/docs/api`; errores `application/problem+json`; identificadores ULID; paginación por cursor; tokens Sanctum con abilities para dispositivos. Contrato completo: [spec/02-srs.md](spec/02-srs.md) §5.3 y §6.
 
-Los tres endpoints principales, en formato OpenAPI:
+Los cinco endpoints principales, en formato OpenAPI:
 
 ```yaml
 openapi: 3.1.0
@@ -443,6 +502,56 @@ paths:
                 properties:
                   server_ms: { type: integer, example: 1761000000123 }
                   timezone: { type: string, example: America/Caracas }
+  /station/pairing:
+    post:
+      summary: Emparejamiento de la estación (canje de código por token de dispositivo)
+      description: >
+        El organizador genera un código de emparejamiento de un solo uso por evento.
+        La estación lo canjea una única vez al abrir con conexión y recibe su token
+        Sanctum de dispositivo con abilities (device:marks, device:roster). Sin sesión
+        web: el código es la credencial del canje, el token la credencial de operación.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              event_id: 01JARQ3M9X
+              pairing_code: 8F2K-Q91R
+              device_name: meta-tablet-01
+      responses:
+        "200":
+          description: Token de dispositivo emitido
+          content:
+            application/json:
+              example:
+                token: 17|9a4d...c81f
+                abilities: [device:marks, device:roster]
+                server_ms: 1761000000123
+                timezone: America/Caracas
+        "410": { description: Código ya usado o expirado }
+  /events/{eventId}/entries:
+    get:
+      summary: Descarga del roster de inscritos para la estación
+      description: >
+        La estación lo consulta al abrir con conexión (y cuando cambie la versión del
+        roster) para cruzar dorsales en local y avisar de un dorsal desconocido sin
+        red. Solo campos públicos por diseño: dorsal, nombre, club, carrera, categoría
+        y oleada. Paginado por cursor; cacheable por versión.
+      security: [{ deviceToken: [] }]
+      parameters:
+        - { name: eventId, in: path, required: true, schema: { type: string } }
+        - { name: cursor, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Página del roster de inscritos
+          content:
+            application/json:
+              example:
+                v: 3
+                rows:
+                  - { bib: 128, name: "Ana Pérez", org: "Club Zulianos", race: 21K, category: "F 30-39", wave: "2" }
+                  - { bib: 129, name: "Luis Mora", org: "Guaros", race: 21K, category: "M 40-49", wave: "2" }
   /public/events/{eventId}/leaderboard:
     get:
       summary: Clasificación en vivo del evento (pública, sin datos personales)
@@ -565,11 +674,11 @@ Como **juez**, quiero corregir una marca (ajustar hora, reasignar, anular) **con
 
 ## 6. Tickets de trabajo
 
-**Ticket 1 (backend) — ISSUE-149: Sincronización idempotente de marcas por lotes**
+**Ticket 1 (cliente de la estación) — ISSUE-149: Sincronización idempotente de marcas por lotes**
 
 | Tipo | Prioridad | Estimación | Labels | Depende de |
 |---|---|---|---|---|
-| feature | P0 | M (≤ 5 días) | `api`, `offline`, `cronometraje`, `rebuild` | ISSUE-148 (captura IndexedDB), ISSUE-067 (API de marcas, backlog heredado) |
+| feature | P0 | M (≤ 5 días) | `pwa`, `offline`, `cronometraje`, `rebuild` | ISSUE-148 (captura IndexedDB), ISSUE-156 (endpoint idempotente de marcas, en este backlog) |
 
 *Descripción.* Cliente de sincronización de la estación contra `POST /api/v1/events/{e}/timing-marks`: lotes de hasta 100 marcas, idempotencia por `client_mark_id` (reenviar nunca duplica), resultado por marca (`assigned` / `orphan` / `duplicate`), reintento con backoff ante fallos y sincronización en segundo plano con disparo manual forzado. Indicadores permanentes de conexión, pendientes y última sincronización.
 
@@ -587,7 +696,7 @@ Definición completa: [spec/04-backlog/EP-27-estacion-offline-pwa.md](spec/04-ba
 
 | Tipo | Prioridad | Estimación | Labels | Depende de |
 |---|---|---|---|---|
-| feature | P0 | L (≤ 10 días) | `frontend`, `livewire`, `clasificacion`, `tiempo-real`, `rebuild` | ISSUE-074 (motor de resultados, backlog heredado), ISSUE-142 (puente Echo) |
+| feature | P0 | L (≤ 10 días) | `frontend`, `livewire`, `clasificacion`, `tiempo-real`, `rebuild` | ISSUE-158 (motor de resultados, en este backlog), ISSUE-142 (puente Echo) |
 
 *Descripción.* Pantalla de proyección de la clasificación en vivo: fondo oscuro, branding del evento, reloj, filtros, columna de diferencia, filas DSQ, resaltado de llegadas ≤ 30 s y modo pantalla completa. Decisiones de diseño: posiciones y diferencia calculadas en el backend, cero código dinámico en el cliente, endpoint y payload sin datos personales, y actualización por delta del canal del evento en < 2 s.
 
@@ -619,6 +728,41 @@ Definición completa: [spec/04-backlog/EP-25-pantallas-livewire.md](spec/04-back
 - Reversibilidad de las migraciones probada en la PR (criterio G6 de la DoD).
 
 Definición completa: [spec/04-backlog/EP-24-fundaciones-livewire.md](spec/04-backlog/EP-24-fundaciones-livewire.md).
+
+**Ticket 4 (backend) — ISSUE-156: Endpoint idempotente de marcas del servidor**
+
+| Tipo | Prioridad | Estimación | Labels | Depende de |
+|---|---|---|---|---|
+| feature | P0 | M (≤ 5 días) | `api`, `backend`, `cronometraje`, `rebuild` | ISSUE-157 (migraciones del núcleo) |
+
+*Descripción.* El endpoint del servidor que hasta ahora solo existía como dependencia heredada: `POST /api/v1/events/{event}/timing-marks` recibe lotes de hasta 100 marcas, descarta las repetidas por `client_mark_id` (UUIDv7, UNIQUE en base de datos), asigna cada marca a su inscripción por `(event_id, bib)` — o la deja huérfana si el dorsal no existe — y responde por marca (`assigned` / `orphan` / `duplicate`). Todo dentro de una transacción por lote. Trae al repositorio el alcance del primer corte de ISSUE-067 del corpus heredado.
+
+*Criterios de aceptación*
+
+- Reenviar el mismo lote (o la misma marca suelta) no crea un segundo registro y devuelve el mismo resultado por marca.
+- Marca con dorsal existente → `assigned` con su inscripción; dorsal desconocido → `orphan` con `entry_id` null; reenvío → `duplicate`.
+- El lote se aplica en una transacción: o se persiste completo o nada.
+- Auth por token de dispositivo Sanctum con ability `device:marks`; 401/403 conservan la cola del cliente (documentado).
+- Prueba de extremo a extremo del flujo: lote → duplicado por reenvío → huérfana por dorsal desconocido.
+
+Definición completa: [spec/04-backlog/README.md](spec/04-backlog/README.md) §5.
+
+**Ticket 5 (base de datos) — ISSUE-157: Migraciones del núcleo con pruebas de esquema**
+
+| Tipo | Prioridad | Estimación | Labels | Depende de |
+|---|---|---|---|---|
+| feature | P0 | M (≤ 5 días) | `database`, `backend`, `rebuild` | ISSUE-105 (esqueleto) |
+
+*Descripción.* Las migraciones del núcleo del modelo to-be con sus **pruebas de esquema escritas antes** (dorsal único por evento, persona-o-equipo en cada inscripción, marca que no se puede modificar): `regions`, `organizations`, `persons`, `accounts`, `teams`, `team_user`, `events`, `races`, `waves`, `categories`, `entries`, `entry_adjustments`, `timing_marks` (append-only), `timing_mark_corrections`, `results`. PK `bigint` + ULID público UNIQUE; `datetime(3)`/`bigint` ms; FKs físicas, UNIQUE y CHECK. Sin tablas de liga (v2).
+
+*Criterios de aceptación*
+
+- Prueba de esquema que recorre `information_schema` y verifica: `UNIQUE (event_id, bib)`, `UNIQUE (event_id, person_id)`, CHECK persona XOR equipo, `client_mark_id` UNIQUE, FKs físicas con `ON DELETE` definido.
+- Prueba de que `timing_marks` es append-only: una actualización/borrado directo es rechazado por la base de datos (trigger o equivalente) — la marca nunca se modifica.
+- `migrate:fresh --seed` + `migrate:rollback` probados en la PR (G6).
+- Todas las migraciones reversibles.
+
+Definición completa: [spec/04-backlog/README.md](spec/04-backlog/README.md) §5.
 
 ---
 

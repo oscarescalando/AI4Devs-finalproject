@@ -365,7 +365,8 @@ las pantallas públicas usan el listener de eventos Livewire sobre el canal púb
 ### 5.3 Contrato API `/api/v1` (resumido, ADR-012)
 
 **La UI web NO consume la API**: los componentes Livewire invocan Actions de dominio directamente. La API existe para
-consumidores **no-web**: app móvil **B3** (v2), visor de llegadas **B4** (v2) e integraciones externas. Estilo: REST
+consumidores **no-web**: la **estación de cronometraje** (primera consumidora: emparejamiento, roster y marcas), app
+móvil **B3** (v2), visor de llegadas **B4** (v2) e integraciones externas. Estilo: REST
 JSON, OpenAPI 3.1 generada (Scramble) y publicada en `/docs/api`; errores `application/problem+json`; identificadores
 ULID; paginación por cursor; `?sort=` y `?filter[]` con listas blancas. Los endpoints CRUD privados dejan de ser
 obligatorios para la web: solo se construyen los que B3/B4/integraciones requieran (protocolo de sincronización, v2).
@@ -373,8 +374,8 @@ obligatorios para la web: solo se construyen los que B3/B4/integraciones requier
 | Grupo | Endpoints | Auth | Consumidor |
 |---|---|---|---|
 | Público, sin PII, cacheable | `GET /public/events`, `/public/events/{event}`, `.../races`, `.../leaderboard`, `.../arrivals?since=`, `.../results`, `GET /public/championships/{c}/standings`, `GET /time` | ninguno | pantallas externas, integraciones, B4 |
-| Marcas de dispositivos | `POST /events/{e}/timing-marks` (lote, **idempotente por `client_mark_id`**), `GET /events/{e}/timing-marks?cursor=&status=`, `POST /events/{e}/timing-marks/{m}/corrections` | token Sanctum con abilities (`device:marks`) | estación no-web, lector de chips, B3/B4 |
-| Dispositivos | CRUD `/timing-devices`, `POST /timing-devices/{d}/token`, `POST /broadcasting/auth` | organizador (web) emite el token | administración de dispositivos |
+| Marcas de dispositivos | `POST /events/{e}/timing-marks` (lote, **idempotente por `client_mark_id`**), `GET /events/{e}/timing-marks?cursor=&status=`, `POST /events/{e}/timing-marks/{m}/corrections`, `GET /events/{e}/entries` (**roster de inscritos** para la estación: solo campos públicos — dorsal, nombre, club, carrera, categoría, oleada — paginado por cursor y cacheable por versión) | token Sanctum con abilities (`device:marks`, `device:roster`) | estación no-web, lector de chips, B3/B4 |
+| Dispositivos | CRUD `/timing-devices`, `POST /timing-devices/{d}/token`, `POST /station/pairing` (**emparejamiento**: la estación canjea un código de un solo uso emitido por el organizador y recibe su token de dispositivo con abilities), `POST /broadcasting/auth` | organizador (web) emite el código/token | administración de dispositivos y estaciones |
 | Sync (v2, plataforma) | `/api/v1/sync/pull`, `/api/v1/sync/push` (protocolo de sincronización del corpus de origen, fase posterior) | token de dispositivo | B3, B4 |
 
 ---
