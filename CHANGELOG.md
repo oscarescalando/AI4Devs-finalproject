@@ -3,6 +3,14 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.3.0] - 2026-11-23
+### 🚀 Agregado
+- Esqueleto Laravel 13 / PHP 8.4 del monolito en la raíz del repo (ISSUE-105): Sanctum con abilities para dispositivos, aliases `ability`/`abilities`, sesión database sobre `accounts`, timezone `America/Caracas`, locale de Faker `es_VE`.
+- Migraciones del núcleo con pruebas de esquema (ISSUE-157): directorio (persona ≠ cuenta), eventos/carreras/oleadas/categorías, inscripciones con `UNIQUE (event_id, bib)` y `(event_id, person_id)` + CHECK persona XOR equipo, `timing_marks` append-only con triggers que rechazan UPDATE/DELETE en MySQL, correcciones auditadas y `results` derivado. PK `bigint` + ULID público (trait `HasPublicUlid`).
+- API `/api/v1` (ISSUE-156): `GET /time` (hora oficial), `POST /events/{ulid}/timing-marks` (lote transaccional idempotente por `client_mark_id`, respuesta assigned/orphan/duplicate) y `GET /events/{ulid}/entries` (roster de la estación con solo campos públicos; menores con iniciales).
+- Seeders sintéticos (ADR-015): evento demo `vuela-caracas-21k` con 114 inscritos, 4 menores para INV-06 y admin bootstrap.
+- Calidad: Pest 26 tests (esquema + API + arquitectura Pest Arch) contra MySQL real, Larastan nivel 8 limpio, Pint aplicado, assets Vite compilados.
+
 ## [0.2.0] - 2026-11-23
 ### 📝 Documentación
 - Correcciones del feedback de la entrega 1 (revisión LIDR): alcance recortado a un **primer corte** explícito en `readme.md` (evento sembrado → estación offline → clasificación en servidor → pantalla pública), con cada funcionalidad marcada como [Corte 1]/[v2]/[Simulado], y bocetos de la pantalla de estación y de la clasificación pública.
