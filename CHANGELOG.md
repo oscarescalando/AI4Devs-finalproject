@@ -3,6 +3,10 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.7.1] - 2026-11-27
+### 🧹 Otros
+- Se ignora `public/fonts-manifest.dev.json` (artefacto del dev server de Vite que se coló en el commit anterior) y se saca del repositorio.
+
 ## [0.7.0] - 2026-11-27
 ### 🚀 Agregado
 - **Acceso y shell del panel** (TQ-002 · ISSUE-108 completa, ISSUE-159 nueva en el backlog): login por sesiones en Volt (documento **o** correo + contraseña, remember, bloqueo 5/min por usuario+IP con mensaje de reintentos, redirect intended, solo cuentas activas), logout por POST con invalidación de sesión y **419 → login con mensaje conservando el destino** (HttpException capturado tras la conversión de TokenMismatch).
