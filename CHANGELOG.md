@@ -3,6 +3,12 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.13.0] - 2026-11-27
+### 🚀 Agregado
+- **Pruebas de la capa TALL y CI** (TQ-008 · ISSUE-116/117/109): reglas Pest Arch (Livewire sin BD ni modelos: componente → Action), inspección de auth/permission por ruta, pruebas de autorización del kit y del CRUD por rol (Gate `directory.write` = admin/superadmin como convención hasta `directory.manage`), **Playwright smoke** (landing, login→consola, pantalla pública; `npm run test:e2e`) y **pipeline de GitHub Actions** con los gates en orden: Pint → Larastan 8 → Pest con MySQL 8 → Pest Arch → gitleaks → composer audit → build Vite + verificación de manifest → Playwright (PRs a main).
+- Con esto **cierra el plan TQ-001** (EP-24 al día): 8 fases en la noche autónoma. Suite final **209 tests**.
+- DEFER documentado: imagen OCI al etiquetar (registry/runtime) y cobertura con umbral — decisión de la mañana, anotada en el workflow y las bitácoras.
+
 ## [0.12.0] - 2026-11-27
 ### 🚀 Agregado
 - **i18n es-VE completo** (TQ-007 · ISSUE-118): 199 claves en `lang/es/ui.php` por dominio (panel, auth, nav, roles, events, directory, kit, profile, públicas y errores) con los textos renderizados idénticos; el config entrega claves y las vistas traducen (evita congelar traducciones con `config:cache`).

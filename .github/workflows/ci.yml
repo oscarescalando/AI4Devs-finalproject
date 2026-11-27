@@ -1,0 +1,177 @@
+# =============================================================================
+# CI del monolito TDChronos (ISSUE-117, TQ-008) — job "calidad"
+# =============================================================================
+# Corre los 8 gates de spec/07-tests.md §3 EN ORDEN (el orden importa: lo
+# barato y específico primero, para cortar la PR lo antes posible):
+#
+#   1. Pint              — sin diff de estilo (G4)
+#   2. Larastan 8        — sin errores de análisis estático (G4)
+#   3. Pest unit+feature — todo verde contra MySQL real (G2/G3)
+#   4. Pest Arch         — reglas de arquitectura en verde (G5)
+#   5. gitleaks          — sin secretos en el repo (G10, INV-13)
+#   6. composer audit    — dependencias sin vulnerabilidades (G10)
+#   7. Playwright smoke  — suite de humo contra la app servida (G12)
+#   8. Build de assets   — npm run build deja manifest verificable (G15)
+#
+# El gate 8 del catálogo (build de la IMAGEN Docker/OCI) queda DIFERIDO
+# deliberadamente (ISSUE-117 criterio 4): exige dos decisiones que no se
+# toman en este PR — (a) registry destino: propuesta ghcr.io ligado al repo
+# GitHub, pendiente de aprobación; (b) runtime de la imagen: php-fpm+nginx
+# vs Laravel Octane, con sus implicaciones de Horizon/Reverb. Al decidir,
+# añadir un job `imagen` que corra SOLO al etiquetar (on: push tags 'v*'),
+# construya la imagen y la publique versionada. Se deja este comentario
+# como registro de la decisión pendiente para la mañana.
+#
+# Flujo del repo: feature → PR a main. Se dispara en PRs a main y en push
+# a main; las suites nocturnas (cu-paridad, estacion-offline) llegan con
+# sus épicas (EP-25/EP-27) con su propio schedule.
+# =============================================================================
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  calidad:
+    name: Gates de calidad (G4 → G15)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: tdchronos_testing
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --host=127.0.0.1"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: ''
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------------------
+      # Preparación: PHP 8.4 + Node con sus cachés (composer-install trae
+      # caché de vendor por hash de composer.lock; setup-node cachea npm).
+      # ------------------------------------------------------------------
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Instalar dependencias Composer (con caché)
+        uses: ramsey/composer-install@v3
+
+      - name: Setup Node con caché de npm
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias npm
+        run: npm ci
+
+      # .env de CI: el catálogo .env.example + APP_KEY + credenciales del
+      # servicio MySQL. Pest además fuerza tdchronos_testing vía phpunit.xml.
+      - name: Preparar .env de CI
+        run: |
+          cp .env.example .env
+          php artisan key:generate --force
+          sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          sed -i 's/^DB_USERNAME=.*/DB_USERNAME=root/' .env
+          sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=/' .env
+
+      # ------------------------------------------------------------------
+      # Gate 1 · Pint (G4): sin diff de estilo.
+      # ------------------------------------------------------------------
+      - name: 'Gate 1: Pint'
+        run: vendor/bin/pint --test
+
+      # ------------------------------------------------------------------
+      # Gate 2 · Larastan nivel 8 (G4): sin errores.
+      # ------------------------------------------------------------------
+      - name: 'Gate 2: Larastan nivel 8'
+        run: vendor/bin/phpstan analyse
+
+      # ------------------------------------------------------------------
+      # Gate 3 · Pest unit + feature (G2/G3): contra MySQL real — los
+      # triggers append-only y los CHECK del esquema solo valen en el
+      # motor objetivo. phpunit.xml ya apunta a tdchronos_testing/root.
+      # ------------------------------------------------------------------
+      - name: 'Gate 3: Pest (unit + feature) contra MySQL'
+        run: vendor/bin/pest tests/Unit tests/Feature
+
+      # ------------------------------------------------------------------
+      # Gate 4 · Pest Arch (G5): reglas de arquitectura de ADR-011/012.
+      # ------------------------------------------------------------------
+      - name: 'Gate 4: Pest Arch'
+        run: vendor/bin/pest tests/Arch
+
+      # ------------------------------------------------------------------
+      # Gate 5 · gitleaks (G10, INV-13): sin secretos en el repo.
+      # ------------------------------------------------------------------
+      - name: 'Gate 5: gitleaks'
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ------------------------------------------------------------------
+      # Gate 6 · composer audit (G10): dependencias sin vulnerabilidades.
+      # ------------------------------------------------------------------
+      - name: 'Gate 6: composer audit'
+        run: composer audit
+
+      # ------------------------------------------------------------------
+      # Build de assets Vite (G15, pieza del gate 8): requisito del smoke
+      # (la app servida referencia el manifest) y verificación temprana
+      # del criterio de ISSUE-117: si el build no deja assets, falla aquí.
+      # ------------------------------------------------------------------
+      - name: Build de assets Vite + verificación del manifest
+        run: |
+          npm run build
+          test -f public/build/manifest.json || { echo "public/build/manifest.json no existe: el build no dejó assets"; exit 1; }
+
+      # ------------------------------------------------------------------
+      # Gate 7 · Playwright smoke (G12, ADR-018): chromium con caché, BD
+      # del smoke sembrada (tdchronos, la BD "normal" del .env de CI) y la
+      # suite de tests/e2e contra `php artisan serve` (playwright.config.js
+      # levanta el servidor en 127.0.0.1:8088).
+      # ------------------------------------------------------------------
+      - name: Caché del navegador Playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: 'Gate 7: Playwright smoke'
+        run: |
+          npx playwright install --with-deps chromium
+          mysql -h 127.0.0.1 -P 3306 -u root -e "CREATE DATABASE IF NOT EXISTS tdchronos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          sed -i 's/^DB_DATABASE=.*/DB_DATABASE=tdchronos/' .env
+          npm run test:e2e
+
+      # Gate 8 completo (imagen OCI versionada al etiquetar): DIFERIDO —
+      # ver el comentario del encabezado (ISSUE-117 criterio 4).

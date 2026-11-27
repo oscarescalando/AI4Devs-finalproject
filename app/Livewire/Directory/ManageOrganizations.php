@@ -10,9 +10,8 @@ use App\Actions\Directory\FindOrganization;
 use App\Actions\Directory\ListOrganizations;
 use App\Actions\Directory\ListRegions;
 use App\Actions\Directory\UpdateOrganization;
-use App\Models\Organization;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -24,10 +23,16 @@ use Livewire\WithPagination;
  * x-ui.* y sin CSS/JS ad-hoc. El componente no toca la base: lee y escribe
  * vía Actions de dominio (ADR-011/ADR-012). El estado de la tabla (búsqueda,
  * orden y página) vive en la query string para compartir URL (ISSUE-115).
+ *
+ * Autorización (ISSUE-109, TQ-008): la ruta exige `directory.view` para
+ * leer; las acciones que mutan comprueban la habilidad `directory.write`
+ * (convención documentada en AppServiceProvider) — la UI oculta el botón,
+ * el servidor siempre autoriza.
  */
 #[Layout('components.layouts.panel')]
 final class ManageOrganizations extends Component
 {
+    use AuthorizesRequests;
     use WithPagination;
 
     /** Columnas ordenables: lista blanca — cualquier otra se ignora. */
@@ -96,6 +101,10 @@ final class ManageOrganizations extends Component
 
     public function save(): void
     {
+        // La UI oculta el modal sin permiso de escritura; el servidor
+        // autoriza igual (ISSUE-109).
+        $this->authorize('directory.write');
+
         $creating = $this->editingUlid === null;
 
         try {
@@ -122,6 +131,8 @@ final class ManageOrganizations extends Component
 
     public function deleteOrganization(string $ulid): void
     {
+        $this->authorize('directory.write');
+
         try {
             app(DeleteOrganization::class)($ulid);
         } catch (ValidationException $e) {
@@ -143,20 +154,12 @@ final class ManageOrganizations extends Component
         [$sort, $direction] = $this->effectiveOrder();
 
         return view('livewire.directory.manage-organizations', [
-            'organizations' => $this->listOrganizations($sort, $direction),
+            'organizations' => app(ListOrganizations::class)([
+                'q' => $this->q,
+                'sort' => $sort,
+                'direction' => $direction,
+            ]),
             'headers' => $this->tableHeaders($sort, $direction),
-        ]);
-    }
-
-    /**
-     * @return LengthAwarePaginator<int, Organization>
-     */
-    private function listOrganizations(string $sort, string $direction): LengthAwarePaginator
-    {
-        return app(ListOrganizations::class)([
-            'q' => $this->q,
-            'sort' => $sort,
-            'direction' => $direction,
         ]);
     }
 

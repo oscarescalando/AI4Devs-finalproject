@@ -40,3 +40,30 @@ arch('el job de resultados delega en su Action de dominio')
     ->expect('App\Jobs')
     ->classes()
     ->toBeFinal();
+
+/*
+|--------------------------------------------------------------------------
+| Capa Livewire (ISSUE-109/ADR-012, TQ-008)
+|--------------------------------------------------------------------------
+| Los componentes Livewire siguen el mismo flujo que los controladores de
+| la API: componente → Action de dominio → modelo (ADR-011/ADR-012). No
+| consultan la base con DB ni importan modelos Eloquent: leen y escriben
+| vía Actions.
+|
+| LÍMITE CONOCIDO (Volt, documentado): las pantallas funcionales de Volt
+| viven como FUENTES Blade en resources/views/livewire/ y Volt las compila
+| a clases bajo storage/framework (fuera del árbol PSR-4 app/ que Pest Arch
+| recorre). Estas reglas no pueden ver esos fuentes. Su resguardo hoy es
+| indirecto: la suite Feature ejercita cada pantalla (RouteMapTest, kit,
+| perfil, login) y NoInlineTextTest escanea los .blade.php literales. Si
+| Volt expone una vía estable de análisis estático de sus fuentes, las
+| reglas se extienden a ellas.
+*/
+
+arch('los componentes Livewire no acceden a la base de datos directamente')
+    ->expect('Illuminate\Support\Facades\DB')
+    ->not->toBeUsedIn('App\Livewire');
+
+arch('los componentes Livewire no importan modelos Eloquent: van por Actions')
+    ->expect('App\Models')
+    ->not->toBeUsedIn('App\Livewire');

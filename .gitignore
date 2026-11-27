@@ -50,3 +50,7 @@ _ide_helper.php
 /bootstrap/cache/
 /database/database.sqlite
 public/fonts-manifest.dev.json
+
+# Artefactos de Playwright (trazas/capturas de fallos)
+/test-results/
+/playwright-report/

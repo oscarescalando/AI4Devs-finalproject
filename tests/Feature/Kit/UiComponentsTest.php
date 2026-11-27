@@ -246,6 +246,33 @@ it('alert de éxito usa rol status', function () {
         ->toContain('role="status"');
 });
 
+it('alert re-renderiza idéntico: el cierre es estado de cliente, no de servidor', function () {
+    // ISSUE-116a: dos renders consecutivos del mismo markup producen el
+    // mismo HTML — el dismissible no depende de estado del servidor, así
+    // un re-render (p. ej. tras una acción Livewire) no "revive" el aviso
+    // cerrado porque Alpine mantiene `visible` en el cliente.
+    $template = '<x-ui.alert type="warning" title="Atención" dismissible>Revisa los campos.</x-ui.alert>';
+
+    expect(kitRender($template))->toBe(kitRender($template));
+});
+
+it('alert sin dismissible no ofrece botón de cierre', function () {
+    $html = kitRender('<x-ui.alert type="info">Informativo.</x-ui.alert>');
+
+    expect($html)
+        ->not->toContain('alert-close')
+        ->not->toContain('aria-label="Cerrar"')
+        ->toContain('Informativo.');
+});
+
+it('alert cae a info ante un tipo desconocido', function () {
+    $html = kitRender('<x-ui.alert type="critico">Algo.</x-ui.alert>');
+
+    expect($html)
+        ->toContain('alert-info')
+        ->not->toContain('alert-critico');
+});
+
 /*
 |--------------------------------------------------------------------------
 | x-ui.modal
@@ -296,6 +323,21 @@ it('empty-state muestra icono, textos y el CTA del slot', function () {
         ->toContain('Vacío')
         ->toContain('Sin filas.')
         ->toContain('Crear');
+});
+
+it('empty-state admite CTA en el slot sin título ni texto', function () {
+    // ISSUE-116a: el slot del CTA es opcional e independiente — sin
+    // título/texto no quedan párrafos huérfanos y el icono cae al default.
+    $html = kitRender(
+        '<x-ui.empty-state><a href="/crear" class="btn btn-primary">Crear organización</a></x-ui.empty-state>',
+    );
+
+    expect($html)
+        ->toContain('data-lucide="inbox"')
+        ->not->toContain('empty-title')
+        ->not->toContain('empty-text')
+        ->toContain('href="/crear"')
+        ->toContain('Crear organización');
 });
 
 it('card renderiza cabecera, acciones, cuerpo y pie', function () {

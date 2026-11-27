@@ -4,7 +4,7 @@ titulo: Cierre de EP-24: fundaciones del panel
 tipo: plan
 prioridad: P0
 estimacion: XL
-estado: abierto
+estado: hecho
 refiere_a: ISSUE-107, ISSUE-108, ISSUE-109, ISSUE-110, ISSUE-111, ISSUE-112, ISSUE-113, ISSUE-114, ISSUE-115, ISSUE-116, ISSUE-117, ISSUE-118
 parte_de: —
 rama: feature/entrega-2-ol-gt
@@ -46,24 +46,26 @@ PWA base, i18n y CI.
   con la actual (ISSUE-113)
 - [x] [TQ-006](TQ-006-pwa-base-instalable.md) — PWA base instalable (ISSUE-114)
 - [x] [TQ-007](TQ-007-i18n-es-ve-completo.md) — i18n es-VE completo (ISSUE-118, resto)
-- [ ] [TQ-008](TQ-008-pruebas-tall-y-ci.md) — Pruebas de la capa TALL y CI del monolito
+- [x] [TQ-008](TQ-008-pruebas-tall-y-ci.md) — Pruebas de la capa TALL y CI del monolito
   (ISSUE-116, 117; cierra la regla de arquitectura de ISSUE-109)
 
 ## Siguiente paso
 
-Ejecutar TQ-008 (pruebas de la capa TALL y CI del monolito): última fase del plan.
+Plan COMPLETO (8/8 fases, 2026-11-27). Siguiente épica según el roadmap F1: EP-26 (tiempo real
+con Reverb) y EP-27 (estación offline PWA), o el PR de la entrega a main.
 
 ## Criterios de aceptación
 
-- [ ] Las siete fases cerradas en `hecho` con sus criterios verificados.
-- [ ] Los criterios de ISSUE-107…118 quedan marcados en `spec/04-backlog/EP-24-fundaciones-livewire.md`
-      conforme se cierran las fases (spec sincronizada en el mismo cambio).
-- [ ] `php artisan migrate:fresh --seed` + `npm run build` dejan el panel utilizable de punta a
-      punta con el admin demo.
-- [ ] Suite completa en verde (pint → Larastan 8 → Pest).
+- [x] Las ocho fases cerradas en `hecho` con sus criterios verificados (TQ-002…TQ-009).
+- [x] Los criterios de ISSUE-107…118 marcados en EP-24 conforme se cerraron las fases (los
+      pendientes documentados: multipart, recorrido E2E completo, cobertura con umbral, imagen OCI).
+- [x] `php artisan migrate:fresh --seed` + `npm run build` dejan el panel utilizable de punta a
+      punta con el admin demo (verificado en la noche con humo HTTP + Playwright).
+- [x] Suite completa en verde: Pint · Larastan 8 con 0 errores · Pest 209/209 · Playwright 3/3.
 
 ## Bitácora
 
 | Fecha | Estado | Nota |
 |-------|--------|------|
 | 2026-11-26 | abierto | Creado: corte en 7 fases verticales, primera TQ-002 |
+| 2026-11-27 | hecho | Plan cerrado en la noche autónoma del 27/11 (TQ-002…TQ-008 delegados a subagentes y verificados por el orquestador; usuario autorizó el encadenamiento). 9 commits, versión 0.13.0 |

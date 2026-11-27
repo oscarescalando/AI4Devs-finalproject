@@ -19,9 +19,11 @@
         :subtitle="__('ui.directory.organizations.subtitle')"
     >
         <x-slot:actions>
-            <x-ui.button variant="primary" icon="plus" wire:click="startCreate">
-                {{ __('ui.directory.organizations.new') }}
-            </x-ui.button>
+            @can('directory.write')
+                <x-ui.button variant="primary" icon="plus" wire:click="startCreate">
+                    {{ __('ui.directory.organizations.new') }}
+                </x-ui.button>
+            @endcan
         </x-slot:actions>
     </x-ui.page-header>
 
@@ -64,9 +66,11 @@
                     :text="trim($q) !== '' ? __('ui.directory.organizations.empty_search_text') : __('ui.directory.organizations.empty_text')"
                 >
                     @if (trim($q) === '')
-                        <x-ui.button variant="primary" icon="plus" wire:click="startCreate">
-                            {{ __('ui.directory.organizations.new') }}
-                        </x-ui.button>
+                        @can('directory.write')
+                            <x-ui.button variant="primary" icon="plus" wire:click="startCreate">
+                                {{ __('ui.directory.organizations.new') }}
+                            </x-ui.button>
+                        @endcan
                     @endif
                 </x-ui.empty-state>
             @else
@@ -79,18 +83,20 @@
                             <td class="td-right">
                                 <span class="inline-flex items-center justify-end gap-1">
                                     <x-ui.icon-button icon="eye" :tip="__('ui.directory.organizations.soon')" disabled />
-                                    <x-ui.icon-button
-                                        icon="pencil"
-                                        :tip="__('ui.directory.organizations.edit')"
-                                        wire:click="startEdit('{{ $organization->ulid }}')"
-                                    />
-                                    <x-ui.icon-button
-                                        icon="trash-2"
-                                        :tip="__('ui.directory.organizations.delete')"
-                                        color="danger"
-                                        wire:click="deleteOrganization('{{ $organization->ulid }}')"
-                                        wire:confirm="{{ __('ui.directory.organizations.delete_confirm', ['name' => $organization->name]) }}"
-                                    />
+                                    @can('directory.write')
+                                        <x-ui.icon-button
+                                            icon="pencil"
+                                            :tip="__('ui.directory.organizations.edit')"
+                                            wire:click="startEdit('{{ $organization->ulid }}')"
+                                        />
+                                        <x-ui.icon-button
+                                            icon="trash-2"
+                                            :tip="__('ui.directory.organizations.delete')"
+                                            color="danger"
+                                            wire:click="deleteOrganization('{{ $organization->ulid }}')"
+                                            wire:confirm="{{ __('ui.directory.organizations.delete_confirm', ['name' => $organization->name]) }}"
+                                        />
+                                    @endcan
                                 </span>
                             </td>
                         </tr>

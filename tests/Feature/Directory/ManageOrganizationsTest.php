@@ -34,6 +34,20 @@ function directoryTimekeeper(): Account
     return $account;
 }
 
+/**
+ * Organizador con `directory.view` concedido directo (ISSUE-116a): puede
+ * LEER el directorio pero no escribir — la habilidad directory.write queda
+ * para los roles administradores (convención en AppServiceProvider).
+ */
+function directoryOrganizerViewer(): Account
+{
+    $account = Account::factory()->create();
+    $account->assignRole('organizer');
+    $account->givePermissionTo('directory.view');
+
+    return $account;
+}
+
 function seedOrganizations(int $count): void
 {
     $region = Region::factory()->create();
@@ -88,11 +102,94 @@ it('redirige a los invitados al login', function () {
 
 /*
 |--------------------------------------------------------------------------
+| Matriz por rol: quién ve el botón de escribir (ISSUE-116a/ISSUE-109)
+|--------------------------------------------------------------------------
+| Lectura = directory.view (ruta); escritura = habilidad directory.write
+| (roles administradores — convención documentada en AppServiceProvider).
+| La UI oculta; el servidor autoriza (ADR-011).
+*/
+
+it('respeta la matriz de acceso del CRUD por rol', function (string $role, bool $conLecturaDirecta, int $status, bool $veBotonCrear) {
+    Organization::factory()->create(['name' => 'Club Matriz']);
+
+    $account = Account::factory()->create();
+    $account->assignRole($role);
+    if ($conLecturaDirecta) {
+        $account->givePermissionTo('directory.view');
+    }
+
+    $response = $this->actingAs($account)->get(route('directory.organizations'));
+
+    expect($response->status())->toBe($status);
+
+    if ($status !== 200) {
+        return;
+    }
+
+    $html = (string) $response->getContent();
+
+    // Todos los que entran ven la lista...
+    expect($html)->toContain('Club Matriz');
+
+    // ...pero el CTA de escribir solo con permiso de escritura (el título
+    // del modal oculto siempre existe en el DOM: se ancla en la acción).
+    $veBotonCrear
+        ? expect($html)->toContain('wire:click="startCreate"')
+        : expect($html)->not->toContain('wire:click="startCreate"');
+})->with([
+    'admin ve y opera' => ['admin', false, 200, true],
+    'superadmin ve y opera' => ['superadmin', false, 200, true],
+    'organizer con directory.view lee sin botón' => ['organizer', true, 200, false],
+    'timekeeper sin acceso' => ['timekeeper', false, 403, false],
+    'athlete sin acceso' => ['athlete', false, 403, false],
+]);
+
+it('quien solo lee no ve las acciones de editar ni eliminar', function () {
+    Organization::factory()->create(['name' => 'Club Solo Lectura']);
+
+    $html = (string) $this->actingAs(directoryOrganizerViewer())
+        ->get(route('directory.organizations'))
+        ->getContent();
+
+    expect($html)
+        ->not->toContain('startEdit(')
+        ->not->toContain('deleteOrganization(')
+        ->not->toContain('¿Eliminar');
+});
+
+it('el servidor rechaza guardar sin permiso de escritura aunque la UI se salte', function () {
+    $this->actingAs(directoryOrganizerViewer());
+
+    // Livewire pinta el 403 del authorize() como respuesta de la acción.
+    Livewire::test(ManageOrganizations::class)
+        ->set('form.name', 'Club Ilegal')
+        ->set('form.region_id', (string) Region::factory()->create()->id)
+        ->call('save')
+        ->assertForbidden();
+
+    $this->assertDatabaseMissing('organizations', ['name' => 'Club Ilegal']);
+});
+
+it('el servidor rechaza eliminar sin permiso de escritura', function () {
+    $this->actingAs(directoryOrganizerViewer());
+    $organization = Organization::factory()->create();
+
+    Livewire::test(ManageOrganizations::class)
+        ->call('deleteOrganization', $organization->ulid)
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('organizations', ['id' => $organization->id]);
+});
+
+/*
+|--------------------------------------------------------------------------
 | Validación de servidor (única fuente de verdad)
 |--------------------------------------------------------------------------
 */
 
 it('pinta el error del servidor bajo el campo cuando falta el nombre', function () {
+    $this->actingAs(directoryAdmin());
+
     Livewire::test(ManageOrganizations::class)
         ->set('form.name', '')
         ->set('form.region_id', (string) Region::factory()->create()->id)
@@ -102,6 +199,8 @@ it('pinta el error del servidor bajo el campo cuando falta el nombre', function 
 });
 
 it('rechaza nombres de más de 150 caracteres', function () {
+    $this->actingAs(directoryAdmin());
+
     Livewire::test(ManageOrganizations::class)
         ->set('form.name', str_repeat('a', 151))
         ->set('form.region_id', (string) Region::factory()->create()->id)
@@ -111,6 +210,8 @@ it('rechaza nombres de más de 150 caracteres', function () {
 });
 
 it('rechaza una región inexistente', function () {
+    $this->actingAs(directoryAdmin());
+
     Livewire::test(ManageOrganizations::class)
         ->set('form.name', 'Club Válido')
         ->set('form.region_id', '999999')
@@ -126,6 +227,7 @@ it('rechaza una región inexistente', function () {
 */
 
 it('crea una organización desde el formulario del modal', function () {
+    $this->actingAs(directoryAdmin());
     $region = Region::factory()->create();
 
     Livewire::test(ManageOrganizations::class)
@@ -160,6 +262,7 @@ it('carga los datos de la organización al editar', function () {
 });
 
 it('actualiza una organización existente', function () {
+    $this->actingAs(directoryAdmin());
     $organization = Organization::factory()->create(['name' => 'Club Viejo']);
     $region = Region::factory()->create();
 
@@ -175,6 +278,7 @@ it('actualiza una organización existente', function () {
 });
 
 it('elimina una organización y avisa con toast', function () {
+    $this->actingAs(directoryAdmin());
     $organization = Organization::factory()->create();
 
     Livewire::test(ManageOrganizations::class)
@@ -185,6 +289,7 @@ it('elimina una organización y avisa con toast', function () {
 });
 
 it('el botón de eliminar exige confirmación previa', function () {
+    $this->actingAs(directoryAdmin());
     Organization::factory()->create();
 
     Livewire::test(ManageOrganizations::class)
@@ -192,6 +297,7 @@ it('el botón de eliminar exige confirmación previa', function () {
 });
 
 it('no elimina una organización con equipos y avisa del error', function () {
+    $this->actingAs(directoryAdmin());
     $organization = Organization::factory()->create();
     Team::query()->create(['organization_id' => $organization->id, 'name' => 'Equipo Relevo']);
 
@@ -318,9 +424,21 @@ it('la acción de ver llega deshabilitada hasta que exista su pantalla', functio
 });
 
 it('muestra el estado vacío con CTA cuando no hay filas', function () {
+    $this->actingAs(directoryAdmin());
+
     Livewire::test(ManageOrganizations::class)
         ->assertSee('Aún no hay organizaciones')
-        ->assertSeeHtml('empty-state');
+        ->assertSeeHtml('empty-state')
+        // El CTA del slot solo con permiso de escritura (ISSUE-116a).
+        ->assertSee('Nueva organización');
+});
+
+it('el estado vacío sin permiso de escritura no ofrece CTA', function () {
+    $this->actingAs(directoryOrganizerViewer());
+
+    Livewire::test(ManageOrganizations::class)
+        ->assertSee('Aún no hay organizaciones')
+        ->assertDontSeeHtml('wire:click="startCreate"');
 });
 
 it('el selector de región lista las regiones del directorio', function () {

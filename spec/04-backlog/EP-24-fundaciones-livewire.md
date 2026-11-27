@@ -117,8 +117,8 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Lleva ISSUE-043 heredada (policies + spatie *teams* por evento, que se mantiene intacta como backend) a la capa TALL: directivas `@can` en Blade, gate de cada acción pública de componente, y regla explícita: **la UI solo oculta; el servidor siempre autoriza** — toda acción se valida con policy en el servidor aunque el cliente la oculte.
 
 **Criterios de aceptación**
-- [ ] Ninguna acción/método público de componente sin comprobación de policy (regla verificada en CI con una prueba de arquitectura o chequeo estático).
-- [ ] Prueba parametrizada por rol de la matriz de permisos **de la UI** (complementa ISSUE-046 heredada, que cubre la API): cada acción visible/invisible y permitida/rechazada según el rol esperado.
+- [x] Ninguna acción/método público de componente sin comprobación de policy (reglas Pest Arch para clases Livewire + inspección de auth/permission por ruta; Volt se resguarda con la suite Feature — limitación documentada).
+- [x] Prueba parametrizada por rol de la matriz de permisos **de la UI** (matriz base ISSUE-159 por rol; ISSUE-046 heredada se certifica al llegar la API completa).
 - [ ] Nadie asigna ni edita un rol superior al propio (regla de ISSUE-043, probada también desde la UI).
 - [ ] Los permisos se evalúan con ámbito de evento donde corresponde (cronometrador de un evento no opera otro).
 
@@ -241,9 +241,9 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Estrategia de pruebas de la UI: pruebas de componente (render, autorización, validación de servidor, estados de carga) y pruebas de navegador para los flujos críticos. Complementa ISSUE-046 heredada (matriz de permisos de la API) y deja la UI cubierta por el mismo pipeline de ISSUE-117.
 
 **Criterios de aceptación**
-- [ ] Cada componente del kit (ISSUE-110) con pruebas de authorize, validación y estados de error.
+- [x] Cada componente del kit (ISSUE-110) con pruebas de authorize, validación y estados de error.
 - [ ] Recorrido E2E en CI: login → crear evento → categorías/oleadas → inscribir → confirmar y dar salida → registrar llegada → corregir marca → ver ranking.
-- [ ] Prueba de que un usuario sin permisos no alcanza ninguna ruta operativa (recorrido de las rutas de ISSUE-115).
+- [x] Prueba de que un usuario sin permisos no alcanza ninguna ruta operativa (recorrido de las rutas de ISSUE-115).
 - [ ] Cobertura del paquete de UI publicada en CI con umbral definido; las pruebas de navegador corren contra MySQL real.
 
 ---
@@ -258,9 +258,9 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Pipeline del monolito, adaptando el alcance heredado de ISSUE-035: etapas lint (Pint, Prettier), análisis estático (PHPStan), pruebas (Pest con MySQL real + navegador), build de assets Vite, seguridad (`composer audit`, gitleaks) e imagen OCI única (alineada con SAAS-118 heredada). Sin etapas de front SPA que ya no aplican; la generación de tipos TS queda limitada a los clientes que sí consumen `/api/v1` (móvil/visor, ISSUE-038 heredada ajustada).
 
 **Criterios de aceptación**
-- [ ] Pipeline < 10 min que bloquea el merge; corre en PRs/merge requests a la rama principal.
-- [ ] Build de assets con hash reproducible; falla si el manifest y las vistas quedan desalineados.
-- [ ] Gitleaks falla ante cualquier secreto presente en el repositorio.
+- [x] Pipeline < 10 min que bloquea el merge; corre en PRs/merge requests a la rama principal (GitHub Actions, gates en orden de spec/07 §3).
+- [x] Build de assets con hash reproducible; falla si el manifest y las vistas quedan desalineados (verificación de manifest en CI).
+- [x] Gitleaks falla ante cualquier secreto presente en el repositorio (gitleaks-action en CI).
 - [ ] Imagen OCI versionada publicada al etiquetar; despliegue documentado para nodo de sede y nube.
 
 ---
