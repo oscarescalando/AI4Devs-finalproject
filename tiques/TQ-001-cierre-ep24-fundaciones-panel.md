@@ -42,7 +42,7 @@ PWA base, i18n y CI.
   carga/error unificados con demo Organizaciones (ISSUE-110, 111)
 - [x] [TQ-004](TQ-004-rutas-y-navegacion-to-be.md) — Rutas to-be y navegación por evento en el
   path (ISSUE-115)
-- [ ] [TQ-005](TQ-005-perfil-y-cambio-de-contrasena.md) — Perfil propio y cambio de contraseña
+- [x] [TQ-005](TQ-005-perfil-y-cambio-de-contrasena.md) — Perfil propio y cambio de contraseña
   con la actual (ISSUE-113)
 - [ ] [TQ-006](TQ-006-pwa-base-instalable.md) — PWA base instalable (ISSUE-114)
 - [ ] [TQ-007](TQ-007-i18n-es-ve-completo.md) — i18n es-VE completo (ISSUE-118, resto)
@@ -51,7 +51,7 @@ PWA base, i18n y CI.
 
 ## Siguiente paso
 
-Ejecutar TQ-005 (perfil propio y cambio de contraseña con la actual, ISSUE-113).
+Ejecutar TQ-006 (PWA base instalable, ISSUE-114): manifest + service worker del shell.
 
 ## Criterios de aceptación
 

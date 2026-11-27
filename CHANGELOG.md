@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.10.0] - 2026-11-27
+### 🚀 Agregado
+- **Perfil propio** (TQ-005 · ISSUE-113/RF-71): `/profile` con dos tarjetas — Cuenta (nombre, correo y roles en badges, solo lectura: sin selector de rol ni control de estado) y Contraseña (actual obligatoria, nueva + confirmación con política mínima `min:8` documentada, campos vacíos tras guardar y toast). `UpdateOwnPassword` valida en servidor, cifrá con el cast `hashed` e **invalida las demás sesiones** (borra en `sessions` las filas ajenas a la sesión activa). Entradas desde el dropdown del avatar y el grupo Principal del menú.
+- Clave `validation.confirmed` en español. Suite a **174 tests** (12 nuevas). Pint, Larastan 8 y humo HTTP en verde.
+
 ## [0.9.0] - 2026-11-27
 ### 🚀 Agregado
 - **Mapa de rutas to-be del panel** (TQ-004 · ISSUE-115): el evento en el path con binding por ULID (patrón de ruta; id entero o ULID inexistente → 404 propia) y middleware `permission:` en todas: `events.index`/`events.show` (hub con KPIs, tarjetas operativas por permiso y aviso accionable si falta configuración), `events.entries|start|marks|results`, `events.categories|waves`, `directory.persons|teams`, `championships.index` — placeholders navegables con aviso «Llega con EP-25» y sin rutas fantasma (chequeo estático anti-`Route::resource`).

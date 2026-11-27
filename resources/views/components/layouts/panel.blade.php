@@ -54,6 +54,10 @@
                                 <p class="dd-name">{{ $account?->person?->first_name }} {{ $account?->person?->last_name }}</p>
                                 <p class="dd-mail">{{ $account?->email }}</p>
                             </div>
+                            <a href="{{ route('profile') }}" class="dd-item">
+                                <x-ui.icon name="user-round" />
+                                <span>Perfil</span>
+                            </a>
                             <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm('¿Cerrar sesión?')">
                                 @csrf
                                 <button type="submit" class="dd-item">

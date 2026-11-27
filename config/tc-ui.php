@@ -31,6 +31,7 @@ return [
             'label' => 'Principal',
             'items' => [
                 ['label' => 'Consola', 'route' => 'panel.home', 'permission' => null, 'icon' => 'gauge'],
+                ['label' => 'Perfil', 'route' => 'profile', 'permission' => null, 'icon' => 'user-round'],
             ],
         ],
         [

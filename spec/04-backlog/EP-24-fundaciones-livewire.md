@@ -190,10 +190,10 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Pantalla de perfil de la cuenta propia en Livewire: datos no sensibles, cambio de contraseña **exigiendo la actual** (alineado con ISSUE-013 heredada), campo de confirmación de contraseña operativo, y cierre de las demás sesiones al cambiar la contraseña. Complementa ISSUE-044 heredada (invitación y recuperación).
 
 **Criterios de aceptación**
-- [ ] Cambio de contraseña sin la actual → 422 (prueba); con la actual → éxito e invalidación de las otras sesiones.
-- [ ] Los campos de contraseña quedan vacíos tras guardar; nunca se rellenan con el hash.
-- [ ] La propia cuenta no puede cambiarse el rol ni desactivarse a sí misma (prueba).
-- [ ] Un usuario `user` edita su perfil sin ver el selector de rol.
+- [x] Cambio de contraseña sin la actual → 422 (prueba); con la actual → éxito e invalidación de las otras sesiones.
+- [x] Los campos de contraseña quedan vacíos tras guardar; nunca se rellenan con el hash.
+- [x] La propia cuenta no puede cambiarse el rol ni desactivarse a sí misma (prueba por ausencia de controles; la positiva llega con la administración de cuentas de F2).
+- [x] Un usuario `user` edita su perfil sin ver el selector de rol.
 
 ---
 

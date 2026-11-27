@@ -8,6 +8,7 @@
 return [
     'accepted' => 'El campo :attribute debe ser aceptado.',
     'boolean' => 'El campo :attribute debe ser verdadero o falso.',
+    'confirmed' => 'El campo :attribute de confirmación no coincide.',
     'email' => 'El campo :attribute debe ser un correo válido.',
     'exists' => 'El campo :attribute seleccionado no existe.',
     'in' => 'El campo :attribute seleccionado no es válido.',

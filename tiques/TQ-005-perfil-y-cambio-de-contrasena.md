@@ -4,12 +4,12 @@ titulo: Perfil propio y cambio de contraseña con la actual
 tipo: feature
 prioridad: P1
 estimacion: S
-estado: abierto
+estado: hecho
 refiere_a: ISSUE-113
 parte_de: TQ-001
 rama: feature/entrega-2-ol-gt
 creado: 2026-11-26
-actualizado: 2026-11-26
+actualizado: 2026-11-27
 ---
 
 # TQ-005 — Perfil propio y cambio de contraseña con la actual
@@ -34,23 +34,27 @@ exigiendo la actual, confirmación operativa e invalidación de las demás sesio
 
 ## Tareas
 
-- [ ] Action de cambio de contraseña: exige la actual, validación de confirmación, invalida las
+- [x] Action de cambio de contraseña: exige la actual, validación de confirmación, invalida las
       otras sesiones.
-- [ ] Pantalla de perfil con el formulario del kit; campos de contraseña vacíos tras guardar
+- [x] Pantalla de perfil con el formulario del kit; campos de contraseña vacíos tras guardar
       (nunca el hash).
-- [ ] Reglas de auto-protección: la propia cuenta no se cambia el rol ni se desactiva a sí
-      misma; un `user` no ve selector de rol.
-- [ ] Pruebas: sin la actual → 422; con la actual → éxito + sesiones invalidadas.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Reglas de auto-protección: la propia cuenta no se cambia el rol ni se desactiva a sí
+      misma (sin controles de rol/estado en la pantalla, probado por ausencia); un `user` no ve
+      selector de rol.
+- [x] Pruebas: sin la actual → 422; con la actual → éxito + sesiones invalidadas.
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-113 completo (4 criterios del backlog verificados con pruebas).
+- [x] ISSUE-113 completo (4 criterios del backlog verificados con pruebas; el de
+      auto-protección por ausencia de controles — la prueba positiva llega con la administración
+      de cuentas de F2).
 
 ## Bitácora
 
 | Fecha | Estado | Nota |
 |-------|--------|------|
 | 2026-11-26 | abierto | Creado como fase 4 del plan TQ-001 |
+| 2026-11-27 | hecho | Delegado y verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 174/174 (12 tests nuevos) · /profile 302→login para invitados. Distribución validada: card Cuenta (solo lectura + roles como badges) y card Contraseña; entradas desde el dropdown del avatar y el grupo Principal del sidebar. Decisiones: política de contraseña mínima (min:8+confirmed) documentada en el Action a la espera de la spec; clave validation.confirmed añadida a lang/es; atributos en español vía setAttributeNames dentro de la Action |

@@ -24,6 +24,10 @@ Route::post('/logout', LogoutController::class)->name('logout')->middleware('aut
 // Panel: requiere sesión; las rutas por evento y permisos crecen con ISSUE-115.
 Volt::route('/home', 'panel.home')->name('panel.home')->middleware('auth');
 
+// Perfil propio (ISSUE-113, RF-71): cualquier cuenta autenticada, sin
+// permiso específico — la propia cuenta no se autogestiona roles ni estado.
+Volt::route('/profile', 'profile.show')->name('profile')->middleware('auth');
+
 // CRUD demo del directorio (ISSUE-110/TQ-003): la entrada del menú aparece
 // sola porque config/tc-ui.nav ya declara esta ruta.
 Route::get('/directory/organizations', ManageOrganizations::class)
