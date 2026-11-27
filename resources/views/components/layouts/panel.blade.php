@@ -67,15 +67,9 @@
             </header>
 
             <main class="content">
-                @if ($title)
-                    <div class="mb-4">
-                        <h1 class="page-title">{{ $title }}</h1>
-                        @if ($subtitle)
-                            <p class="page-subtitle">{{ $subtitle }}</p>
-                        @endif
-                    </div>
-                @endif
-
+                {{-- El título de página vive en el header (#[Title]) y cada
+                     pantalla abre con x-ui.page-header (spec/09-ui-estilo
+                     §4): no se duplica aquí. --}}
                 {{ $slot }}
             </main>
         </div>

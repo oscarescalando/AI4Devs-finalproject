@@ -40,7 +40,7 @@ PWA base, i18n y CI.
   sesiones + layout con menú por permisos (ISSUE-108, 107, 109 parcial, 112)
 - [x] [TQ-003](TQ-003-kit-crud-y-estados.md) — Kit CRUD (tabla + formulario) y estados de
   carga/error unificados con demo Organizaciones (ISSUE-110, 111)
-- [ ] [TQ-004](TQ-004-rutas-y-navegacion-to-be.md) — Rutas to-be y navegación por evento en el
+- [x] [TQ-004](TQ-004-rutas-y-navegacion-to-be.md) — Rutas to-be y navegación por evento en el
   path (ISSUE-115)
 - [ ] [TQ-005](TQ-005-perfil-y-cambio-de-contrasena.md) — Perfil propio y cambio de contraseña
   con la actual (ISSUE-113)
@@ -51,8 +51,7 @@ PWA base, i18n y CI.
 
 ## Siguiente paso
 
-Ejecutar TQ-004 (rutas to-be y navegación por evento): completa el mapa de rutas con permisos
-de producción y el hub de evento.
+Ejecutar TQ-005 (perfil propio y cambio de contraseña con la actual, ISSUE-113).
 
 ## Criterios de aceptación
 

@@ -224,9 +224,9 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Define el mapa de rutas del panel: recursos con el evento en el **path** (`/events/{event}/registrations`, `/events/{event}/start`, …) en lugar de identificadores propagados a mano por query string, middleware de permisos por ruta, nombres de ruta únicos y 404 coherente. Toda pantalla operativa tiene vía de entrada cuando existe el permiso; si falta configuración del evento, se muestra aviso accionable.
 
 **Criterios de aceptación**
-- [ ] Rutas nombradas que cubren las 14 pantallas del panel (mapeo en [EP-25](EP-25-pantallas-livewire.md)); sin rutas resource sin implementación (chequeo estático en CI).
-- [ ] Middleware de permisos por ruta registrado en la matriz de ISSUE-046 heredada.
-- [ ] Inscripciones/Salidas/Registros/Clasificación accesibles siempre que exista el permiso; si falta configuración del evento se muestra aviso accionable, no ausencia de enlace.
+- [x] Rutas nombradas que cubren las 14 pantallas del panel (mapeo en [EP-25](EP-25-pantallas-livewire.md); distancias llega con su pantalla ISSUE-127); sin rutas resource sin implementación (chequeo estático en CI).
+- [x] Middleware de permisos por ruta registrado (matriz base en ISSUE-159; ISSUE-046 heredada se certifica en TQ-008).
+- [x] Inscripciones/Salidas/Registros/Clasificación accesibles siempre que exista el permiso; si falta configuración del evento se muestra aviso accionable, no ausencia de enlace.
 - [ ] El estado de tablas (página, filtros, orden) vive en query string nombrada y comparte URL.
 
 ---

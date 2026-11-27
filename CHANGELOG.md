@@ -3,6 +3,13 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.9.0] - 2026-11-27
+### 🚀 Agregado
+- **Mapa de rutas to-be del panel** (TQ-004 · ISSUE-115): el evento en el path con binding por ULID (patrón de ruta; id entero o ULID inexistente → 404 propia) y middleware `permission:` en todas: `events.index`/`events.show` (hub con KPIs, tarjetas operativas por permiso y aviso accionable si falta configuración), `events.entries|start|marks|results`, `events.categories|waves`, `directory.persons|teams`, `championships.index` — placeholders navegables con aviso «Llega con EP-25» y sin rutas fantasma (chequeo estático anti-`Route::resource`).
+- **Navegación por evento**: `PanelNav::href` enlaza las operativas con el ULID activo en sesión (`tc.event_ulid`, fijado por el hub) y cae al listado de eventos si no hay; lista real de inscripciones con dorsales en mono tabular y sin documento (INV-06).
+- Actions `ListEvents`, `GetEventHub`, `ListEventEntries`; `EventStatus` (etiqueta+badge sin hex); 11 Volt con el kit.
+- Suite a **162 tests** (RouteMapTest: 26 casos — nombres como código, invitado→login en todas, 403/200 por rol, 404s, sesión de evento, aviso del hub). Pint, Larastan 8 y humo HTTP en verde.
+
 ## [0.8.0] - 2026-11-27
 ### 🚀 Agregado
 - **Kit de componentes `x-ui.*`** (TQ-003 · ISSUE-110/111): button, icon-button (tip obligatorio), form-group (foco al primer inválido), table (cabeceras ordenables por enlaces compartibles, compact, footer), badge, alert, modal, empty-state, card, kpi, page-header y pagination con vista propia en español; `tcToast` (rol `status`, cierre automático) y `tcConfirm` (Promise) en `app.js` con listener del evento `toast` de Livewire.

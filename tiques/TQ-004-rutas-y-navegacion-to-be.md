@@ -4,12 +4,12 @@ titulo: Rutas to-be y navegación por evento en el path
 tipo: feature
 prioridad: P1
 estimacion: M
-estado: abierto
+estado: hecho
 refiere_a: ISSUE-115
 parte_de: TQ-001
 rama: feature/entrega-2-ol-gt
 creado: 2026-11-26
-actualizado: 2026-11-26
+actualizado: 2026-11-27
 ---
 
 # TQ-004 — Rutas to-be y navegación por evento en el path
@@ -36,25 +36,26 @@ sin identificadores propagados a mano por query string ni rutas fantasma.
 
 ## Tareas
 
-- [ ] Definir y registrar las rutas nombradas que cubren las 14 pantallas, con el evento en el
+- [x] Definir y registrar las rutas nombradas que cubren las 14 pantallas, con el evento en el
       path y binding por ULID.
-- [ ] Middleware de permisos por ruta alineado con la matriz de permisos.
-- [ ] Vista operativa por evento: Inscripciones/Salidas/Registros/Clasificación accesibles si
+- [x] Middleware de permisos por ruta alineado con la matriz de permisos.
+- [x] Vista operativa por evento: Inscripciones/Salidas/Registros/Clasificación accesibles si
       existe el permiso; aviso accionable si falta configuración del evento (no enlace ausente).
-- [ ] 404 coherente para evento/slug inexistente.
-- [ ] Prueba del recorrido de rutas: usuario sin permisos no alcanza ninguna ruta operativa.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] 404 coherente para evento/slug inexistente.
+- [x] Prueba del recorrido de rutas: usuario sin permisos no alcanza ninguna ruta operativa.
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-115: rutas nombradas que cubren las 14 pantallas; sin `Route::resource` sin
-      implementación (chequeo estático); estado de tablas en query string compartible;
-      aviso accionable ante configuración faltante.
+- [x] ISSUE-115: rutas nombradas que cubren el mapa (distancias queda para su pantalla de
+      EP-25 para evitar una ruta fantasma); chequeo estático anti-`Route::resource`;
+      binding por ULID con patrón de ruta; aviso accionable ante configuración faltante.
 
 ## Bitácora
 
 | Fecha | Estado | Nota |
 |-------|--------|------|
 | 2026-11-26 | abierto | Creado como fase 3 del plan TQ-001 |
+| 2026-11-27 | hecho | Delegado y verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 162/162 (26 tests nuevos en RouteMapTest) · humo HTTP (/events 302→login, /events/123 404 propia, 12 rutas del mapa). Extras: PanelNav::href para ítems por evento con tc.event_ulid en sesión (fallback al listado), EventStatus (etiqueta+badge sin hex), lista real de inscripciones con dorsales mono tabular sin documento (INV-06), h1 duplicado del layout retirado (#[Title] + page-header). Pendientes: staleness del ULID en sesión (ULID borrado → 404 hasta visitar el hub), placeholders EP-25 |

@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
  * por ruta existente (sin rutas fantasma, ISSUE-115) y por permiso REAL del
  * servidor. Lo no permitado no se pinta; el servidor igual lo autoriza en la
  * ruta (la UI solo oculta, ADR-011).
+ *
+ * Rutas por evento (ISSUE-115/TQ-004): los ítems que declaran 'event' => true
+ * enlazan con el ULID guardado en sesión por el hub (tc.event_ulid); sin
+ * evento activo caen al listado events.index, donde el usuario elige el
+ * evento a operar.
  */
 final readonly class PanelNav
 {
@@ -24,6 +29,8 @@ final readonly class PanelNav
         /** @var array<int, array<string, mixed>> $nav */
         $nav = config('tc-ui.nav', []);
 
+        $eventUlid = self::activeEventUlid();
+
         $visible = [];
 
         foreach ($nav as $group) {
@@ -34,6 +41,12 @@ final readonly class PanelNav
 
             foreach ($rawItems as $item) {
                 if (! self::routeExists((string) $item['route'])) {
+                    continue;
+                }
+
+                // Ítem por evento sin evento activo: solo se pinta si existe
+                // el listado donde elegirlo (defensivo: hoy siempre existe).
+                if (self::isByEvent($item) && $eventUlid === null && ! self::routeExists('events.index')) {
                     continue;
                 }
 
@@ -51,6 +64,47 @@ final readonly class PanelNav
         }
 
         return $visible;
+    }
+
+    /**
+     * URL del ítem: las rutas por evento usan el ULID activo en sesión; sin
+     * evento apuntan al listado de eventos (el hub se alcanza desde allí).
+     *
+     * @param  array<string, mixed>  $item
+     */
+    public static function href(array $item): string
+    {
+        $name = (string) $item['route'];
+
+        if (self::isByEvent($item)) {
+            $eventUlid = self::activeEventUlid();
+
+            if ($eventUlid !== null) {
+                return route($name, ['event' => $eventUlid]);
+            }
+
+            $name = 'events.index';
+        }
+
+        return route($name);
+    }
+
+    /**
+     * @param  array<string, mixed>  $item
+     */
+    private static function isByEvent(array $item): bool
+    {
+        return ($item['event'] ?? false) === true;
+    }
+
+    /**
+     * ULID del evento activo fijado por el hub; null si no hay sesión válida.
+     */
+    private static function activeEventUlid(): ?string
+    {
+        $ulid = session('tc.event_ulid');
+
+        return is_string($ulid) && $ulid !== '' ? $ulid : null;
     }
 
     /**

@@ -24,6 +24,8 @@ return [
 
     // Grupos del menú lateral. `permission` null = cualquier autenticado.
     // `route` debe existir para que la entrada se pinte (sin rutas fantasma).
+    // `event` true = ruta por evento (ISSUE-115): enlaza con el ULID activo
+    // en sesión (tc.event_ulid, fijado por el hub) o cae al listado events.index.
     'nav' => [
         [
             'label' => 'Principal',
@@ -44,10 +46,10 @@ return [
         [
             'label' => 'Operación',
             'items' => [
-                ['label' => 'Inscripciones', 'route' => 'events.entries', 'permission' => 'entries.view', 'icon' => 'clipboard-list'],
-                ['label' => 'Salidas', 'route' => 'events.start', 'permission' => 'start.manage', 'icon' => 'flag'],
-                ['label' => 'Registros', 'route' => 'events.marks', 'permission' => 'marks.view', 'icon' => 'timer'],
-                ['label' => 'Clasificación', 'route' => 'events.results', 'permission' => 'results.view', 'icon' => 'medal'],
+                ['label' => 'Inscripciones', 'route' => 'events.entries', 'permission' => 'entries.view', 'icon' => 'clipboard-list', 'event' => true],
+                ['label' => 'Salidas', 'route' => 'events.start', 'permission' => 'start.manage', 'icon' => 'flag', 'event' => true],
+                ['label' => 'Registros', 'route' => 'events.marks', 'permission' => 'marks.view', 'icon' => 'timer', 'event' => true],
+                ['label' => 'Clasificación', 'route' => 'events.results', 'permission' => 'results.view', 'icon' => 'medal', 'event' => true],
             ],
         ],
     ],

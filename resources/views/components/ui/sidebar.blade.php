@@ -22,7 +22,7 @@
                 <span class="nav-group-label">{{ $group['label'] }}</span>
                 @foreach ($group['items'] as $item)
                     <x-ui.nav-link
-                        :href="route($item['route'])"
+                        :href="\App\Support\Ui\PanelNav::href($item)"
                         :icon="$item['icon']"
                         :active="$current === $item['route']"
                     >{{ $item['label'] }}</x-ui.nav-link>
