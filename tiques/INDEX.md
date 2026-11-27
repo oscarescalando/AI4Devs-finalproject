@@ -5,6 +5,8 @@
 | ID | Título | Estado | Tipo | Prio | Refiere a | Parte de | Actualizado |
 |----|--------|--------|------|------|-----------|----------|-------------|
 | [TQ-001](TQ-001-cierre-ep24-fundaciones-panel.md) | Cierre de EP-24: fundaciones del panel | abierto | plan | P0 | ISSUE-107…118 | — | 2026-11-26 |
+| [TQ-009](TQ-009-guia-estilo-ui.md) | Guía de estilo de la interfaz: Blade/Livewire/Tailwind | hecho | docs | P1 | ISSUE-107, 110 | TQ-001 | 2026-11-26 |
+| [TQ-002](TQ-002-acceso-y-shell-del-panel.md) | Acceso y shell del panel: login por sesiones + layout con menú por permisos | en-curso | feature | P0 | ISSUE-108, 107, 109, 112 | TQ-001 | 2026-11-26 |
 | [TQ-002](TQ-002-acceso-y-shell-del-panel.md) | Acceso y shell del panel: login por sesiones + layout con menú por permisos | abierto | feature | P0 | ISSUE-108, 107, 109, 112 | TQ-001 | 2026-11-26 |
 | [TQ-003](TQ-003-kit-crud-y-estados.md) | Kit CRUD (tabla + formulario) y estados de carga/error unificados | abierto | feature | P0 | ISSUE-110, 111 | TQ-001 | 2026-11-26 |
 | [TQ-004](TQ-004-rutas-y-navegacion-to-be.md) | Rutas to-be y navegación por evento en el path | abierto | feature | P1 | ISSUE-115 | TQ-001 | 2026-11-26 |

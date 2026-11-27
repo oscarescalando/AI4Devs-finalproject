@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.6.1] - 2026-11-26
+### 📝 Documentación
+- Guía de estilo de la interfaz `spec/09-ui-estilo.md` (TQ-009, ISSUE-107/110): principios, stack, tokens con valores (chrono sky · live ámbar · mono tabular para cronometraje), layout del panel, inventario del kit `x-ui.*` con API de props y componentes de dominio (`time-cell`, `bib`, `delta`, `live-indicator`), estados, iconos Lucide, formato de datos, WCAG 2.1 AA, i18n y pantallas públicas. Arquitectura adaptada del sistema de diseño previo del equipo con identidad TDChronos; registrada en el mapa de artefactos de `spec/README.md` §5.
+- TQ-009 cerrado (hecho) y plan TQ-001/índice actualizados.
+
 ## [0.6.0] - 2026-11-26
 ### 📝 Documentación
 - Sistema de tiques (registro de trabajo por actividad): carpeta `tiques/` con índice de control (`INDEX.md`), plan **TQ-001** (cierre de EP-24: fundaciones del panel) y sus siete fases **TQ-002…008** — login por sesiones + layout con menú por permisos, kit CRUD + estados de carga/error, rutas to-be, perfil, PWA base, i18n es-VE y pruebas TALL + CI.

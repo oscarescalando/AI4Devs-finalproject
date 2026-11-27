@@ -34,6 +34,8 @@ PWA base, i18n y CI.
 
 ## Fases
 
+- [x] [TQ-009](TQ-009-guia-estilo-ui.md) — Guía de estilo de la interfaz `spec/09-ui-estilo.md`
+  (base: arquitectura del sistema previo del equipo, identidad TDChronos)
 - [ ] [TQ-002](TQ-002-acceso-y-shell-del-panel.md) — Acceso y shell del panel: login por
   sesiones + layout con menú por permisos (ISSUE-108, 107, 109 parcial, 112)
 - [ ] [TQ-003](TQ-003-kit-crud-y-estados.md) — Kit CRUD (tabla + formulario) y estados de
