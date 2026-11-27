@@ -3,6 +3,12 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.6.0] - 2026-11-26
+### 📝 Documentación
+- Sistema de tiques (registro de trabajo por actividad): carpeta `tiques/` con índice de control (`INDEX.md`), plan **TQ-001** (cierre de EP-24: fundaciones del panel) y sus siete fases **TQ-002…008** — login por sesiones + layout con menú por permisos, kit CRUD + estados de carga/error, rutas to-be, perfil, PWA base, i18n es-VE y pruebas TALL + CI.
+- Skill `tiques-gestionar` (.claude/skills/): plantilla única de tique (frontmatter con serie TQ-NNN, estados, tipos del backlog), ciclo de vida, corte en rebanadas verticales con aprobación, bitácora por commit y regla "nada de trabajo sin tique".
+- `CLAUDE.md` documenta el registro de trabajo y la regla de tique obligatorio.
+
 ## [0.5.0] - 2026-11-23
 ### 🚀 Agregado
 - Base TALL (ISSUE-106): Livewire 4 + Volt + Alpine sobre el Tailwind 4 del esqueleto, `VoltServiceProvider` y convención documentada (pantallas = Volt funcional; CRUD = clases Livewire).

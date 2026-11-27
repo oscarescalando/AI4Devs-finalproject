@@ -16,6 +16,7 @@ TDChronos 2.0: plataforma de cronometraje, resultados en vivo y liga de carreras
 - **Motor de resultados (ISSUE-158)**: `RecalculateEventResults` + job `afterCommit` por cada lote de marcas; `results` solo se escribe desde el motor (regla Pest Arch).
 - Seeders 100 % sintéticos: evento demo `vuela-caracas-21k` con 114 inscritos y admin bootstrap (`admin@tdchronos.test`).
 - Calidad: Pest (46 tests: esquema + API + resultados + pantalla + arquitectura) contra MySQL real, Larastan nivel 8 limpio, Pint aplicado.
+- **Registro de trabajo**: carpeta `tiques/` — un tique `TQ-NNN` por actividad (plan + fases), con plantilla única, bitácora e índice en `tiques/INDEX.md`; lo gestiona el skill `tiques-gestionar`. Nada de trabajo sin tique.
 
 `spec/README.md` §5 mapea cada tipo de artefacto al archivo donde vive; §3 define el ciclo SDD; §4 recoge las reglas de oro del arranque limpio.
 
@@ -74,4 +75,4 @@ php artisan serve          # y abrir /  o  /e/vuela-caracas-21k
 
 ## Nota sobre `.claude/`
 
-Vigente y adaptado a este repositorio: el hook `validate-commit.sh` (bloquea autoría y secretos en commits), el skill `commit` (flujo completo de commit), el skill `spec-gestionar` (control de cambios de `spec/` con su mapa de artefactos) y el skill `memoria-gestionar`. Los agentes y skills del proyecto anterior del curso (microservicio de pagos) fueron eliminados en la entrega 2 tras el feedback de la entrega 1.
+Vigente y adaptado a este repositorio: el hook `validate-commit.sh` (bloquea autoría y secretos en commits), el skill `commit` (flujo completo de commit), el skill `spec-gestionar` (control de cambios de `spec/` con su mapa de artefactos), el skill `tiques-gestionar` (registro y control del trabajo en `tiques/` con plantilla única) y el skill `memoria-gestionar`. Los agentes y skills del proyecto anterior del curso (microservicio de pagos) fueron eliminados en la entrega 2 tras el feedback de la entrega 1.
