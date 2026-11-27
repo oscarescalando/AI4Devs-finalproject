@@ -13,3 +13,4 @@
 | [TQ-007](TQ-007-i18n-es-ve-completo.md) | i18n es-VE completo: todo texto por lang/ | hecho | chore | P2 | ISSUE-118 | TQ-001 | 2026-11-27 |
 | [TQ-008](TQ-008-pruebas-tall-y-ci.md) | Pruebas de la capa TALL y CI del monolito | hecho | test | P1 | ISSUE-116, 117, 109 | TQ-001 | 2026-11-27 |
 | [TQ-009](TQ-009-guia-estilo-ui.md) | Guía de estilo de la interfaz: Blade/Livewire/Tailwind | hecho | docs | P1 | ISSUE-107, 110 | TQ-001 | 2026-11-27 |
+| [TQ-010](TQ-010-corregir-iconos-lucide.md) | Corregir iconos Lucide: pasar objeto icons a createIcons | hecho | bug | P1 | — | — | 2026-11-27 |

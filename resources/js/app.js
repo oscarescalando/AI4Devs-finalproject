@@ -5,13 +5,13 @@
  * confirmación destructiva y foco al primer campo inválido. Nada de estado
  * de sesión ni de dominio en JS (ADR-011).
  */
-import { createIcons } from 'lucide';
+import { createIcons, icons } from 'lucide';
 
 window.tcRenderIcons = (root = document) => {
     if (typeof createIcons !== 'function') {
         return;
     }
-    createIcons({ nameAttr: 'data-lucide' }, root);
+    createIcons({ icons, nameAttr: 'data-lucide', root });
 };
 
 window.tcToggleTheme = () => {

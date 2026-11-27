@@ -3,6 +3,10 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.13.1] - 2026-11-27
+### 🐛 Corregido
+- Iconos Lucide no renderizaban en el navegador (TQ-010, hallazgo de la revisión de la mañana): `createIcons` exige el objeto `icons` y se llamaba sin él (además el `root` iba como segundo argumento ignorado). Ahora `tcRenderIcons` llama `createIcons({ icons, nameAttr, root })`; build y suite reverificados.
+
 ## [0.13.0] - 2026-11-27
 ### 🚀 Agregado
 - **Pruebas de la capa TALL y CI** (TQ-008 · ISSUE-116/117/109): reglas Pest Arch (Livewire sin BD ni modelos: componente → Action), inspección de auth/permission por ruta, pruebas de autorización del kit y del CRUD por rol (Gate `directory.write` = admin/superadmin como convención hasta `directory.manage`), **Playwright smoke** (landing, login→consola, pantalla pública; `npm run test:e2e`) y **pipeline de GitHub Actions** con los gates en orden: Pint → Larastan 8 → Pest con MySQL 8 → Pest Arch → gitleaks → composer audit → build Vite + verificación de manifest → Playwright (PRs a main).
