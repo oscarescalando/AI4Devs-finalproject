@@ -17,14 +17,16 @@
 </head>
 <body class="tc-shell">
     <div class="guest-shell">
-        @unless (config('tc-ui.brand.logo'))
-            <div class="guest-brand" aria-hidden="true">
-                <div class="text-center select-none">
-                    <div class="brand-mark mx-auto" style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#0284C7,#0C4A6E);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.75rem">T</div>
-                    <p class="mt-4 text-lg font-semibold" style="color:#F1F5F9">{{ config('tc-ui.brand.name') }}</p>
-                </div>
+        <div class="guest-brand" aria-hidden="true">
+            <div class="text-center select-none">
+                @if (config('tc-ui.brand.logo'))
+                    <img src="{{ config('tc-ui.brand.logo') }}" alt="" class="mx-auto h-16">
+                @else
+                    <div class="brand-mark brand-mark-hero mx-auto">T</div>
+                @endif
+                <p class="mt-4 text-lg font-semibold text-neutral-100">{{ config('tc-ui.brand.name') }}</p>
             </div>
-        @endunless
+        </div>
         <div class="guest-form-col">
             <main class="guest-card">
                 {{ $slot }}

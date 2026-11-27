@@ -138,10 +138,10 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 - **Subida de archivos**: multipart con límite configurable y mensajes claros; miniaturas servidas por el backend; límites coherentes en todas las pantallas.
 
 **Criterios de aceptación**
-- [ ] Un CRUD de demostración (p. ej. Organizaciones) construido exclusivamente con el kit, sin CSS/JS ad-hoc.
-- [ ] Todo error de validación del servidor aparece junto a su campo en todos los formularios construidos con el kit (prueba de componente).
-- [ ] Ordenación por columna fuera de la lista blanca → 422 o ignorada (prueba).
-- [ ] Confirmación previa en toda acción destructiva; doble clic no duplica la acción (prueba).
+- [x] Un CRUD de demostración (p. ej. Organizaciones) construido exclusivamente con el kit, sin CSS/JS ad-hoc.
+- [x] Todo error de validación del servidor aparece junto a su campo en todos los formularios construidos con el kit (prueba de componente).
+- [x] Ordenación por columna fuera de la lista blanca → 422 o ignorada (prueba).
+- [x] Confirmación previa en toda acción destructiva; doble clic no duplica la acción (prueba).
 - [ ] Subida multipart con límite por configuración; errores de tipo/tamaño claros; miniaturas servidas por el backend.
 
 ---
@@ -156,11 +156,11 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Sistema único de feedback visual: `wire:loading` con esqueletos para tablas y formularios, barra de progreso global, toasts de resultado, y **interceptor global de errores**: cualquier fallo de acción Livewire o error de render muestra toast con correlación y libera la UI. Complementa ISSUE-017 heredada.
 
 **Criterios de aceptación**
-- [ ] Toda acción asíncrona muestra estado de carga acotado al área afectada; ninguna queda con spinner colgado (prueba forzando fallo).
+- [x] Toda acción asíncrona muestra estado de carga acotado al área afectada; ninguna queda con spinner colgado (prueba forzando fallo).
 - [ ] Error de servidor → toast con id de correlación; el usuario nunca ve silencio ante 401/419/500 (casos probados).
-- [ ] 419 (sesión expirada) → redirección a login conservando destino; el formulario no pierde el dato en curso donde sea recuperable.
-- [ ] Páginas 403/404/500 de marca propia, coherentes con el layout.
-- [ ] Toasts accesibles (rol `status`, cierre automático) y en español.
+- [x] 419 (sesión expirada) → redirección a login conservando destino; el formulario no pierde el dato en curso donde sea recuperable.
+- [x] Páginas 403/404/500 de marca propia, coherentes con el layout.
+- [x] Toasts accesibles (rol `status`, cierre automático) y en español.
 
 ---
 

@@ -78,7 +78,9 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    // UI en español por defecto (ISSUE-118): los mensajes de validación del
+    // servidor llegan localizados sin depender del .env (TQ-003).
+    'locale' => env('APP_LOCALE', 'es'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 

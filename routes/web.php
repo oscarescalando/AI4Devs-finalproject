@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Auth\LogoutController;
+use App\Livewire\Directory\ManageOrganizations;
 use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
@@ -22,3 +23,9 @@ Route::post('/logout', LogoutController::class)->name('logout')->middleware('aut
 
 // Panel: requiere sesión; las rutas por evento y permisos crecen con ISSUE-115.
 Volt::route('/home', 'panel.home')->name('panel.home')->middleware('auth');
+
+// CRUD demo del directorio (ISSUE-110/TQ-003): la entrada del menú aparece
+// sola porque config/tc-ui.nav ya declara esta ruta.
+Route::get('/directory/organizations', ManageOrganizations::class)
+    ->name('directory.organizations')
+    ->middleware(['auth', 'permission:directory.view']);

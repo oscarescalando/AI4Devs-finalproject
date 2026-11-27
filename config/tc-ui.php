@@ -7,6 +7,8 @@
 return [
     'brand' => [
         'name' => env('APP_NAME', 'TDChronos'),
+        // Logo opcional (ruta pública); sin él, la marca usa el monograma del tema.
+        'logo' => env('TC_LOGO'),
         'season' => env('TC_TEMPORADA', '2026'),
     ],
 

@@ -4,7 +4,7 @@ titulo: "Acceso y shell del panel: login por sesiones + layout con menú por per
 tipo: feature
 prioridad: P0
 estimacion: L
-estado: en-revision
+estado: hecho
 refiere_a: ISSUE-108, ISSUE-107, ISSUE-109, ISSUE-112
 parte_de: TQ-001
 rama: feature/entrega-2-ol-gt
@@ -80,3 +80,5 @@ EP-24 cuelga de aquí.
 | 2026-11-26 | abierto | Creado como fase 1 del plan TQ-001 |
 | 2026-11-26 | en-curso | Noche autorizada por el usuario (encadenar fases); arranque tras aprobar TQ-009 |
 | 2026-11-27 | en-revision | Implementado: 67/67 tests, Larastan 8 y Pint en verde, build OK. Hallazgos: (1) clone sin vendor/.env → bootstrap completo del entorno local (Herd, MySQL, BDs tdchronos y tdchronos_testing, site linked); (2) 5 advisories de symfony en el lock → actualizados, `composer audit` verde; (3) spatie teams exige team_id → convención equipo 0 = plataforma; (4) `Route::has` no ve rutas con nombre fluido registradas tras el arranque → `PanelNav::routeExists` refresca el índice; (5) ISSUE-159 abierta en el backlog (matriz de permisos base + accounts.active). Pendiente: revisión del usuario en la mañana |
+| 2026-11-27 | hecho | Correcciones de la auditoría aplicadas y verificadas (123/123, build ✓): confirmación de logout, aria-haspopup/:aria-expanded del menú de cuenta, logo configurable (tc-ui.brand.logo con fallback al monograma), welcome.blade.php muerta eliminada, hex inline fuera de guest/errores (clases en theme.css), mono tabular en Pos/dorsal/reloj de la pública, scope=col en cabeceras, paleta cruda → tokens (emerald→success, amber→accent, slate→neutral) en landing/pública, <style> inline del layout público movido a .public-body. Pendiente documentado: permission: sobre rutas de producción llega con TQ-004 |
+| 2026-11-27 | en-revision | Auditoría (agente, solo lectura): TQ-001 válido; TQ-002 válido con 3 huecos menores — (a) logout sin confirmación prometida, (b) `permission:` solo probado con rutas de muestra (las reales llegan con TQ-004), (c) `tc-ui.brand.logo` consultado pero no definido y marca "T" fija. Además la auditoría contra spec/09-ui-estilo marcó: hex inline en guest y páginas de error (§2/§3), mono tabular faltante en posición/dorsal/reloj de la pantalla pública (§1.3), `<style>` inline en layout público, aria del botón de cuenta, `welcome.blade.php` muerta y paleta cruda en públicas en vez de tokens. Correcciones encoladas: se aplican junto al cierre de TQ-003 (theme.css ocupado por el implementador) |

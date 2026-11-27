@@ -64,14 +64,28 @@ class DatabaseSeeder extends Seeder
             ])->assignRole($role);
         }
 
-        // --- Directorio sintético ---
-        $region = Region::query()->create(['name' => 'Distrito Capital']);
-        $clubs = [
-            Organization::query()->create(['region_id' => $region->id, 'name' => 'Corredores del Ávila']),
-            Organization::query()->create(['region_id' => $region->id, 'name' => 'Club Zulianos']),
-            Organization::query()->create(['region_id' => $region->id, 'name' => 'Guaros Runners']),
-            Organization::query()->create(['region_id' => $region->id, 'name' => 'Andes Trail']),
+        // --- Directorio sintético: 3 regiones y 22 organizaciones (TQ-003,
+        //     datos para ejercitar paginación/búsqueda/orden del CRUD demo) ---
+        $regions = [
+            Region::query()->create(['name' => 'Distrito Capital']),
+            Region::query()->create(['name' => 'Zulia']),
+            Region::query()->create(['name' => 'Mérida']),
         ];
+
+        $clubs = [];
+        foreach ([['Corredores del Ávila', 0], ['Club Zulianos', 1], ['Guaros Runners', 1], ['Andes Trail', 2]] as [$name, $regionIndex]) {
+            $clubs[] = Organization::query()->create([
+                'region_id' => $regions[$regionIndex]->id,
+                'name' => $name,
+            ]);
+        }
+
+        // 18 organizaciones extra repartidas entre las regiones (22 en total).
+        foreach (range(1, 18) as $i) {
+            Organization::factory()->create([
+                'region_id' => $regions[$i % 3]->id,
+            ]);
+        }
 
         // 110 atletas sintéticos, 4 de ellos menores para demostrar INV-06.
         $persons = Person::factory()->count(106)->create();

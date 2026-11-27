@@ -23,10 +23,11 @@ use Spatie\Permission\Traits\HasRoles;
 final class Account extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable;
-
     use Authorizable;
+
     /** @use HasFactory<AccountFactory> */
     use HasApiTokens, HasFactory;
+
     use HasPublicUlid;
     use HasRoles;
 

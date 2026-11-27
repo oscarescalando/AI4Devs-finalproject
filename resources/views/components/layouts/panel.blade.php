@@ -46,15 +46,15 @@
                     </button>
 
                     <div class="relative" x-data="{ open: false }" @keydown.escape="open = false">
-                        <button type="button" class="icon-btn" @click="open = !open" aria-label="Menú de cuenta" aria-expanded="false">
+                        <button type="button" class="icon-btn" @click="open = !open" aria-label="Menú de cuenta" aria-haspopup="menu" :aria-expanded="open ? 'true' : 'false'">
                             <span class="avatar">{{ mb_substr($account?->person?->first_name ?? 'U', 0, 1) }}{{ mb_substr($account?->person?->last_name ?? '', 0, 1) }}</span>
                         </button>
                         <div class="menu-dd" x-cloak x-show="open" @click.outside="open = false">
-                            <div class="px-2.5 py-2 border-b mb-1" style="border-color: var(--tc-border)">
-                                <p class="text-sm font-semibold" style="color: var(--tc-text)">{{ $account?->person?->first_name }} {{ $account?->person?->last_name }}</p>
-                                <p class="text-xs text-muted truncate">{{ $account?->email }}</p>
+                            <div class="dd-header">
+                                <p class="dd-name">{{ $account?->person?->first_name }} {{ $account?->person?->last_name }}</p>
+                                <p class="dd-mail">{{ $account?->email }}</p>
                             </div>
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm('¿Cerrar sesión?')">
                                 @csrf
                                 <button type="submit" class="dd-item">
                                     <x-ui.icon name="log-out" />

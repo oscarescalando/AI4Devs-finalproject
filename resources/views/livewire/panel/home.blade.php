@@ -51,11 +51,11 @@ new #[Layout('components.layouts.panel')] #[Title('Consola')] class extends Comp
         ] as $kpi)
             <div class="card">
                 <div class="card-body flex items-center gap-3">
-                    <span class="grid place-items-center w-9 h-9 rounded-lg" style="background: var(--tc-primary-soft); color: var(--tc-primary)">
+                    <span class="kpi-icon">
                         <x-ui.icon :name="$kpi['icon']" />
                     </span>
                     <span>
-                        <span class="block mono text-xl font-bold" style="color: var(--tc-text)">{{ number_format($kpi['value'], 0, ',', '.') }}</span>
+                        <span class="kpi-value">{{ number_format($kpi['value'], 0, ',', '.') }}</span>
                         <span class="block text-xs uppercase tracking-wide text-muted">{{ $kpi['label'] }}</span>
                     </span>
                 </div>
@@ -74,11 +74,11 @@ new #[Layout('components.layouts.panel')] #[Title('Consola')] class extends Comp
                     <p class="text-sm text-muted">Sin eventos cargados todavía.</p>
                 </div>
             @else
-                <ul class="flex flex-col divide-y" style="border-color: var(--tc-border)">
+                <ul class="flex flex-col list-divide">
                     @foreach ($events as $event)
                         <li class="flex items-center gap-3 py-2.5">
                             <span class="badge badge-primary">{{ $event['date'] }}</span>
-                            <span class="text-sm font-medium" style="color: var(--tc-text)">{{ $event['name'] }}</span>
+                            <span class="text-sm font-medium text-strong">{{ $event['name'] }}</span>
                             <span class="badge badge-neutral ml-auto">{{ $event['status'] }}</span>
                             <a href="{{ route('public.event', $event['slug']) }}" class="btn btn-ghost btn-sm">
                                 <x-ui.icon name="eye" />

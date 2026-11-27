@@ -5,7 +5,11 @@
 @endphp
 <aside id="tc-sidebar" class="sidebar" aria-label="Navegación del panel">
     <div class="sidebar-brand">
-        <span class="brand-mark" aria-hidden="true">T</span>
+        @if (config("tc-ui.brand.logo"))
+            <img src="{{ config("tc-ui.brand.logo") }}" alt="" class="h-8 w-8 rounded-lg object-cover">
+        @else
+            <span class="brand-mark" aria-hidden="true">T</span>
+        @endif
         <span>
             <span class="brand-name block leading-tight">{{ config('tc-ui.brand.name') }}</span>
             <span class="brand-season">{{ config('tc-ui.brand.season') }}</span>

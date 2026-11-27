@@ -36,9 +36,9 @@ PWA base, i18n y CI.
 
 - [x] [TQ-009](TQ-009-guia-estilo-ui.md) — Guía de estilo de la interfaz `spec/09-ui-estilo.md`
   (base: arquitectura del sistema previo del equipo, identidad TDChronos)
-- [ ] [TQ-002](TQ-002-acceso-y-shell-del-panel.md) — Acceso y shell del panel: login por
+- [x] [TQ-002](TQ-002-acceso-y-shell-del-panel.md) — Acceso y shell del panel: login por
   sesiones + layout con menú por permisos (ISSUE-108, 107, 109 parcial, 112)
-- [ ] [TQ-003](TQ-003-kit-crud-y-estados.md) — Kit CRUD (tabla + formulario) y estados de
+- [x] [TQ-003](TQ-003-kit-crud-y-estados.md) — Kit CRUD (tabla + formulario) y estados de
   carga/error unificados con demo Organizaciones (ISSUE-110, 111)
 - [ ] [TQ-004](TQ-004-rutas-y-navegacion-to-be.md) — Rutas to-be y navegación por evento en el
   path (ISSUE-115)
@@ -51,8 +51,8 @@ PWA base, i18n y CI.
 
 ## Siguiente paso
 
-TQ-002 implementado (en revisión); continuar con TQ-003 (kit CRUD y estados de carga/error),
-que necesita el layout y los permisos ya en pie.
+Ejecutar TQ-004 (rutas to-be y navegación por evento): completa el mapa de rutas con permisos
+de producción y el hub de evento.
 
 ## Criterios de aceptación
 

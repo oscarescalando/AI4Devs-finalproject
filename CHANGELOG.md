@@ -3,6 +3,18 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.8.0] - 2026-11-27
+### 🚀 Agregado
+- **Kit de componentes `x-ui.*`** (TQ-003 · ISSUE-110/111): button, icon-button (tip obligatorio), form-group (foco al primer inválido), table (cabeceras ordenables por enlaces compartibles, compact, footer), badge, alert, modal, empty-state, card, kpi, page-header y pagination con vista propia en español; `tcToast` (rol `status`, cierre automático) y `tcConfirm` (Promise) en `app.js` con listener del evento `toast` de Livewire.
+- **CRUD demo Organizaciones** en `/directory/organizations` (auth + `permission:directory.view`, la entrada del menú aparece sola): búsqueda, orden solo por lista blanca (columna o dirección inválidas caen al default), paginación con skeleton, modal de alta/edición con validación de servidor bajo el campo, eliminación con confirmación y rechazo de organizaciones con equipos; escrituras/lecturas vía Actions (`List/Find/Create/Update/DeleteOrganization`, `ListRegions`).
+- Datos sintéticos ampliados: `RegionFactory` + `OrganizationFactory`, 3 regiones y 22 organizaciones en el seeder.
+- `lang/es/validation.php` y `lang/es/pagination.php`; locale por defecto `es`.
+- Suite a **123 tests** (56 nuevas: kit + CRUD por rol). Pint, Larastan 8 y build en verde.
+### 🎨 Corregido (auditoría contra `spec/09-ui-estilo.md`)
+- Sin hex ni `style` inline en vistas: hero del login, páginas de error (clases `.error-*`), cabecera del menú de cuenta, consola (`.kpi-icon/.kpi-value/.text-strong/.list-divide`); `<style>` del layout público → `.public-body`.
+- Pantalla pública: **mono tabular en Pos, dorsal y reloj** (§1.3), `scope="col"` en cabeceras y paleta cruda → tokens (`emerald→success`, `amber→accent`, `slate→neutral`) también en la landing.
+- Panel: confirmación al cerrar sesión, `aria-haspopup`/`:aria-expanded` del menú de cuenta, logo configurable (`TC_LOGO`) con fallback al monograma; eliminada `welcome.blade.php` muerta.
+
 ## [0.7.2] - 2026-11-27
 ### 📝 Documentación
 - Agente `orquestador` (`.claude/agents/`): coordina el desarrollo por tiques — valida la fase cerrada, delega implementación a subagentes con briefs completos, corre los gates (Pint → Larastan 8 → Pest → build), commitea cada fase y mantiene el registro; documentado en `CLAUDE.md`.

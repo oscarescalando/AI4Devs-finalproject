@@ -6,11 +6,8 @@
     <meta name="robots" content="noindex">
     <title>TDChronos · {{ $title ?? 'Cronometraje en vivo' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        html { color-scheme: dark; }
-    </style>
 </head>
-<body class="min-h-screen bg-slate-950 font-sans text-slate-100 antialiased">
+<body class="public-body min-h-screen bg-neutral-950 font-sans text-neutral-100 antialiased">
     {{ $slot }}
     @livewireScripts
 </body>

@@ -115,7 +115,7 @@ new #[Layout('components.layouts.guest')] class extends Component
             @error('password') <span class="form-error" role="alert">{{ $message }}</span> @enderror
         </div>
 
-        <label class="flex items-center gap-2 text-sm" style="color: var(--tc-text-2)">
+        <label class="flex items-center gap-2 text-sm text-body">
             <input type="checkbox" class="form-check" wire:model="remember">
             <span>Recordarme</span>
         </label>
