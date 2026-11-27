@@ -3,6 +3,10 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.7.2] - 2026-11-27
+### 📝 Documentación
+- Agente `orquestador` (`.claude/agents/`): coordina el desarrollo por tiques — valida la fase cerrada, delega implementación a subagentes con briefs completos, corre los gates (Pint → Larastan 8 → Pest → build), commitea cada fase y mantiene el registro; documentado en `CLAUDE.md`.
+
 ## [0.7.1] - 2026-11-27
 ### 🧹 Otros
 - Se ignora `public/fonts-manifest.dev.json` (artefacto del dev server de Vite que se coló en el commit anterior) y se saca del repositorio.
