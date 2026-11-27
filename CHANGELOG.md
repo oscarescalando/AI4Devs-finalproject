@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.11.0] - 2026-11-27
+### 🚀 Agregado
+- **PWA base instalable** (TQ-006 · ISSUE-114): manifest (standalone, tema chrono, iconos 192/512 + maskable placeholder), service worker a mano (precache del shell e iconos, assets por hash, navegaciones network-first con fallback a `/offline.html`, `/livewire*` y `/api/` nunca interceptados), pantalla offline en español y registro en los layouts de panel e invitado (el público queda siempre fresco). Ajuste del orquestador: el estático del manifest bajaba como `octet-stream` → ruta canónica `/pwa/manifest` con `application/manifest+json`.
+- Suite a **183 tests** (9 nuevas de PWA). Pint, Larastan 8, build y humo HTTP en verde.
+
 ## [0.10.0] - 2026-11-27
 ### 🚀 Agregado
 - **Perfil propio** (TQ-005 · ISSUE-113/RF-71): `/profile` con dos tarjetas — Cuenta (nombre, correo y roles en badges, solo lectura: sin selector de rol ni control de estado) y Contraseña (actual obligatoria, nueva + confirmación con política mínima `min:8` documentada, campos vacíos tras guardar y toast). `UpdateOwnPassword` valida en servidor, cifrá con el cast `hashed` e **invalida las demás sesiones** (borra en `sessions` las filas ajenas a la sesión activa). Entradas desde el dropdown del avatar y el grupo Principal del menú.

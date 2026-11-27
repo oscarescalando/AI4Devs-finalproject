@@ -96,6 +96,23 @@ document.addEventListener('toast', (event) => {
     });
 });
 
+/* ---------- PWA base instalable (ISSUE-114, TQ-006): registro del SW ---------- */
+
+window.tcRegisterSW = () => {
+    if (! ('serviceWorker' in navigator)) {
+        return;
+    }
+    // Solo contexto seguro: https o localhost. En file:// (u otro http
+    // inseguro) no hay SW — el registro se omite y, si fallara, calla.
+    const host = window.location.hostname;
+    if (window.location.protocol !== 'https:' && host !== 'localhost' && host !== '127.0.0.1') {
+        return;
+    }
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+        /* sin soporte o sin permiso: la app sigue siendo online-normal */
+    });
+};
+
 /* ---------- Confirmación previa de acciones destructivas (ISSUE-110) ---------- */
 
 window.tcConfirm = ({

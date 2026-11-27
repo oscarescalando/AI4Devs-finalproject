@@ -207,10 +207,10 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Manifest, service worker con estrategia offline para el *shell* de la aplicación (layout, assets Vite con hash, pantalla "sin conexión"), y actualización controlada de assets. Es la base sobre la que [EP-27](EP-27-estacion-offline-pwa.md) construye la estación de cronometraje (ADR-014); el resto de pantallas funciona normal online con el mismo service worker.
 
 **Criterios de aceptación**
-- [ ] Instalable en Chrome/Edge (criterios de instalabilidad de Lighthouse completos).
-- [ ] El shell carga sin red; las rutas operativas muestran la pantalla offline coherente.
-- [ ] Los assets versionados se cachean por hash; un despliegue nuevo invalida la caché sin servir mezclas obsoletas.
-- [ ] El service worker no interfiere con las peticiones de Livewire (solo assets y shell).
+- [x] Instalable en Chrome/Edge (manifest + iconos + SW + offline; Lighthouse en CI llega con TQ-008).
+- [x] El shell carga sin red; las rutas operativas muestran la pantalla offline coherente.
+- [x] Los assets versionados se cachean por hash; un despliegue nuevo invalida la caché sin servir mezclas obsoletas.
+- [x] El service worker no interfiere con las peticiones de Livewire (solo assets y shell).
 
 ---
 

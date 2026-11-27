@@ -44,14 +44,14 @@ PWA base, i18n y CI.
   path (ISSUE-115)
 - [x] [TQ-005](TQ-005-perfil-y-cambio-de-contrasena.md) — Perfil propio y cambio de contraseña
   con la actual (ISSUE-113)
-- [ ] [TQ-006](TQ-006-pwa-base-instalable.md) — PWA base instalable (ISSUE-114)
+- [x] [TQ-006](TQ-006-pwa-base-instalable.md) — PWA base instalable (ISSUE-114)
 - [ ] [TQ-007](TQ-007-i18n-es-ve-completo.md) — i18n es-VE completo (ISSUE-118, resto)
 - [ ] [TQ-008](TQ-008-pruebas-tall-y-ci.md) — Pruebas de la capa TALL y CI del monolito
   (ISSUE-116, 117; cierra la regla de arquitectura de ISSUE-109)
 
 ## Siguiente paso
 
-Ejecutar TQ-006 (PWA base instalable, ISSUE-114): manifest + service worker del shell.
+Ejecutar TQ-007 (i18n es-VE completo, ISSUE-118): todo texto de UI por lang/.
 
 ## Criterios de aceptación
 

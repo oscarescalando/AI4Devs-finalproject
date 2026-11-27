@@ -74,3 +74,49 @@ Volt::route('/directory/teams', 'directory.team-list')->name('directory.teams')
 // Liga: sin tablas de liga en v1 (ADR-015); placeholder "Liga — v2".
 Volt::route('/championships', 'championships.index')->name('championships.index')
     ->middleware(['auth', 'permission:championships.view']);
+
+/*
+|--------------------------------------------------------------------------
+| PWA base instalable (ISSUE-114, TQ-006)
+|--------------------------------------------------------------------------
+| Manifest, service worker, pantalla offline e iconos viven como estáticos
+| en public/ y el servidor web los sirve directo; estas rutas declaran el
+| Content-Type correcto del manifest (application/manifest+json, que los
+| mime.types por defecto no garantizan) y cubren el shell donde no hay
+| servidor de estáticos — p. ej. las pruebas HTTP. El SW no toca /livewire
+| ni /api (ISSUE-114).
+*/
+
+// Texto plano leído del estático (response()->file() no expone cuerpo en
+// pruebas); el icono binario sí va por BinaryFileResponse.
+// El manifest se sirve por /pwa/manifest: el servidor web entrega el archivo
+// estático de /manifest.webmanifest antes que PHP y con un mime que Chrome
+// puede rechazar; la ruta sin colisión garantiza application/manifest+json.
+Route::get('/manifest.webmanifest', fn () => response()->make(
+    file_get_contents(public_path('manifest.webmanifest')) ?: '',
+    200,
+    ['Content-Type' => 'application/manifest+json'],
+))->name('pwa.manifest');
+
+Route::get('/pwa/manifest', fn () => response()->make(
+    file_get_contents(public_path('manifest.webmanifest')) ?: '',
+    200,
+    ['Content-Type' => 'application/manifest+json'],
+))->name('pwa.manifest.canonical');
+
+Route::get('/sw.js', fn () => response()->make(
+    file_get_contents(public_path('sw.js')) ?: '',
+    200,
+    ['Content-Type' => 'application/javascript'],
+))->name('pwa.sw');
+
+Route::get('/offline.html', fn () => response()->make(
+    file_get_contents(public_path('offline.html')) ?: '',
+    200,
+    ['Content-Type' => 'text/html; charset=UTF-8'],
+))->name('pwa.offline');
+
+Route::get('/icons/{file}', fn (string $file) => response()->file(
+    public_path("icons/{$file}"),
+    ['Content-Type' => 'image/png'],
+))->where('file', 'icon-(192|512|maskable-512)\.png')->name('pwa.icon');

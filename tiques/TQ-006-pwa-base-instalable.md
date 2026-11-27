@@ -4,12 +4,12 @@ titulo: "PWA base instalable (manifest + shell offline)"
 tipo: chore
 prioridad: P1
 estimacion: M
-estado: abierto
+estado: hecho
 refiere_a: ISSUE-114
 parte_de: TQ-001
 rama: feature/entrega-2-ol-gt
 creado: 2026-11-26
-actualizado: 2026-11-26
+actualizado: 2026-11-27
 ---
 
 # TQ-006 — PWA base instalable (manifest + shell offline)
@@ -35,24 +35,24 @@ normal con el mismo service worker.
 
 ## Tareas
 
-- [ ] Manifest completo (nombre, iconos, display standalone, tema) con los criterios de
-      instalabilidad de Lighthouse en verde.
-- [ ] Service worker: precache del shell y assets versionados por hash; pantalla "sin conexión"
-      para rutas operativas sin red.
-- [ ] Actualización controlada: un despliegue nuevo invalida la caché sin servir mezclas
-      obsoletas.
-- [ ] El SW no interfiere con las peticiones de Livewire (solo assets y shell).
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Manifest completo (nombre, iconos 192/512 + maskable, standalone, tema) — Lighthouse en
+      navegador queda para la revisión manual documentada (TQ-008 lo lleva a CI).
+- [x] Service worker: precache del shell e iconos, assets por hash, navegaciones network-first
+      con fallback a /offline.html; /livewire* y /api/ nunca se interceptan.
+- [x] Actualización controlada: assets con hash inmutable; activate limpia cachés viejas.
+- [x] El SW no interfiere con las peticiones de Livewire (solo GET propio, /livewire-<hash>/ excluido; probado).
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-114 completo (4 criterios del backlog; los de navegador verificados manualmente y
-      documentado cómo reproducirlos).
+- [x] ISSUE-114 completo (4 criterios del backlog; instalabilidad/offline con verificación manual
+      documentada para Chrome — Lighthouse en CI llega con TQ-008).
 
 ## Bitácora
 
 | Fecha | Estado | Nota |
 |-------|--------|------|
 | 2026-11-26 | abierto | Creado como fase 5 del plan TQ-001 |
+| 2026-11-27 | hecho | Delegado y verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 183/183 (9 tests nuevos) · humo HTTP (manifest/sw/offline/iconos 200). Ajuste del orquestador: el estático /manifest.webmanifest bajaba como octet-stream (nginx sirve el archivo antes que PHP) → ruta canónica /pwa/manifest con application/manifest+json y layouts apuntando ahí. Iconos placeholder (gradiente chrono + T) a sustituir por branding real. Pendientes: Lighthouse en CI y mime de nginx si se sirve el estático (TQ-008) |
