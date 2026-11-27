@@ -275,7 +275,7 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Re-expresión del alcance heredado de ISSUE-039 en Blade: textos en archivos `lang/` PHP, locale `es-VE` por defecto, y utilidad única de formato de duraciones desde milisegundos (ADR-015) que soporta > 24 h y décimas opcionales. Textos de interfaz revisados ortográficamente.
 
 **Criterios de aceptación**
-- [ ] Sin literales de interfaz en componentes (chequeo en CI); todo texto pasa por `lang/`.
-- [ ] `formatDuration(ms)` con pruebas para 0, < 1 h, > 24 h (`54:05:34`) y valores negativos (diferencias).
-- [ ] Mensajes de validación en español, incluido "documento o contraseña inválidos".
-- [ ] Fechas en formato `dd/mm/yyyy` en la UI y ISO en BD; revisión ortográfica de los textos de interfaz aprobada (checklist o revisión).
+- [x] Sin literales de interfaz en componentes (chequeo automatizado); todo texto pasa por `lang/` (excepción documentada: `#[Title]` de Volt exige constante).
+- [x] `formatDuration(ms)` con pruebas para 0, < 1 h, > 24 h (`54:05:34`) y valores negativos (diferencias).
+- [x] Mensajes de validación en español, incluido "documento o contraseña inválidos".
+- [x] Fechas en formato `dd/mm/yyyy` en la UI (helper `FormatDate`) y ISO en BD; revisión ortográfica de los textos de interfaz aprobada (checklist o revisión).

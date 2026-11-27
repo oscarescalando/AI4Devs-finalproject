@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <title>TDChronos · {{ $title ?? 'Acceso' }}</title>
+    <title>TDChronos · {{ $title ?? __('ui.auth.title') }}</title>
     {{-- PWA base instalable (ISSUE-114, TQ-006): el login también instala;
          las pantallas públicas/kiosco viven siempre frescas. Tokens spec/09. --}}
     <link rel="manifest" href="/pwa/manifest">

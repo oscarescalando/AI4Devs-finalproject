@@ -82,7 +82,9 @@ return [
     // servidor llegan localizados sin depender del .env (TQ-003).
     'locale' => env('APP_LOCALE', 'es'),
 
-    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+    // Fallback también en español (TQ-007): cualquier clave sin traducir cae
+    // a lang/es, jamás a inglés — la UI no mezcla idiomas.
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'es'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'es_VE'),
 

@@ -24,13 +24,13 @@ new #[Layout('components.layouts.panel')] #[Title('Salidas')] class extends Comp
 ?>
 
 <div class="flex flex-col gap-4">
-    <x-ui.page-header title="Salidas" subtitle="{{ $event->name }}" />
+    <x-ui.page-header :title="__('ui.events.start_title')" subtitle="{{ $event->name }}" />
 
     <x-ui.card padding="none">
         <x-ui.empty-state
             icon="flag"
-            title="Llega con su pantalla completa en EP-25"
-            text="El tablero de salidas con reloj sincronizado y confirmaciones se construye en EP-25 (ISSUE-132 e ISSUE-133)."
+            :title="__('ui.events.coming_soon')"
+            :text="__('ui.events.start_soon_text')"
         />
     </x-ui.card>
 </div>

@@ -30,23 +30,23 @@ new #[Layout('components.layouts.panel')] #[Title('Eventos')] class extends Comp
 
 <div class="flex flex-col gap-4">
     <x-ui.page-header
-        title="Eventos"
-        subtitle="Directorio de eventos; abre uno para operarlo."
+        :title="__('ui.events.title')"
+        :subtitle="__('ui.events.subtitle')"
     />
 
     <x-ui.card padding="none">
         @if ($events->isEmpty())
             <x-ui.empty-state
                 icon="calendar-days"
-                title="Aún no hay eventos"
-                text="La pantalla de creación y edición de eventos llega con EP-25 (ISSUE-124)."
+                :title="__('ui.events.empty_title')"
+                :text="__('ui.events.empty_text')"
             />
         @else
-            <x-ui.table :headers="['Evento', 'Fecha', 'Estado', ['label' => 'Acciones', 'align' => 'right']]">
+            <x-ui.table :headers="[__('ui.events.header_event'), __('ui.events.header_date'), __('ui.events.header_status'), ['label' => __('ui.events.header_actions'), 'align' => 'right']]">
                 @foreach ($events as $event)
                     <tr wire:key="event-{{ $event->ulid }}">
                         <td class="font-medium text-strong">{{ $event->name }}</td>
-                        <td class="mono">{{ $event->date->format('d/m/Y') }}</td>
+                        <td class="mono">{{ \App\Support\FormatDate::date($event->date) }}</td>
                         <td>
                             <x-ui.badge
                                 :variant="EventStatus::badgeVariant($event->status)"
@@ -56,7 +56,7 @@ new #[Layout('components.layouts.panel')] #[Title('Eventos')] class extends Comp
                         <td class="td-right">
                             <x-ui.icon-button
                                 icon="eye"
-                                tip="Abrir evento"
+                                :tip="__('ui.events.open')"
                                 :href="route('events.show', $event)"
                             />
                         </td>

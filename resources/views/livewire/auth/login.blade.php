@@ -76,8 +76,8 @@ new #[Layout('components.layouts.guest')] class extends Component
 ?>
 
 <div>
-    <h1 class="page-title">Acceso</h1>
-    <p class="page-subtitle mb-5">Ingresa a tu cuenta para continuar.</p>
+    <h1 class="page-title">{{ __('ui.auth.title') }}</h1>
+    <p class="page-subtitle mb-5">{{ __('ui.auth.subtitle') }}</p>
 
     @if (session('status'))
         <div class="alert alert-info mb-4" role="status">
@@ -88,7 +88,7 @@ new #[Layout('components.layouts.guest')] class extends Component
 
     <form wire:submit="authenticate" class="flex flex-col gap-4">
         <div class="form-group">
-            <label class="form-label" for="login">Documento o correo</label>
+            <label class="form-label" for="login">{{ __('ui.auth.login') }}</label>
             <input
                 id="login"
                 type="text"
@@ -96,14 +96,14 @@ new #[Layout('components.layouts.guest')] class extends Component
                 wire:model="login"
                 autocomplete="username"
                 autofocus
-                placeholder="tu@ejemplo.com"
+                placeholder="{{ __('ui.auth.placeholder') }}"
                 required
             >
             @error('login') <span class="form-error" role="alert">{{ $message }}</span> @enderror
         </div>
 
         <div class="form-group">
-            <label class="form-label" for="password">Contraseña</label>
+            <label class="form-label" for="password">{{ __('ui.auth.password') }}</label>
             <input
                 id="password"
                 type="password"
@@ -117,11 +117,11 @@ new #[Layout('components.layouts.guest')] class extends Component
 
         <label class="flex items-center gap-2 text-sm text-body">
             <input type="checkbox" class="form-check" wire:model="remember">
-            <span>Recordarme</span>
+            <span>{{ __('ui.auth.remember') }}</span>
         </label>
 
         <button type="submit" class="btn btn-primary btn-block" wire:loading.attr="disabled" wire:target="authenticate">
-            <span wire:loading.remove wire:target="authenticate">Iniciar sesión</span>
+            <span wire:loading.remove wire:target="authenticate">{{ __('ui.auth.submit') }}</span>
             <span wire:loading class="spinner" wire:target="authenticate" aria-hidden="true"></span>
         </button>
     </form>

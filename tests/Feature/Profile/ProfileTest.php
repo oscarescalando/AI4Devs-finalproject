@@ -60,7 +60,8 @@ it('renderiza para cualquier rol autenticado sin selector de rol ni control de a
         ->assertSee($account->email)
         ->assertSee($account->person->first_name)
         ->assertSee($account->person->last_name)
-        ->assertSee(config('tc-ui.roles.'.$role))
+        // TQ-007: el config guarda la clave de rol y la vista la traduce.
+        ->assertSee(__('ui.roles.'.$role))
         ->getContent();
 
     // ISSUE-113: la propia cuenta no se autogestiona roles ni estado — no

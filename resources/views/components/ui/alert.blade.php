@@ -19,7 +19,7 @@
         @if ($slot->isNotEmpty())<div>{{ $slot }}</div>@endif
     </div>
     @if ($dismissible)
-        <button type="button" class="alert-close" @click="visible = false" aria-label="Cerrar">
+        <button type="button" class="alert-close" @click="visible = false" aria-label="{{ __('ui.kit.close') }}">
             <x-ui.icon name="x" />
         </button>
     @endif

@@ -2,6 +2,7 @@
 
 use App\Actions\Directory\GetPanelOverview;
 use App\Models\Event;
+use App\Support\FormatDate;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
@@ -32,7 +33,7 @@ new #[Layout('components.layouts.panel')] #[Title('Consola')] class extends Comp
                 'ulid' => $event->ulid,
                 'slug' => $event->slug,
                 'name' => $event->name,
-                'date' => $event->date->format('d/m/Y'),
+                'date' => FormatDate::date($event->date),
                 'status' => $event->status,
             ])
             ->all();
@@ -44,10 +45,10 @@ new #[Layout('components.layouts.panel')] #[Title('Consola')] class extends Comp
 <div class="flex flex-col gap-5" wire:poll.30s>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         @foreach ([
-            ['label' => 'Eventos', 'value' => $overview['events'], 'icon' => 'calendar-days'],
-            ['label' => 'Personas', 'value' => $overview['persons'], 'icon' => 'users'],
-            ['label' => 'Inscripciones', 'value' => $overview['entries'], 'icon' => 'clipboard-list'],
-            ['label' => 'Marcas', 'value' => $overview['marks'], 'icon' => 'timer'],
+            ['label' => __('ui.panel.kpi_events'), 'value' => $overview['events'], 'icon' => 'calendar-days'],
+            ['label' => __('ui.panel.kpi_persons'), 'value' => $overview['persons'], 'icon' => 'users'],
+            ['label' => __('ui.panel.kpi_entries'), 'value' => $overview['entries'], 'icon' => 'clipboard-list'],
+            ['label' => __('ui.panel.kpi_marks'), 'value' => $overview['marks'], 'icon' => 'timer'],
         ] as $kpi)
             <div class="card">
                 <div class="card-body flex items-center gap-3">
@@ -65,13 +66,13 @@ new #[Layout('components.layouts.panel')] #[Title('Consola')] class extends Comp
 
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title">Próximos eventos</h2>
+            <h2 class="card-title">{{ __('ui.panel.upcoming') }}</h2>
         </div>
         <div class="card-body">
             @if ($events === [])
                 <div class="text-center py-8 flex flex-col items-center gap-2">
                     <x-ui.icon name="calendar-off" class="w-8 h-8 text-subtle" />
-                    <p class="text-sm text-muted">Sin eventos cargados todavía.</p>
+                    <p class="text-sm text-muted">{{ __('ui.panel.no_events') }}</p>
                 </div>
             @else
                 <ul class="flex flex-col list-divide">
@@ -82,7 +83,7 @@ new #[Layout('components.layouts.panel')] #[Title('Consola')] class extends Comp
                             <span class="badge badge-neutral ml-auto">{{ $event['status'] }}</span>
                             <a href="{{ route('public.event', $event['slug']) }}" class="btn btn-ghost btn-sm">
                                 <x-ui.icon name="eye" />
-                                <span>Ver pública</span>
+                                <span>{{ __('ui.panel.view_public') }}</span>
                             </a>
                         </li>
                     @endforeach

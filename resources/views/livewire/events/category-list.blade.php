@@ -24,13 +24,13 @@ new #[Layout('components.layouts.panel')] #[Title('Categorías')] class extends 
 ?>
 
 <div class="flex flex-col gap-4">
-    <x-ui.page-header title="Categorías" subtitle="{{ $event->name }}" />
+    <x-ui.page-header :title="__('ui.events.categories_title')" subtitle="{{ $event->name }}" />
 
     <x-ui.card padding="none">
         <x-ui.empty-state
             icon="tags"
-            title="Llega con su pantalla completa en EP-25"
-            text="El listado y el formulario de categorías con validación de rangos se construyen en EP-25 (ISSUE-125)."
+            :title="__('ui.events.coming_soon')"
+            :text="__('ui.events.categories_soon_text')"
         />
     </x-ui.card>
 </div>

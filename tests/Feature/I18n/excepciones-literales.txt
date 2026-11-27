@@ -1,0 +1,17 @@
+# Excepciones del chequeo de literales (TQ-007, ISSUE-118).
+#
+# Formato: una línea por texto EXACTO (recortado) que puede quedarse como
+# literal en resources/views/**.blade.php; la línea con # justo arriba
+# documenta el motivo. La prueba tests/Feature/I18n/NoInlineTextTest.php
+# imprime archivo:línea:texto al fallar; si el texto puede migrarse a
+# lang/es/ui.php, migra — este archivo es último recurso.
+#
+# Hoy no hay excepciones vigentes: todo el texto visible pasa por lang/.
+# Fuera del escaneo quedan (por diseño, no por excepción):
+#   - public/offline.html y public/manifest.webmanifest: estáticos fuera de
+#     Blade (ISSUE-114); el texto del offline no se traduce en runtime.
+#   - resources/js/app.js: el aria-label "Cerrar" del toast vive en el asset
+#     compilado, no en una vista.
+#   - #[Title('…')] en componentes Volt: los atributos PHP exigen expresiones
+#     constantes, así que no pueden llamar a __(); el título sigue literal.
+#   - Placeholders dinámicos y valores que ya llegan del servidor por {{ }}.

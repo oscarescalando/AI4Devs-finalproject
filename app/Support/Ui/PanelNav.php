@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 /**
  * Menú del panel (ISSUE-107): se genera desde config('tc-ui.nav') y se filtra
  * por ruta existente (sin rutas fantasma, ISSUE-115) y por permiso REAL del
- * servidor. Lo no permitado no se pinta; el servidor igual lo autoriza en la
+ * servidor. Lo no permitido no se pinta; el servidor igual lo autoriza en la
  * ruta (la UI solo oculta, ADR-011).
  *
  * Rutas por evento (ISSUE-115/TQ-004): los ítems que declaran 'event' => true

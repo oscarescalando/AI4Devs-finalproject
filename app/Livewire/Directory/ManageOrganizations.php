@@ -73,7 +73,7 @@ final class ManageOrganizations extends Component
         $organization = app(FindOrganization::class)($ulid);
 
         if ($organization === null) {
-            $this->dispatch('toast', type: 'error', message: 'La organización ya no existe.');
+            $this->dispatch('toast', type: 'error', message: __('ui.directory.organizations.toast_missing'));
 
             return;
         }
@@ -116,7 +116,7 @@ final class ManageOrganizations extends Component
         $this->dispatch(
             'toast',
             type: 'success',
-            message: $creating ? 'Organización creada.' : 'Organización actualizada.',
+            message: $creating ? __('ui.directory.organizations.toast_created') : __('ui.directory.organizations.toast_updated'),
         );
     }
 
@@ -128,14 +128,14 @@ final class ManageOrganizations extends Component
             $this->dispatch(
                 'toast',
                 type: 'error',
-                title: 'No se pudo eliminar',
+                title: __('ui.directory.organizations.toast_delete_failed'),
                 message: collect($e->errors())->flatten()->first(),
             );
 
             return;
         }
 
-        $this->dispatch('toast', type: 'success', message: 'Organización eliminada.');
+        $this->dispatch('toast', type: 'success', message: __('ui.directory.organizations.toast_deleted'));
     }
 
     public function render(): View
@@ -162,7 +162,8 @@ final class ManageOrganizations extends Component
 
     /**
      * Cabeceras para x-ui.table: columnas ordenables con enlace (estado en
-     * query string) e icono de dirección solo en la columna activa.
+     * query string) e icono de dirección solo en la columna activa. Los
+     * labels llegan de lang/es/ui.php (TQ-007).
      *
      * @return list<array<string, mixed>>
      */
@@ -170,19 +171,19 @@ final class ManageOrganizations extends Component
     {
         return [
             [
-                'label' => 'Nombre',
+                'label' => __('ui.directory.organizations.name'),
                 'href' => $this->sortHref('name', $sort, $direction),
                 'icon' => $sort === 'name' ? ($direction === 'asc' ? 'arrow-up' : 'arrow-down') : null,
             ],
-            ['label' => 'Región'],
+            ['label' => __('ui.directory.organizations.region')],
             [
-                'label' => 'Creada',
+                'label' => __('ui.directory.organizations.header_created'),
                 'align' => 'right',
                 'class' => 'mono',
                 'href' => $this->sortHref('created_at', $sort, $direction),
                 'icon' => $sort === 'created_at' ? ($direction === 'asc' ? 'arrow-up' : 'arrow-down') : null,
             ],
-            ['label' => 'Acciones', 'align' => 'right'],
+            ['label' => __('ui.directory.organizations.header_actions'), 'align' => 'right'],
         ];
     }
 

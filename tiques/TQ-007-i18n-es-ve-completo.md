@@ -4,12 +4,12 @@ titulo: "i18n es-VE completo: todo texto por lang/"
 tipo: chore
 prioridad: P2
 estimacion: S
-estado: abierto
+estado: hecho
 refiere_a: ISSUE-118
 parte_de: TQ-001
 rama: feature/entrega-2-ol-gt
 creado: 2026-11-26
-actualizado: 2026-11-26
+actualizado: 2026-11-27
 ---
 
 # TQ-007 — i18n es-VE completo: todo texto por lang/
@@ -35,22 +35,26 @@ interfaz en componentes. (`FormatDuration` con pruebas ya existe desde 0.5.0.)
 
 ## Tareas
 
-- [ ] Inventario de literales de interfaz en vistas/componentes; migración a `lang/`.
-- [ ] Locale `es_VE` por defecto (Faker ya está en `es_VE`); mensajes de validación en español
-      (incluido "documento o contraseña inválidos").
-- [ ] Fechas `dd/mm/yyyy` en UI (ISO en BD) con helper/filtro único.
-- [ ] Chequeo en CI (o prueba) de que ningún componente nuevo introduce literales.
-- [ ] Revisión ortográfica de los textos de interfaz (checklist).
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Inventario de literales de interfaz en vistas/componentes; migración a `lang/` (199 claves
+      en lang/es/ui.php por dominio; textos renderizados idénticos).
+- [x] Locale es con fallback es; mensajes de validación en español (completados en TQ-005).
+- [x] Fechas `dd/mm/yyyy` en UI (ISO en BD) con helper único `FormatDate` (bisiesto y fin de mes
+      probados).
+- [x] Prueba NoInlineTextTest que escanea las vistas y falla con archivo:línea:texto ante literales
+      (excepciones documentadas en excepciones-literales.txt).
+- [x] Revisión ortográfica de ~250 cadenas: cero erratas en UI (un typo en comentario corregido).
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-118 completo (4 criterios del backlog; `formatDuration` ya verde desde 0.5.0).
+- [x] ISSUE-118 completo (4 criterios del backlog; `formatDuration` verde desde 0.5.0; los literales
+      de `#[Title]` de Volt quedan documentados como excepción técnica del atributo PHP).
 
 ## Bitácora
 
 | Fecha | Estado | Nota |
 |-------|--------|------|
 | 2026-11-26 | abierto | Creado como fase 6 del plan TQ-001 |
+| 2026-11-27 | hecho | Delegado y verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 191/191 (FormatDate + chequeo de literales) · humo HTTP con textos idénticos en /login y /e/{slug}. Decisiones: config devuelve claves y las vistas traducen (evita congelar traducciones con config:cache); atributos de validación por-validador en el perfil; excepciones del chequeo documentadas |

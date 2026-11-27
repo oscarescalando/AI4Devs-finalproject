@@ -24,13 +24,13 @@ new #[Layout('components.layouts.panel')] #[Title('Registros')] class extends Co
 ?>
 
 <div class="flex flex-col gap-4">
-    <x-ui.page-header title="Registros" subtitle="{{ $event->name }}" />
+    <x-ui.page-header :title="__('ui.events.marks_title')" subtitle="{{ $event->name }}" />
 
     <x-ui.card padding="none">
         <x-ui.empty-state
             icon="timer"
-            title="Llega con su pantalla completa en EP-25"
-            text="La bitácora de marcas en vivo y la corrección con operaciones 1/2/3 se construyen en EP-25 (ISSUE-134 e ISSUE-135)."
+            :title="__('ui.events.coming_soon')"
+            :text="__('ui.events.marks_soon_text')"
         />
     </x-ui.card>
 </div>

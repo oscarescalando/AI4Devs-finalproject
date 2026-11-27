@@ -8,7 +8,7 @@
 <div {{ $attributes->merge(['class' => 'form-group']) }} @if ($for !== null) data-field="{{ $for }}" @endif>
     @if ($label !== null)
         <label class="form-label" @if ($for !== null) for="{{ $for }}" @endif>
-            {{ $label }}@if ($required)<span class="req" aria-hidden="true">*</span><span class="sr-only"> (obligatorio)</span>@endif
+            {{ $label }}@if ($required)<span class="req" aria-hidden="true">*</span><span class="sr-only"> {{ __('ui.kit.required') }}</span>@endif
         </label>
     @endif
 

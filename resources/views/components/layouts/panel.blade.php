@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TDChronos · {{ $title ?? 'Panel' }}</title>
+    <title>TDChronos · {{ $title ?? __('ui.panel.title') }}</title>
     {{-- PWA base instalable (ISSUE-114, TQ-006): solo en layouts con sesión;
          las pantallas públicas/kiosco viven siempre frescas. Tokens spec/09. --}}
     <link rel="manifest" href="/pwa/manifest">
@@ -29,7 +29,7 @@
 
         <div class="panel-main">
             <header class="header">
-                <button type="button" class="icon-btn lg:hidden" onclick="window.tcToggleSidebar()" aria-label="Abrir menú">
+                <button type="button" class="icon-btn lg:hidden" onclick="window.tcToggleSidebar()" aria-label="{{ __('ui.panel.open_menu') }}">
                     <x-ui.icon name="menu" />
                 </button>
 
@@ -37,8 +37,8 @@
                     @if ($title)
                         <p class="header-title truncate">{{ $title }}</p>
                     @endif
-                    <nav class="header-crumb" aria-label="Miga de pan">
-                        <a href="{{ route('panel.home') }}">Panel</a>
+                    <nav class="header-crumb" aria-label="{{ __('ui.panel.breadcrumb') }}">
+                        <a href="{{ route('panel.home') }}">{{ __('ui.panel.title') }}</a>
                         @if ($title)
                             <span aria-hidden="true">›</span>
                             <span class="truncate">{{ $title }}</span>
@@ -47,12 +47,12 @@
                 </div>
 
                 <div class="ml-auto flex items-center gap-1.5">
-                    <button type="button" class="icon-btn" onclick="window.tcToggleTheme()" aria-label="Cambiar tema">
+                    <button type="button" class="icon-btn" onclick="window.tcToggleTheme()" aria-label="{{ __('ui.panel.change_theme') }}">
                         <x-ui.icon name="moon-star" />
                     </button>
 
                     <div class="relative" x-data="{ open: false }" @keydown.escape="open = false">
-                        <button type="button" class="icon-btn" @click="open = !open" aria-label="Menú de cuenta" aria-haspopup="menu" :aria-expanded="open ? 'true' : 'false'">
+                        <button type="button" class="icon-btn" @click="open = !open" aria-label="{{ __('ui.panel.account_menu') }}" aria-haspopup="menu" :aria-expanded="open ? 'true' : 'false'">
                             <span class="avatar">{{ mb_substr($account?->person?->first_name ?? 'U', 0, 1) }}{{ mb_substr($account?->person?->last_name ?? '', 0, 1) }}</span>
                         </button>
                         <div class="menu-dd" x-cloak x-show="open" @click.outside="open = false">
@@ -62,13 +62,13 @@
                             </div>
                             <a href="{{ route('profile') }}" class="dd-item">
                                 <x-ui.icon name="user-round" />
-                                <span>Perfil</span>
+                                <span>{{ __('ui.panel.profile') }}</span>
                             </a>
-                            <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm('¿Cerrar sesión?')">
+                            <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm('{{ __('ui.panel.logout_confirm') }}')">
                                 @csrf
                                 <button type="submit" class="dd-item">
                                     <x-ui.icon name="log-out" />
-                                    <span>Cerrar sesión</span>
+                                    <span>{{ __('ui.panel.logout') }}</span>
                                 </button>
                             </form>
                         </div>

@@ -19,15 +19,15 @@ new #[Layout('components.layouts.panel')] #[Title('Liga')] class extends Compone
 
 <div class="flex flex-col gap-4">
     <x-ui.page-header
-        title="Liga"
-        subtitle="Clasificación de la liga de organizaciones."
+        :title="__('ui.directory.championships.title')"
+        :subtitle="__('ui.directory.championships.subtitle')"
     />
 
     <x-ui.card padding="none">
         <x-ui.empty-state
             icon="trophy"
-            title="Liga — v2"
-            text="La liga de organizaciones y los puntos por box llegan en la versión 2: esta entrega no tiene tablas de liga."
+            :title="__('ui.directory.championships.soon_title')"
+            :text="__('ui.directory.championships.soon_text')"
         />
     </x-ui.card>
 </div>

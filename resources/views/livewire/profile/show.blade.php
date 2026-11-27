@@ -46,7 +46,7 @@ new #[Layout('components.layouts.panel')] #[Title('Perfil')] class extends Compo
         $this->reset('current_password', 'password', 'password_confirmation');
         $this->resetValidation();
 
-        $this->dispatch('toast', type: 'success', message: 'Contraseña actualizada');
+        $this->dispatch('toast', type: 'success', message: __('ui.profile.password_updated'));
     }
 };
 
@@ -56,17 +56,17 @@ new #[Layout('components.layouts.panel')] #[Title('Perfil')] class extends Compo
 
 <div class="flex flex-col gap-5">
     <x-ui.page-header
-        title="Perfil"
-        subtitle="Los datos de tu cuenta de acceso y el cambio de contraseña."
+        :title="__('ui.profile.title')"
+        :subtitle="__('ui.profile.subtitle')"
     />
 
     <div class="grid items-start gap-5 lg:grid-cols-2">
         {{-- Cuenta: SOLO lectura — sin selector de rol ni control de
              activación (ISSUE-113: eso lo gestiona quien tenga
              accounts.manage, no la propia cuenta). --}}
-        <x-ui.card title="Cuenta" subtitle="Datos identificativos de tu acceso.">
+        <x-ui.card :title="__('ui.profile.account')" :subtitle="__('ui.profile.account_subtitle')">
             <div class="flex flex-col gap-4">
-                <x-ui.form-group label="Nombre" for="profile-name">
+                <x-ui.form-group :label="__('ui.profile.name')" for="profile-name">
                     <input
                         id="profile-name"
                         type="text"
@@ -77,9 +77,9 @@ new #[Layout('components.layouts.panel')] #[Title('Perfil')] class extends Compo
                 </x-ui.form-group>
 
                 <x-ui.form-group
-                    label="Correo electrónico"
+                    :label="__('ui.profile.email')"
                     for="profile-email"
-                    help="El correo de acceso no se cambia desde el perfil."
+                    :help="__('ui.profile.email_help')"
                 >
                     <input
                         id="profile-email"
@@ -90,12 +90,12 @@ new #[Layout('components.layouts.panel')] #[Title('Perfil')] class extends Compo
                     >
                 </x-ui.form-group>
 
-                <x-ui.form-group label="Roles" for="profile-roles" help="Asignados por la administración de la plataforma.">
+                <x-ui.form-group :label="__('ui.profile.roles')" for="profile-roles" :help="__('ui.profile.roles_help')">
                     <span id="profile-roles" class="flex flex-wrap gap-1.5">
                         @forelse ($account?->getRoleNames() ?? [] as $role)
-                            <x-ui.badge variant="neutral">{{ config('tc-ui.roles.'.$role, $role) }}</x-ui.badge>
+                            <x-ui.badge variant="neutral">{{ __(config('tc-ui.roles.'.$role, $role)) }}</x-ui.badge>
                         @empty
-                            <x-ui.badge variant="neutral">Sin rol asignado</x-ui.badge>
+                            <x-ui.badge variant="neutral">{{ __('ui.profile.no_role') }}</x-ui.badge>
                         @endforelse
                     </span>
                 </x-ui.form-group>
@@ -104,10 +104,10 @@ new #[Layout('components.layouts.panel')] #[Title('Perfil')] class extends Compo
 
         {{-- Contraseña: exige la actual; las demás sesiones se cierran al
              cambiarla (ISSUE-113). --}}
-        <x-ui.card title="Contraseña" subtitle="Al cambiarla se cerrarán tus demás sesiones.">
+        <x-ui.card :title="__('ui.profile.password')" :subtitle="__('ui.profile.password_subtitle')">
             <form wire:submit="updatePassword" class="flex flex-col gap-4">
                 <x-ui.form-group
-                    label="Contraseña actual"
+                    :label="__('ui.profile.current_password')"
                     for="current_password"
                     required
                     :error="$errors->first('current_password')"
@@ -123,10 +123,10 @@ new #[Layout('components.layouts.panel')] #[Title('Perfil')] class extends Compo
                 </x-ui.form-group>
 
                 <x-ui.form-group
-                    label="Contraseña nueva"
+                    :label="__('ui.profile.new_password')"
                     for="password"
                     required
-                    help="Mínimo 8 caracteres (política mínima vigente)."
+                    :help="__('ui.profile.new_password_help')"
                     :error="$errors->first('password')"
                 >
                     <input
@@ -140,7 +140,7 @@ new #[Layout('components.layouts.panel')] #[Title('Perfil')] class extends Compo
                 </x-ui.form-group>
 
                 <x-ui.form-group
-                    label="Confirmar contraseña"
+                    :label="__('ui.profile.confirm_password')"
                     for="password_confirmation"
                     required
                     :error="$errors->first('password_confirmation')"
@@ -163,7 +163,7 @@ new #[Layout('components.layouts.panel')] #[Title('Perfil')] class extends Compo
                         wire:loading.attr="disabled"
                         wire:target="updatePassword"
                     >
-                        <span wire:loading.remove wire:target="updatePassword">Actualizar contraseña</span>
+                        <span wire:loading.remove wire:target="updatePassword">{{ __('ui.profile.update') }}</span>
                         <span wire:loading wire:target="updatePassword" class="spinner" aria-hidden="true"></span>
                     </x-ui.button>
                 </div>

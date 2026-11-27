@@ -3,6 +3,12 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.12.0] - 2026-11-27
+### 🚀 Agregado
+- **i18n es-VE completo** (TQ-007 · ISSUE-118): 199 claves en `lang/es/ui.php` por dominio (panel, auth, nav, roles, events, directory, kit, profile, públicas y errores) con los textos renderizados idénticos; el config entrega claves y las vistas traducen (evita congelar traducciones con `config:cache`).
+- `FormatDate` (dd/mm/yyyy en UI, ISO en BD) con pruebas de bisiesto/fin de mes, y chequeo automatizado **NoInlineTextTest** que falla con archivo:línea:texto ante literales de interfaz en vistas (excepciones documentadas).
+- Suite a **191 tests**. Pint, Larastan 8 y humo HTTP en verde.
+
 ## [0.11.0] - 2026-11-27
 ### 🚀 Agregado
 - **PWA base instalable** (TQ-006 · ISSUE-114): manifest (standalone, tema chrono, iconos 192/512 + maskable placeholder), service worker a mano (precache del shell e iconos, assets por hash, navegaciones network-first con fallback a `/offline.html`, `/livewire*` y `/api/` nunca interceptados), pantalla offline en español y registro en los layouts de panel e invitado (el público queda siempre fresco). Ajuste del orquestador: el estático del manifest bajaba como `octet-stream` → ruta canónica `/pwa/manifest` con `application/manifest+json`.

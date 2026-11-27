@@ -29,7 +29,7 @@
                     @if ($title !== null)<h2 class="modal-title">{{ $title }}</h2>@endif
                     @if ($subtitle !== null)<p class="modal-subtitle">{{ $subtitle }}</p>@endif
                 </div>
-                <button type="button" class="icon-btn" @click="{{ $show }} = false" aria-label="Cerrar">
+                <button type="button" class="icon-btn" @click="{{ $show }} = false" aria-label="{{ __('ui.kit.close') }}">
                     <x-ui.icon name="x" />
                 </button>
             </div>

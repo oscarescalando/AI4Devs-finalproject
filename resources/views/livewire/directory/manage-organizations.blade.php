@@ -15,12 +15,12 @@
     @close-org-modal.window="orgModal = false"
 >
     <x-ui.page-header
-        title="Organizaciones"
-        subtitle="Clubes y entidades del directorio (CRUD de demostración del kit)."
+        :title="__('ui.directory.organizations.title')"
+        :subtitle="__('ui.directory.organizations.subtitle')"
     >
         <x-slot:actions>
             <x-ui.button variant="primary" icon="plus" wire:click="startCreate">
-                Nueva organización
+                {{ __('ui.directory.organizations.new') }}
             </x-ui.button>
         </x-slot:actions>
     </x-ui.page-header>
@@ -32,8 +32,8 @@
                 <input
                     type="search"
                     class="form-control"
-                    placeholder="Buscar por nombre…"
-                    aria-label="Buscar organización por nombre"
+                    placeholder="{{ __('ui.directory.organizations.search_placeholder') }}"
+                    aria-label="{{ __('ui.directory.organizations.search_aria') }}"
                     wire:model.live.debounce.400ms="q"
                 >
             </label>
@@ -41,10 +41,10 @@
             @if (trim($q) !== '')
                 <span class="chip" wire:key="result-count">
                     <x-ui.icon name="list-filter" />
-                    {{ $organizations->total() }} resultado{{ $organizations->total() === 1 ? '' : 's' }}
+                    {{ $organizations->total() }} {{ trans_choice('ui.directory.organizations.results', $organizations->total()) }}
                 </span>
                 <x-ui.button variant="ghost" size="sm" icon="x" wire:click="$set('q', '')">
-                    Limpiar
+                    {{ __('ui.directory.organizations.clear') }}
                 </x-ui.button>
             @endif
         </div>
@@ -60,12 +60,12 @@
             @if ($organizations->isEmpty())
                 <x-ui.empty-state
                     icon="building-2"
-                    title="{{ trim($q) !== '' ? 'Sin resultados' : 'Aún no hay organizaciones' }}"
-                    text="{{ trim($q) !== '' ? 'Ninguna organización coincide con la búsqueda.' : 'Crea la primera para empezar a inscribir equipos.' }}"
+                    :title="trim($q) !== '' ? __('ui.directory.organizations.empty_search_title') : __('ui.directory.organizations.empty_title')"
+                    :text="trim($q) !== '' ? __('ui.directory.organizations.empty_search_text') : __('ui.directory.organizations.empty_text')"
                 >
                     @if (trim($q) === '')
                         <x-ui.button variant="primary" icon="plus" wire:click="startCreate">
-                            Nueva organización
+                            {{ __('ui.directory.organizations.new') }}
                         </x-ui.button>
                     @endif
                 </x-ui.empty-state>
@@ -75,21 +75,21 @@
                         <tr wire:key="org-{{ $organization->ulid }}">
                             <td class="font-medium" style="color: var(--tc-text)">{{ $organization->name }}</td>
                             <td><span class="chip">{{ $organization->region?->name ?? '—' }}</span></td>
-                            <td class="td-right mono">{{ $organization->created_at->timezone('America/Caracas')->format('d/m/Y') }}</td>
+                            <td class="td-right mono">{{ \App\Support\FormatDate::date($organization->created_at->timezone('America/Caracas')) }}</td>
                             <td class="td-right">
                                 <span class="inline-flex items-center justify-end gap-1">
-                                    <x-ui.icon-button icon="eye" tip="Próximamente" disabled />
+                                    <x-ui.icon-button icon="eye" :tip="__('ui.directory.organizations.soon')" disabled />
                                     <x-ui.icon-button
                                         icon="pencil"
-                                        tip="Editar"
+                                        :tip="__('ui.directory.organizations.edit')"
                                         wire:click="startEdit('{{ $organization->ulid }}')"
                                     />
                                     <x-ui.icon-button
                                         icon="trash-2"
-                                        tip="Eliminar"
+                                        :tip="__('ui.directory.organizations.delete')"
                                         color="danger"
                                         wire:click="deleteOrganization('{{ $organization->ulid }}')"
-                                        wire:confirm="¿Eliminar «{{ $organization->name }}»? Esta acción no se puede deshacer."
+                                        wire:confirm="{{ __('ui.directory.organizations.delete_confirm', ['name' => $organization->name]) }}"
                                     />
                                 </span>
                             </td>
@@ -106,16 +106,16 @@
 
     <x-ui.modal
         show="orgModal"
-        title="{{ $editingUlid === null ? 'Nueva organización' : 'Editar organización' }}"
-        subtitle="Los datos se validan en el servidor."
+        :title="$editingUlid === null ? __('ui.directory.organizations.new') : __('ui.directory.organizations.modal_edit')"
+        :subtitle="__('ui.directory.organizations.modal_subtitle')"
         size="md"
     >
         <form wire:submit="save" id="org-form" class="flex flex-col gap-4">
             <x-ui.form-group
-                label="Nombre"
+                :label="__('ui.directory.organizations.name')"
                 for="org-name"
                 required
-                help="Hasta 150 caracteres."
+                :help="__('ui.directory.organizations.name_help')"
                 :error="$errors->first('form.name')"
             >
                 <input
@@ -123,20 +123,20 @@
                     type="text"
                     class="form-control"
                     maxlength="150"
-                    placeholder="Nombre de la organización"
+                    placeholder="{{ __('ui.directory.organizations.name_placeholder') }}"
                     autocomplete="off"
                     wire:model="form.name"
                 >
             </x-ui.form-group>
 
             <x-ui.form-group
-                label="Región"
+                :label="__('ui.directory.organizations.region')"
                 for="org-region"
                 required
                 :error="$errors->first('form.region_id')"
             >
                 <select id="org-region" class="form-control" wire:model="form.region_id">
-                    <option value="" disabled>Selecciona una región…</option>
+                    <option value="" disabled>{{ __('ui.directory.organizations.region_placeholder') }}</option>
                     @foreach ($regions as $region)
                         <option value="{{ $region['id'] }}">{{ $region['name'] }}</option>
                     @endforeach
@@ -145,9 +145,9 @@
         </form>
 
         <x-slot:footer>
-            <x-ui.button variant="ghost" icon="x" @click="orgModal = false">Cancelar</x-ui.button>
+            <x-ui.button variant="ghost" icon="x" @click="orgModal = false">{{ __('ui.directory.organizations.cancel') }}</x-ui.button>
             <x-ui.button variant="primary" icon="check" type="submit" form="org-form" wire:loading.attr="disabled" wire:target="save">
-                <span wire:loading.remove wire:target="save">{{ $editingUlid === null ? 'Crear' : 'Guardar cambios' }}</span>
+                <span wire:loading.remove wire:target="save">{{ $editingUlid === null ? __('ui.directory.organizations.create') : __('ui.directory.organizations.save') }}</span>
                 <span wire:loading wire:target="save" class="spinner" aria-hidden="true"></span>
             </x-ui.button>
         </x-slot:footer>

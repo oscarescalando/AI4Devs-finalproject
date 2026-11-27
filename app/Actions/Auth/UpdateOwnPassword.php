@@ -32,11 +32,13 @@ final readonly class UpdateOwnPassword
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        // Nombres legibles para los mensajes en español (spec/09-ui-estilo §10).
+        // Nombres legibles para los mensajes en español (spec/09-ui-estilo §10);
+        // solo para ESTE validador: el login comparte el campo password con
+        // otra etiqueta, así que no van al catálogo global de attributes.
         $validator->setAttributeNames([
-            'current_password' => 'contraseña actual',
-            'password' => 'contraseña nueva',
-            'password_confirmation' => 'confirmación de contraseña',
+            'current_password' => __('ui.profile.attr_current_password'),
+            'password' => __('ui.profile.attr_password'),
+            'password_confirmation' => __('ui.profile.attr_password_confirmation'),
         ]);
 
         $validated = $validator->validate();
@@ -44,7 +46,7 @@ final readonly class UpdateOwnPassword
         if (! Hash::check($validated['current_password'], $account->password)) {
             // Mensaje genérico: sin pistas sobre la fortaleza de la actual.
             throw ValidationException::withMessages([
-                'current_password' => 'La contraseña actual no es correcta.',
+                'current_password' => __('ui.profile.current_password_wrong'),
             ]);
         }
 

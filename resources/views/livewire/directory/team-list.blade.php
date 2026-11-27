@@ -19,15 +19,15 @@ new #[Layout('components.layouts.panel')] #[Title('Equipos')] class extends Comp
 
 <div class="flex flex-col gap-4">
     <x-ui.page-header
-        title="Equipos"
-        subtitle="Directorio de equipos; su alineación es por evento."
+        :title="__('ui.directory.teams.title')"
+        :subtitle="__('ui.directory.teams.subtitle')"
     />
 
     <x-ui.card padding="none">
         <x-ui.empty-state
             icon="users-round"
-            title="Llega con su pantalla completa en EP-25"
-            text="El listado y el formulario de equipos con miembros autocompletables se construyen en EP-25 (ISSUE-123)."
+            :title="__('ui.events.coming_soon')"
+            :text="__('ui.directory.teams.soon_text')"
         />
     </x-ui.card>
 </div>

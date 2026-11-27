@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Account;
 use App\Models\Entry;
 use App\Models\Event;
+use App\Support\FormatDate;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\RolesPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -192,7 +193,7 @@ it('el listado de eventos muestra la tabla con fecha, estado y acceso al hub', f
     $this->actingAs(routeMapAccount('organizer'))->get(route('events.index'))
         ->assertOk()
         ->assertSee($event->name)
-        ->assertSee($event->date->format('d/m/Y'))
+        ->assertSee(FormatDate::date($event->date))
         ->assertSee('Inscripción'); // estado registration, etiqueta española
 });
 

@@ -6,20 +6,20 @@
 <div class="flex items-center justify-between gap-3">
     <p class="text-xs text-muted" role="status">
         @if ($paginator->total() > 0)
-            {{ $paginator->firstItem() }}–{{ $paginator->lastItem() }} de {{ $paginator->total() }}
+            {{ $paginator->firstItem() }}–{{ $paginator->lastItem() }} {{ __('ui.kit.pagination_of') }} {{ $paginator->total() }}
         @else
-            Sin resultados
+            {{ __('ui.kit.pagination_empty') }}
         @endif
     </p>
 
     @if ($paginator->hasPages())
-        <nav class="flex items-center gap-0.5" aria-label="Paginación">
+        <nav class="flex items-center gap-0.5" aria-label="{{ __('ui.kit.pagination_aria') }}">
             <button
                 type="button"
                 class="page-btn"
                 wire:click="previousPage('{{ $paginator->getPageName() }}')"
                 @if ($paginator->onFirstPage()) disabled @endif
-                aria-label="Página anterior"
+                aria-label="{{ __('ui.kit.pagination_previous') }}"
             >
                 <x-ui.icon name="chevron-left" />
             </button>
@@ -44,7 +44,7 @@
                 class="page-btn"
                 wire:click="nextPage('{{ $paginator->getPageName() }}')"
                 @if (! $paginator->hasMorePages()) disabled @endif
-                aria-label="Página siguiente"
+                aria-label="{{ __('ui.kit.pagination_next') }}"
             >
                 <x-ui.icon name="chevron-right" />
             </button>

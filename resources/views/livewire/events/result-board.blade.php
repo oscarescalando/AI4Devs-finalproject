@@ -25,12 +25,12 @@ new #[Layout('components.layouts.panel')] #[Title('Clasificación')] class exten
 
 <div class="flex flex-col gap-4">
     <x-ui.page-header
-        title="Clasificación"
+        :title="__('ui.events.results_title')"
         subtitle="{{ $event->name }}"
     >
         <x-slot:actions>
             <x-ui.button variant="ghost" icon="eye" href="{{ route('public.event', $event->slug) }}">
-                Ver pública
+                {{ __('ui.panel.view_public') }}
             </x-ui.button>
         </x-slot:actions>
     </x-ui.page-header>
@@ -38,8 +38,8 @@ new #[Layout('components.layouts.panel')] #[Title('Clasificación')] class exten
     <x-ui.card padding="none">
         <x-ui.empty-state
             icon="medal"
-            title="Llega con su pantalla completa en EP-25"
-            text="La clasificación operativa del panel (publicación y cierre de resultados) se construye en EP-25; la proyección pública ya vive en /e/{{ $event->slug }}."
+            :title="__('ui.events.coming_soon')"
+            :text="__('ui.events.results_soon_text', ['slug' => $event->slug])"
         />
     </x-ui.card>
 </div>

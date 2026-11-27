@@ -105,33 +105,33 @@ new #[Layout('components.layouts.public')] class extends Component
             <p class="mt-1 text-sm text-neutral-400">
                 <span class="me-1 inline-flex items-center gap-1 font-medium text-success-400">
                     <span class="size-2 animate-pulse rounded-full bg-success-400"></span>
-                    {{ $status === 'official' ? 'OFICIAL' : 'EN VIVO' }}
+                    {{ $status === 'official' ? __('ui.public.official') : __('ui.public.live') }}
                 </span>
-                · {{ count($rows) }} llegadas · actualiza cada 4 s · <span class="font-mono tabular-nums" x-text="now"></span>
+                · {{ __('ui.public.arrivals', ['count' => count($rows)]) }} · {{ __('ui.public.refresh') }} · <span class="font-mono tabular-nums" x-text="now"></span>
             </p>
         </div>
         <button type="button"
                 class="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm text-neutral-300 hover:bg-neutral-800"
                 x-data
                 @click="document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()">
-            Pantalla completa
+            {{ __('ui.public.fullscreen') }}
         </button>
     </header>
 
     <div class="mb-4 flex flex-wrap gap-3" wire:loading.remove delay>
         <label class="flex items-center gap-2 text-sm text-neutral-400">
-            Categoría
+            {{ __('ui.public.category') }}
             <select wire:model.live="category" class="rounded-lg border border-neutral-700 bg-neutral-900 px-2 py-1.5 text-neutral-100">
-                <option value="">Todas</option>
+                <option value="">{{ __('ui.public.all') }}</option>
                 @foreach ($this->categories() as $cat)
                     <option value="{{ $cat }}">{{ $cat }}</option>
                 @endforeach
             </select>
         </label>
         <label class="flex items-center gap-2 text-sm text-neutral-400">
-            Distancia
+            {{ __('ui.public.distance') }}
             <select wire:model.live="race" class="rounded-lg border border-neutral-700 bg-neutral-900 px-2 py-1.5 text-neutral-100">
-                <option value="">Todas</option>
+                <option value="">{{ __('ui.public.all') }}</option>
                 @foreach ($this->races() as $raceName)
                     <option value="{{ $raceName }}">{{ $raceName }}</option>
                 @endforeach
@@ -140,19 +140,19 @@ new #[Layout('components.layouts.public')] class extends Component
     </div>
 
     <div wire:loading delay class="mb-2 text-sm text-neutral-500" wire:target="refresh">
-        Actualizando…
+        {{ __('ui.public.updating') }}
     </div>
 
     <div class="overflow-x-auto rounded-2xl border border-neutral-800">
         <table class="w-full text-left text-sm sm:text-base">
             <thead class="bg-neutral-900/80 text-xs uppercase tracking-wider text-neutral-400">
                 <tr>
-                    <th scope="col" class="px-4 py-3">Pos</th>
-                    <th scope="col" class="px-4 py-3">Atleta</th>
-                    <th scope="col" class="hidden px-4 py-3 sm:table-cell">Club</th>
-                    <th scope="col" class="hidden px-4 py-3 md:table-cell">Distancia</th>
-                    <th scope="col" class="hidden px-4 py-3 lg:table-cell">Cat</th>
-                    <th scope="col" class="px-4 py-3 text-right">Tiempo</th>
+                    <th scope="col" class="px-4 py-3">{{ __('ui.public.header_pos') }}</th>
+                    <th scope="col" class="px-4 py-3">{{ __('ui.public.header_athlete') }}</th>
+                    <th scope="col" class="hidden px-4 py-3 sm:table-cell">{{ __('ui.public.header_club') }}</th>
+                    <th scope="col" class="hidden px-4 py-3 md:table-cell">{{ __('ui.public.header_race') }}</th>
+                    <th scope="col" class="hidden px-4 py-3 lg:table-cell">{{ __('ui.public.header_category') }}</th>
+                    <th scope="col" class="px-4 py-3 text-right">{{ __('ui.public.header_time') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-neutral-800/70">
@@ -176,7 +176,7 @@ new #[Layout('components.layouts.public')] class extends Component
                 @empty
                     <tr>
                         <td colspan="6" class="px-4 py-10 text-center text-neutral-500">
-                            Sin llegadas todavía{{ $category !== '' || $race !== '' ? ' con estos filtros' : '' }}…
+                            {{ __('ui.public.no_arrivals') }}{{ $category !== '' || $race !== '' ? __('ui.public.with_filters') : '' }}…
                         </td>
                     </tr>
                 @endforelse
@@ -185,6 +185,6 @@ new #[Layout('components.layouts.public')] class extends Component
     </div>
 
     <p class="mt-4 text-xs text-neutral-600">
-        TDChronos · datos públicos por diseño: nombre y club; sin documento, contacto ni nacimiento.
+        {{ __('ui.public.footer') }}
     </p>
 </div>

@@ -10,6 +10,6 @@
 | [TQ-004](TQ-004-rutas-y-navegacion-to-be.md) | Rutas to-be y navegación por evento en el path | hecho | feature | P1 | ISSUE-115 | TQ-001 | 2026-11-27 |
 | [TQ-005](TQ-005-perfil-y-cambio-de-contrasena.md) | Perfil propio y cambio de contraseña con la actual | hecho | feature | P1 | ISSUE-113 | TQ-001 | 2026-11-27 |
 | [TQ-006](TQ-006-pwa-base-instalable.md) | PWA base instalable (manifest + shell offline) | hecho | chore | P1 | ISSUE-114 | TQ-001 | 2026-11-27 |
-| [TQ-007](TQ-007-i18n-es-ve-completo.md) | i18n es-VE completo: todo texto por lang/ | abierto | chore | P2 | ISSUE-118 | TQ-001 | 2026-11-26 |
+| [TQ-007](TQ-007-i18n-es-ve-completo.md) | i18n es-VE completo: todo texto por lang/ | hecho | chore | P2 | ISSUE-118 | TQ-001 | 2026-11-27 |
 | [TQ-008](TQ-008-pruebas-tall-y-ci.md) | Pruebas de la capa TALL y CI del monolito | abierto | test | P1 | ISSUE-116, 117, 109 | TQ-001 | 2026-11-26 |
 | [TQ-009](TQ-009-guia-estilo-ui.md) | Guía de estilo de la interfaz: Blade/Livewire/Tailwind | hecho | docs | P1 | ISSUE-107, 110 | TQ-001 | 2026-11-27 |

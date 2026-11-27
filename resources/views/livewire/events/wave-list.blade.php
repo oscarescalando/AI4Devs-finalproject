@@ -24,13 +24,13 @@ new #[Layout('components.layouts.panel')] #[Title('Oleadas')] class extends Comp
 ?>
 
 <div class="flex flex-col gap-4">
-    <x-ui.page-header title="Oleadas" subtitle="{{ $event->name }}" />
+    <x-ui.page-header :title="__('ui.events.waves_title')" subtitle="{{ $event->name }}" />
 
     <x-ui.card padding="none">
         <x-ui.empty-state
             icon="layers"
-            title="Llega con su pantalla completa en EP-25"
-            text="El listado de oleadas y la reprogramación en bloque se construyen en EP-25 (ISSUE-126)."
+            :title="__('ui.events.coming_soon')"
+            :text="__('ui.events.waves_soon_text')"
         />
     </x-ui.card>
 </div>

@@ -37,23 +37,23 @@ new #[Layout('components.layouts.panel')] #[Title('Inscripciones')] class extend
 ?>
 
 <div class="flex flex-col gap-4">
-    <x-ui.page-header title="Inscripciones" subtitle="{{ $event->name }}" />
+    <x-ui.page-header :title="__('ui.events.entries_title')" subtitle="{{ $event->name }}" />
 
     <x-ui.empty-state
         icon="clipboard-list"
-        title="Llega con su pantalla completa en EP-25"
-        text="Filtros combinados, formulario de inscripción, captura de llegada y exportación se construyen en EP-25 (ISSUE-128 a ISSUE-131)."
+        :title="__('ui.events.coming_soon')"
+        :text="__('ui.events.entries_soon_text')"
     />
 
     <x-ui.card padding="none">
         @if ($entries->isEmpty())
             <x-ui.empty-state
                 icon="users"
-                title="Sin inscritos"
-                text="Este evento todavía no tiene inscripciones."
+                :title="__('ui.events.entries_none_title')"
+                :text="__('ui.events.entries_none_text')"
             />
         @else
-            <x-ui.table :headers="[['label' => 'Dorsal', 'align' => 'right', 'class' => 'mono'], 'Atleta', 'Club']">
+            <x-ui.table :headers="[['label' => __('ui.events.header_bib'), 'align' => 'right', 'class' => 'mono'], __('ui.events.header_athlete'), __('ui.events.header_club')]">
                 @foreach ($entries as $entry)
                     <tr wire:key="entry-{{ $entry->ulid }}">
                         <td class="td-right mono">{{ $entry->bib }}</td>

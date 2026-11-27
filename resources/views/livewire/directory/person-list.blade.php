@@ -19,15 +19,15 @@ new #[Layout('components.layouts.panel')] #[Title('Personas')] class extends Com
 
 <div class="flex flex-col gap-4">
     <x-ui.page-header
-        title="Personas"
-        subtitle="Directorio de personas y cuentas (persona ≠ cuenta)."
+        :title="__('ui.directory.persons.title')"
+        :subtitle="__('ui.directory.persons.subtitle')"
     />
 
     <x-ui.card padding="none">
         <x-ui.empty-state
             icon="users"
-            title="Llega con su pantalla completa en EP-25"
-            text="El listado con PII enmascarada según rol y la gestión de cuentas se construyen en EP-25 (ISSUE-121)."
+            :title="__('ui.events.coming_soon')"
+            :text="__('ui.directory.persons.soon_text')"
         />
     </x-ui.card>
 </div>

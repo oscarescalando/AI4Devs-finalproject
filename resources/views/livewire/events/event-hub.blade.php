@@ -37,7 +37,7 @@ new #[Layout('components.layouts.panel')] #[Title('Evento')] class extends Compo
 <div class="flex flex-col gap-4">
     <x-ui.page-header
         title="{{ $event->name }}"
-        subtitle="Evento del {{ $event->date->format('d/m/Y') }}"
+        :subtitle="__('ui.events.hub_date', ['date' => \App\Support\FormatDate::date($event->date)])"
     >
         <x-slot:actions>
             <x-ui.badge
@@ -48,24 +48,24 @@ new #[Layout('components.layouts.panel')] #[Title('Evento')] class extends Compo
     </x-ui.page-header>
 
     @if ($counts['categories'] === 0 || $counts['waves'] === 0)
-        <x-ui.alert type="warning" title="Falta configuración del evento">
+        <x-ui.alert type="warning" :title="__('ui.events.missing_setup')">
             @if ($counts['categories'] === 0)
                 <p>
-                    Este evento no tiene categorías configuradas.
+                    {{ __('ui.events.no_categories') }}
                     @can('events.manage')
-                        <a href="{{ route('events.categories', $event) }}">Configurar categorías</a>.
+                        <a href="{{ route('events.categories', $event) }}">{{ __('ui.events.configure_categories') }}</a>.
                     @else
-                        La pantalla de configuración llega con EP-25.
+                        {{ __('ui.events.setup_ep25') }}
                     @endcan
                 </p>
             @endif
             @if ($counts['waves'] === 0)
                 <p>
-                    Este evento no tiene oleadas configuradas.
+                    {{ __('ui.events.no_waves') }}
                     @can('events.manage')
-                        <a href="{{ route('events.waves', $event) }}">Configurar oleadas</a>.
+                        <a href="{{ route('events.waves', $event) }}">{{ __('ui.events.configure_waves') }}</a>.
                     @else
-                        La pantalla de configuración llega con EP-25.
+                        {{ __('ui.events.setup_ep25') }}
                     @endcan
                 </p>
             @endif
@@ -73,10 +73,10 @@ new #[Layout('components.layouts.panel')] #[Title('Evento')] class extends Compo
     @endif
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <x-ui.kpi label="Categorías" :value="(string) $counts['categories']" icon="tags" />
-        <x-ui.kpi label="Oleadas" :value="(string) $counts['waves']" icon="layers" />
-        <x-ui.kpi label="Inscritos" :value="(string) $counts['entries']" icon="users" />
-        <x-ui.kpi label="Estado" :value="EventStatus::label($event->status)" icon="activity" />
+        <x-ui.kpi :label="__('ui.events.kpi_categories')" :value="(string) $counts['categories']" icon="tags" />
+        <x-ui.kpi :label="__('ui.events.kpi_waves')" :value="(string) $counts['waves']" icon="layers" />
+        <x-ui.kpi :label="__('ui.events.kpi_entries')" :value="(string) $counts['entries']" icon="users" />
+        <x-ui.kpi :label="__('ui.events.kpi_status')" :value="EventStatus::label($event->status)" icon="activity" />
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -85,10 +85,10 @@ new #[Layout('components.layouts.panel')] #[Title('Evento')] class extends Compo
                 <div class="card-body flex flex-col gap-3">
                     <span class="kpi-icon"><x-ui.icon name="clipboard-list" /></span>
                     <div>
-                        <p class="card-title">Inscripciones</p>
-                        <p class="text-sm text-muted">Inscritos y dorsales del evento.</p>
+                        <p class="card-title">{{ __('ui.events.op_entries') }}</p>
+                        <p class="text-sm text-muted">{{ __('ui.events.op_entries_text') }}</p>
                     </div>
-                    <x-ui.button variant="secondary" icon="arrow-right" href="{{ route('events.entries', $event) }}">Abrir</x-ui.button>
+                    <x-ui.button variant="secondary" icon="arrow-right" href="{{ route('events.entries', $event) }}">{{ __('ui.events.open_section') }}</x-ui.button>
                 </div>
             </div>
         @endcan
@@ -98,10 +98,10 @@ new #[Layout('components.layouts.panel')] #[Title('Evento')] class extends Compo
                 <div class="card-body flex flex-col gap-3">
                     <span class="kpi-icon"><x-ui.icon name="flag" /></span>
                     <div>
-                        <p class="card-title">Salidas</p>
-                        <p class="text-sm text-muted">Confirmaciones y salida real de cada oleada.</p>
+                        <p class="card-title">{{ __('ui.events.op_start') }}</p>
+                        <p class="text-sm text-muted">{{ __('ui.events.op_start_text') }}</p>
                     </div>
-                    <x-ui.button variant="secondary" icon="arrow-right" href="{{ route('events.start', $event) }}">Abrir</x-ui.button>
+                    <x-ui.button variant="secondary" icon="arrow-right" href="{{ route('events.start', $event) }}">{{ __('ui.events.open_section') }}</x-ui.button>
                 </div>
             </div>
         @endcan
@@ -111,10 +111,10 @@ new #[Layout('components.layouts.panel')] #[Title('Evento')] class extends Compo
                 <div class="card-body flex flex-col gap-3">
                     <span class="kpi-icon"><x-ui.icon name="timer" /></span>
                     <div>
-                        <p class="card-title">Registros</p>
-                        <p class="text-sm text-muted">Bitácora de marcas y correcciones.</p>
+                        <p class="card-title">{{ __('ui.events.op_marks') }}</p>
+                        <p class="text-sm text-muted">{{ __('ui.events.op_marks_text') }}</p>
                     </div>
-                    <x-ui.button variant="secondary" icon="arrow-right" href="{{ route('events.marks', $event) }}">Abrir</x-ui.button>
+                    <x-ui.button variant="secondary" icon="arrow-right" href="{{ route('events.marks', $event) }}">{{ __('ui.events.open_section') }}</x-ui.button>
                 </div>
             </div>
         @endcan
@@ -124,10 +124,10 @@ new #[Layout('components.layouts.panel')] #[Title('Evento')] class extends Compo
                 <div class="card-body flex flex-col gap-3">
                     <span class="kpi-icon"><x-ui.icon name="medal" /></span>
                     <div>
-                        <p class="card-title">Clasificación</p>
-                        <p class="text-sm text-muted">Resultados del evento.</p>
+                        <p class="card-title">{{ __('ui.events.op_results') }}</p>
+                        <p class="text-sm text-muted">{{ __('ui.events.op_results_text') }}</p>
                     </div>
-                    <x-ui.button variant="secondary" icon="arrow-right" href="{{ route('events.results', $event) }}">Abrir</x-ui.button>
+                    <x-ui.button variant="secondary" icon="arrow-right" href="{{ route('events.results', $event) }}">{{ __('ui.events.open_section') }}</x-ui.button>
                 </div>
             </div>
         @endcan
