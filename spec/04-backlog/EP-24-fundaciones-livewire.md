@@ -82,7 +82,7 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Layout Blade del panel operativo. El menú se renderiza **desde los permisos reales del usuario en el servidor** (spatie/laravel-permission); ningún rol ni permiso se publica en JS del cliente. Cabecera con cuenta y salir, sidebar, breadcrumbs por página, y branding configurable desde configuración (sin títulos ni logos fijos en código).
 
 **Criterios de aceptación**
-- [ ] Cada entrada del menú exige un permiso; un usuario sin el permiso no ve la entrada **ni puede abrir la ruta** (403 server-side, con prueba).
+- [x] Cada entrada del menú exige un permiso; un usuario sin el permiso no ve la entrada **ni puede abrir la ruta** (403 server-side, con prueba).
 - [ ] Entradas del panel: Eventos, Organizaciones, Personas, Equipos, Liga; entradas operativas por evento: Inscripciones, Salidas, Registros, Clasificación.
 - [ ] Breadcrumbs y título por página; logout con POST y confirmación de sesión.
 - [ ] Branding (nombre, logo, temporada) desde configuración/BD: cambiar de temporada no exige tocar componentes (prueba con dos temporadas).
@@ -99,11 +99,11 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Re-expresión del login web en TALL: la UI web usa **sesión Laravel** (cookie `HttpOnly` + CSRF de la propia app); Sanctum queda para tokens de dispositivos/estaciones (ISSUE-042 heredada conserva ese alcance). Login por documento **o** email + contraseña, `remember`, bloqueo por intentos. Redirección a la ruta intentada sin recarga del shell.
 
 **Criterios de aceptación**
-- [ ] Login/logout funcionales con errores 422 pintados bajo el campo; mensajes genéricos ante credenciales inválidas.
-- [ ] Bloqueo: 5 intentos/min por usuario+IP (prueba automatizada).
-- [ ] Tras login se respeta la ruta intentada (`redirect intended`); sesión expirada (419) → login con mensaje, nunca pantalla en blanco.
-- [ ] Solo cuentas activas inician sesión (persona ≠ cuenta, ADR-015).
-- [ ] Los tokens de dispositivo (estación, móvil, visor) se emiten por `/api/v1` y no comparten la sesión web.
+- [x] Login/logout funcionales con errores 422 pintados bajo el campo; mensajes genéricos ante credenciales inválidas.
+- [x] Bloqueo: 5 intentos/min por usuario+IP (prueba automatizada).
+- [x] Tras login se respeta la ruta intentada (`redirect intended`); sesión expirada (419) → login con mensaje, nunca pantalla en blanco.
+- [x] Solo cuentas activas inician sesión (persona ≠ cuenta, ADR-015).
+- [x] Los tokens de dispositivo (estación, móvil, visor) se emiten por `/api/v1` y no comparten la sesión web.
 
 ---
 

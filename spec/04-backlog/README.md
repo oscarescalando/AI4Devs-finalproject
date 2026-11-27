@@ -19,7 +19,7 @@
 
 | Métrica | Valor |
 |---|---|
-| Issues nuevas | **54** — ISSUE-105…158 |
+| Issues nuevas | **55** — ISSUE-105…159 |
 | Épicas nuevas | 4 — EP-24…EP-27 |
 | P0 nuevas | 21 (ver §6) |
 | Issues heredadas ajustadas por la decisión TALL | ~20 (§3) — ninguna pierde alcance de dominio |
@@ -154,6 +154,7 @@ Issues nuevas que no pertenecen a una sola pantalla (continúan la numeración I
 | ISSUE-156 | Endpoint idempotente de marcas del servidor | feature | P0 | M | `POST /api/v1/events/{e}/timing-marks`: lotes transaccionales, deduplicación por `client_mark_id`, asignación a inscripción por `(event_id, bib)`, huérfanas y respuesta por marca. **Trae al repo el primer corte de ISSUE-067 heredada** | ISSUE-157 |
 | ISSUE-157 | Migraciones del núcleo con pruebas de esquema | feature | P0 | M | Migraciones del núcleo to-be (ADR-015) con **pruebas de esquema escritas antes**: UNIQUE dorsal-evento y persona-evento, CHECK persona XOR equipo, `client_mark_id` UNIQUE, `timing_marks` append-only, FKs físicas | ISSUE-105 |
 | ISSUE-158 | Motor de resultados del servidor | feature | P0 | L | Cálculo de la clasificación en jobs del servidor (`RANK()` sobre `net_ms = llegada − salida + Σ ajustes`), resultados derivados nunca editados a mano y conciliación en vivo ↔ oficial. **Trae al repo el primer corte de ISSUE-074 heredada** | ISSUE-157 |
+| ISSUE-159 | Base de autenticación y matriz de permisos del panel | feature | P0 | M | spatie teams (equipo 0 = plataforma), `accounts.active`, matriz base de roles/permisos del SRS §2 y middleware `permission:` con 403 probado. **Trae al repo las heredadas ISSUE-041/043** | ISSUE-105, ISSUE-157 |
 
 **Checklist verificable de ISSUE-155:**
 
@@ -210,6 +211,22 @@ dentro de este repositorio.
 - [ ] `net_ms` incorpora la hora real de salida de la oleada y los ajustes acumulados (incluye caso > 24 h).
 - [ ] Recalculo por marca en cola; sin bloqueo de la captura (la marca responde aunque el job espere).
 - [ ] `results` jamás se escribe fuera del job (regla de arquitectura Pest Arch).
+
+---
+
+### ISSUE-159 — Base de autenticación y matriz de permisos del panel
+
+| Tipo | Prioridad | Estimación | Labels | Depende de |
+|---|---|---|---|---|
+| feature | P0 | M | `backend`, `auth`, `identity`, `rebuild` | ISSUE-105, ISSUE-157 |
+
+**Descripción.** Trae al repositorio las piezas heredadas (ISSUE-041/043 del corpus) que el login por sesiones y el menú del panel necesitan: spatie/laravel-permission **con teams** (`team_id = event_id`), la columna `accounts.active` (RF-68: solo cuentas activas inician sesión) y la matriz base de roles/permisos global del SRS §2. **Convención de equipos**: el contexto por defecto es el **equipo 0 («plataforma»)**, donde viven los roles globales (superadmin, admin); los roles operativos por evento (organizer, official, timekeeper) se asignan con `team_id = event_id` y un middleware de evento cambia el contexto (ISSUE-115). Permisos base: `events.{view,manage}`, `directory.view`, `accounts.manage`, `championships.view`, `entries.{view,manage}`, `start.manage`, `marks.{view,manage}`, `corrections.manage`, `results.{view,publish}`, `roles.manage`, `platform.manage`.
+
+**Criterios de aceptación**
+- [x] `Account` autentica por sesión web (documento **o** email + contraseña) y porta roles spatie con teams (RF-68/RF-69); los tokens de dispositivo por `/api/v1` siguen intactos.
+- [x] Migración `accounts.active` reversible con prueba de esquema; tablas de spatie con `team_id` (prueba de esquema).
+- [x] Seeder sintético de roles/permisos + cuentas demo por rol; prueba parametrizada de la matriz base por rol.
+- [x] Middleware `permission:`/`role:` registrado; rutas protegidas dan 403 probado por rol.
 
 ---
 

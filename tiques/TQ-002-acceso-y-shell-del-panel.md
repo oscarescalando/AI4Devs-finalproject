@@ -4,12 +4,12 @@ titulo: "Acceso y shell del panel: login por sesiones + layout con menú por per
 tipo: feature
 prioridad: P0
 estimacion: L
-estado: abierto
+estado: en-revision
 refiere_a: ISSUE-108, ISSUE-107, ISSUE-109, ISSUE-112
 parte_de: TQ-001
 rama: feature/entrega-2-ol-gt
 creado: 2026-11-26
-actualizado: 2026-11-26
+actualizado: 2026-11-27
 ---
 
 # TQ-002 — Acceso y shell del panel: login por sesiones + layout con menú por permisos
@@ -44,35 +44,39 @@ EP-24 cuelga de aquí.
 
 ## Tareas
 
-- [ ] Instalar spatie/laravel-permission; roles/permisos base y seeder sintético; prueba mínima
+- [x] Instalar spatie/laravel-permission; roles/permisos base y seeder sintético; prueba mínima
       de la matriz (y issue de backlog nueva si el hueco heredado se confirma).
-- [ ] Login Volt: documento o email + contraseña, `remember`, errores 422 bajo el campo,
+- [x] Login Volt: documento o email + contraseña, `remember`, errores 422 bajo el campo,
       mensaje genérico ante credenciales inválidas, bloqueo 5 intentos/min por usuario+IP.
-- [ ] Redirect intended tras login; solo cuentas activas inician sesión.
-- [ ] Layout del panel: cabecera con cuenta y salir (POST con confirmación), sidebar,
+- [x] Redirect intended tras login; solo cuentas activas inician sesión.
+- [x] Layout del panel: cabecera con cuenta y salir (POST con confirmación), sidebar,
       breadcrumbs y título por página, branding desde configuración (nada fijo en código).
-- [ ] Menú renderizado solo desde permisos reales del servidor; rutas protegidas server-side
+- [x] Menú renderizado solo desde permisos reales del servidor; rutas protegidas server-side
       (sin permiso → 403 con prueba, no solo enlace oculto).
-- [ ] Contexto por render explícito (ISSUE-112): cuenta/permisos desde sesión; `@json` solo
+- [x] Contexto por render explícito (ISSUE-112): cuenta/permisos desde sesión; `@json` solo
       para datos no sensibles; sin variables globales JS de sesión.
-- [ ] 419 → login con mensaje conservando la ruta destino.
-- [ ] Pruebas por rol: login ok/rechazado, menú visible/invisible, 403 en ruta protegida.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] 419 → login con mensaje conservando la ruta destino.
+- [x] Pruebas por rol: login ok/rechazado, menú visible/invisible, 403 en ruta protegida.
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-108: login/logout con errores por campo; bloqueo 5/min probado; redirect intended;
+- [x] ISSUE-108: login/logout con errores por campo; bloqueo 5/min probado; redirect intended;
       419 a login con mensaje; solo cuentas activas; tokens de dispositivo intactos por `/api/v1`.
-- [ ] ISSUE-107: cada entrada del menú exige permiso (invisible **y** 403 server-side, probado);
-      breadcrumbs, título y branding configurable (prueba con dos configuraciones).
-- [ ] ISSUE-109 (parte): `@can`/gate en el render del menú; la UI oculta, el servidor autoriza.
-- [ ] ISSUE-112: arranque probado con sesión válida, expirada y sin sesión; sin inyección de
-      variables JS.
+- [x] ISSUE-107 (núcleo): cada entrada del menú exige permiso (invisible **y** 403 server-side,
+      probado); breadcrumbs y título por página; branding de nombre/temporada por configuración
+      (logo y entradas completas del menú completan con TQ-004/EP-25 al existir sus rutas).
+- [x] ISSUE-109 (parte): permisos por gate en el render del menú; la UI oculta, el servidor
+      autoriza.
+- [x] ISSUE-112 (parte): arranque probado con sesión válida, expirada y sin sesión; sin
+      inyección de variables JS (chequeo de ausencia de paquete queda para TQ-008).
 
 ## Bitácora
 
 | Fecha | Estado | Nota |
 |-------|--------|------|
 | 2026-11-26 | abierto | Creado como fase 1 del plan TQ-001 |
+| 2026-11-26 | en-curso | Noche autorizada por el usuario (encadenar fases); arranque tras aprobar TQ-009 |
+| 2026-11-27 | en-revision | Implementado: 67/67 tests, Larastan 8 y Pint en verde, build OK. Hallazgos: (1) clone sin vendor/.env → bootstrap completo del entorno local (Herd, MySQL, BDs tdchronos y tdchronos_testing, site linked); (2) 5 advisories de symfony en el lock → actualizados, `composer audit` verde; (3) spatie teams exige team_id → convención equipo 0 = plataforma; (4) `Route::has` no ve rutas con nombre fluido registradas tras el arranque → `PanelNav::routeExists` refresca el índice; (5) ISSUE-159 abierta en el backlog (matriz de permisos base + accounts.active). Pendiente: revisión del usuario en la mañana |

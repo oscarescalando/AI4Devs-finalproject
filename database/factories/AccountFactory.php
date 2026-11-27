@@ -19,6 +19,13 @@ class AccountFactory extends Factory
             'person_id' => Person::factory(),
             'email' => fake()->unique()->safeEmail(),
             'password' => Hash::make('password'),
+            'active' => true,
         ];
+    }
+
+    /** Cuenta desactivada: RF-68 la rechaza en el login. */
+    public function inactive(): static
+    {
+        return $this->state(fn () => ['active' => false]);
     }
 }

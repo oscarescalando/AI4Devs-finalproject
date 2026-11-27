@@ -44,6 +44,26 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('tdchronos-admin-2026'),
         ]);
 
+        // --- Roles y permisos base (ISSUE-159) + cuentas demo por rol ---
+        $this->call(RolesPermissionsSeeder::class);
+
+        Account::query()->where('email', 'admin@tdchronos.test')->first()?->assignRole('superadmin');
+
+        foreach ([['organizer', 'organizador'], ['timekeeper', 'cronometrador']] as [$role, $slug]) {
+            $person = Person::query()->create([
+                'document' => 'V-0000000'.(2 + array_search($role, ['organizer', 'timekeeper'], true)),
+                'first_name' => ucfirst($slug),
+                'last_name' => 'TDChronos',
+                'birthdate' => '1990-01-01',
+                'gender' => 'X',
+            ]);
+            Account::query()->create([
+                'person_id' => $person->id,
+                'email' => $slug.'@tdchronos.test',
+                'password' => Hash::make('tdchronos-'.$slug.'-2026'),
+            ])->assignRole($role);
+        }
+
         // --- Directorio sintético ---
         $region = Region::query()->create(['name' => 'Distrito Capital']);
         $clubs = [

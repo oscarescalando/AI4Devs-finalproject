@@ -51,7 +51,8 @@ PWA base, i18n y CI.
 
 ## Siguiente paso
 
-Ejecutar TQ-002 (acceso y shell del panel): sin login no hay panel que probar para el resto.
+TQ-002 implementado (en revisión); continuar con TQ-003 (kit CRUD y estados de carga/error),
+que necesita el layout y los permisos ya en pie.
 
 ## Criterios de aceptación
 

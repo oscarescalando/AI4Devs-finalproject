@@ -3,6 +3,15 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.7.0] - 2026-11-27
+### 🚀 Agregado
+- **Acceso y shell del panel** (TQ-002 · ISSUE-108 completa, ISSUE-159 nueva en el backlog): login por sesiones en Volt (documento **o** correo + contraseña, remember, bloqueo 5/min por usuario+IP con mensaje de reintentos, redirect intended, solo cuentas activas), logout por POST con invalidación de sesión y **419 → login con mensaje conservando el destino** (HttpException capturado tras la conversión de TokenMismatch).
+- **Roles y permisos** (RF-69): spatie/laravel-permission con teams — convención **equipo 0 = plataforma** para roles globales (superadmin, admin, organizer, official, timekeeper, athlete; los por evento usarán `team_id = event_id`) —, migración `accounts.active` reversible, `RolesPermissionsSeeder` con la matriz base del SRS §2 y cuentas demo por rol; middleware `role:`/`permission:` registrados.
+- **Layout del panel** (ISSUE-107, núcleo): sidebar 264px con menú generado desde `config/tc-ui.nav` filtrado por ruta existente y permiso real (`PanelNav`), header sticky con título/breadcrumb/tema/avatar+salir, branding por configuración y modo oscuro persistido (arranque en oscuro). `Account` ahora `Authenticatable` + `Authorizable` + `HasRoles`.
+- **Base visual de la guía** (`spec/09-ui-estilo.md`): tokens `@theme` (chrono sky · live ámbar · semánticos) + `theme.css` con variables `--tc-*` (botones, formularios, tarjetas, badges, alertas, skeleton/spinner, shell sidebar/header, login guest); iconos Lucide (`x-ui.icon`, `tcRenderIcons`); páginas de error 403/404/419/500 propias; locale `es` con `lang/es/auth.php`.
+- Pruebas: 67 (21 nuevas — login completo, menú por permisos, 403 por rol, matriz SRS, esquema de permisos); ISSUE-108 marcada en EP-24.
+- Entorno local macOS/Herd documentado en bitácora del tique: dependencias symfony actualizadas (`composer audit` verde).
+
 ## [0.6.1] - 2026-11-26
 ### 📝 Documentación
 - Guía de estilo de la interfaz `spec/09-ui-estilo.md` (TQ-009, ISSUE-107/110): principios, stack, tokens con valores (chrono sky · live ámbar · mono tabular para cronometraje), layout del panel, inventario del kit `x-ui.*` con API de props y componentes de dominio (`time-cell`, `bib`, `delta`, `live-indicator`), estados, iconos Lucide, formato de datos, WCAG 2.1 AA, i18n y pantallas públicas. Arquitectura adaptada del sistema de diseño previo del equipo con identidad TDChronos; registrada en el mapa de artefactos de `spec/README.md` §5.
