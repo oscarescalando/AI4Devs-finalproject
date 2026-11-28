@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Auth\LogoutController;
 use App\Livewire\Directory\ManageOrganizations;
+use App\Livewire\Events\CategoryManager;
 use App\Livewire\Events\EventList;
+use App\Livewire\Events\WaveManager;
 use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
@@ -75,9 +77,13 @@ Volt::route('/events/{event}/arrivals', 'events.arrival-capture')->name('events.
     ->middleware(['auth', 'permission:marks.manage']);
 Volt::route('/events/{event}/results', 'events.result-board')->name('events.results')
     ->middleware(['auth', 'permission:results.view']);
-Volt::route('/events/{event}/categories', 'events.category-list')->name('events.categories')
+// Configuración del evento (ISSUE-160 fase 2, TQ-026): editores de
+// categorías y oleadas + reprogramación en bloque (ISSUE-050) — dejan de
+// ser placeholders Volt; CRUD con acciones = clase Livewire (convención
+// del proyecto), mismo nombre de ruta y mismo permiso de gestión.
+Route::get('/events/{event}/categories', CategoryManager::class)->name('events.categories')
     ->middleware(['auth', 'permission:events.manage']);
-Volt::route('/events/{event}/waves', 'events.wave-list')->name('events.waves')
+Route::get('/events/{event}/waves', WaveManager::class)->name('events.waves')
     ->middleware(['auth', 'permission:events.manage']);
 
 Volt::route('/directory/persons', 'directory.person-list')->name('directory.persons')

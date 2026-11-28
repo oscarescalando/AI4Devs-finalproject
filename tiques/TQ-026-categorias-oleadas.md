@@ -4,7 +4,7 @@ titulo: "Editor de categorías y oleadas + reprogramación en bloque"
 tipo: feature
 prioridad: P1
 estimacion: L
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-160
 parte_de: TQ-024
 rama: feature/entrega-2-ol-gt
@@ -36,20 +36,20 @@ más la reprogramación en bloque de oleadas (hora inicial + intervalo) con una 
 
 ## Tareas
 
-- [ ] Categorías: lista + modal (nombre, rango según columnas reales), validaciones de
+- [x] Categorías: lista + modal (nombre, rango según columnas reales), validaciones de
       coherencia (solapamientos/sin huecos según reglas del esquema), 403 por rol.
-- [ ] Oleadas: lista por carrera + modal (nombre, hora programada con ms), alta/baja
+- [x] Oleadas: lista por carrera + modal (nombre, hora programada con ms), alta/baja
       (baja bloqueada con inscripciones).
-- [ ] Reprogramación en bloque: hora inicial + intervalo en minutos → recalcula las oleadas
+- [x] Reprogramación en bloque: hora inicial + intervalo en minutos → recalcula las oleadas
       de UNA carrera en orden, UNA sola operación transaccional (ISSUE-050).
-- [ ] Pruebas por rol, validaciones, bloqueos y bloque coherente.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Pruebas por rol, validaciones, bloqueos y bloque coherente.
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-160 completa: evento configurable de punta a punta desde el panel.
+- [x] ISSUE-160 completa: evento configurable de punta a punta desde el panel.
 
 ## Bitácora
 
@@ -57,3 +57,4 @@ más la reprogramación en bloque de oleadas (hora inicial + intervalo) con una 
 |-------|--------|------|
 | 2026-11-28 | abierto | Creado como fase 2 del plan TQ-024 |
 | 2026-11-28 | en-curso | Delegado a subagent (orquestador); noche autónoma |
+| 2026-11-28 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 350/350 (37 nuevas) · humo 302 en ambas rutas. Columnas reales respetadas (categories: name/for_teams/min-max_age SIN género — solapamiento validado por token de nombre documentado en CategoryRange; waves: nombre único por carrera, ms, actual intocable RF-15). Bloque transaccional con lockForUpdate y confirmación de N oleadas |

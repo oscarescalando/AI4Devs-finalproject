@@ -168,13 +168,15 @@ it('inscripciones lista dorsales y atletas con el contrato público del roster',
         ->and($html)->not->toContain((string) $first->person->document);
 });
 
-it('las configuraciones sin pantalla avisan que llegan con EP-25', function (string $name) {
+it('las pantallas de categorías y oleadas exigen events.manage y renderizan su editor', function (string $name) {
     $event = routeMapEvent();
-    $organizer = routeMapAccount('organizer');
 
-    $this->actingAs($organizer)->get(route($name, $event))
+    // El cronometrador opera marcas, no configuración: 403 (ISSUE-160/TQ-026).
+    $this->actingAs(routeMapAccount('timekeeper'))->get(route($name, $event))->assertForbidden();
+
+    $this->actingAs(routeMapAccount('organizer'))->get(route($name, $event))
         ->assertOk()
-        ->assertSee('Llega con su pantalla completa en EP-25');
+        ->assertSee($event->name);
 })->with(['events.categories', 'events.waves']);
 
 it('las pantallas de directorio y liga avisan su llegada', function () {

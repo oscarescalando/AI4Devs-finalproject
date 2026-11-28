@@ -27,6 +27,6 @@
 | [TQ-021](TQ-021-shell-y-captura.md) | Shell de la estación: emparejamiento + captura en IndexedDB | hecho | feature | P0 | ISSUE-147, 148 | TQ-020 | 2026-11-28 |
 | [TQ-022](TQ-022-sync-idempotente.md) | Sync idempotente por lotes + reloj con offset | hecho | feature | P0 | ISSUE-149, 150 | TQ-020 | 2026-11-28 |
 | [TQ-023](TQ-023-e2e-offline.md) | E2E offline de la estación (Playwright) y doble envío | hecho | test | P0 | ISSUE-152 | TQ-020 | 2026-11-28 |
-| [TQ-024](TQ-024-configuracion-eventos.md) | Configuración de eventos (F2 · ISSUE-160) | abierto | plan | P1 | ISSUE-160 | — | 2026-11-28 |
+| [TQ-024](TQ-024-configuracion-eventos.md) | Configuración de eventos (F2 · ISSUE-160) | hecho | plan | P1 | ISSUE-160 | — | 2026-11-28 |
 | [TQ-025](TQ-025-crud-eventos-carreras.md) | CRUD de eventos y carreras | hecho | feature | P1 | ISSUE-160 | TQ-024 | 2026-11-28 |
-| [TQ-026](TQ-026-categorias-oleadas.md) | Editor de categorías y oleadas + reprogramación en bloque | en-curso | feature | P1 | ISSUE-160 | TQ-024 | 2026-11-28 |
+| [TQ-026](TQ-026-categorias-oleadas.md) | Editor de categorías y oleadas + reprogramación en bloque | hecho | feature | P1 | ISSUE-160 | TQ-024 | 2026-11-28 |

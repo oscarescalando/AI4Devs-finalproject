@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.25.0] - 2026-11-28
+### 🚀 Agregado
+- **Editor de categorías y oleadas + reprogramación en bloque** (TQ-026 · ISSUE-160/ISSUE-050, cierra EP-05 en panel):  y  reales con validaciones de coherencia de rangos (token de género documentado), horas con milisegundos ( pared del evento ↔ zona de la app;  intocable RF-15), borrados bloqueados por inscripciones, y **reprogramación en bloque** de las oleadas de una carrera (hora inicial + intervalo) en una transacción con  y confirmación de N afectadas.
+- Suite a **350 tests** (37 nuevas).
+
 ## [0.24.0] - 2026-11-28
 ### 🚀 Agregado
 - **CRUD de eventos y carreras** (TQ-025 · ISSUE-160 fase 1): listado real con búsqueda/orden/paginación y counts, modal de alta/edición con repeater de carreras (mismo nombre de ruta, clase Livewire por convención CRUD), slug autogenerado en servidor, carreras en la misma transacción con retiro bloqueado por inscripciones u oleadas (rollback total y error de negocio), estado validado contra `EventStatus::STATUSES` y edición desde el hub. Sin borrado de eventos (se cierran — DEFER).

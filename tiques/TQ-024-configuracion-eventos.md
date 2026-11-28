@@ -4,7 +4,7 @@ titulo: "Configuración de eventos (F2 · EP-05/ISSUE-160)"
 tipo: plan
 prioridad: P1
 estimacion: XL
-estado: abierto
+estado: hecho
 refiere_a: ISSUE-160
 parte_de: —
 rama: feature/entrega-2-ol-gt
@@ -29,20 +29,22 @@ servidor.
 ## Fases
 
 - [x] [TQ-025](TQ-025-crud-eventos-carreras.md) — CRUD de eventos y carreras
-- [ ] [TQ-026](TQ-026-categorias-oleadas.md) — Editor de categorías y oleadas + reprogramación en bloque
+- [x] [TQ-026](TQ-026-categorias-oleadas.md) — Editor de categorías y oleadas + reprogramación en bloque
 
 ## Siguiente paso
 
-Ejecutar TQ-026 (categorías, oleadas y reprogramación en bloque).
+Plan COMPLETO (2/2): ISSUE-160/EP-05 cerrada en su versión panel. Siguiente: EP-06 directorio
+(paso 5 de la noche).
 
 ## Criterios de aceptación
 
-- [ ] Un evento nuevo nace completo desde el panel (evento + carreras) y se edita.
-- [ ] Categorías y oleadas editables con validaciones; reprogramación en bloque probada.
-- [ ] Suite completa en verde; permisos events.manage con 403 probado.
+- [x] Un evento nuevo nace completo desde el panel (evento + carreras) y se edita.
+- [x] Categorías y oleadas editables con validaciones; reprogramación en bloque probada.
+- [x] Suite completa en verde (350/350); permisos events.manage con 403 probado.
 
 ## Bitácora
 
 | Fecha | Estado | Nota |
 |-------|--------|------|
 | 2026-11-28 | abierto | Creado en la noche autónoma; ISSUE-160 traída al backlog |
+| 2026-11-28 | hecho | Cerrado: TQ-025 (0.24.0) + TQ-026 (0.25.0). DEFERs: columnas distance/type en races (cambio de esquema con spec), cierre de evento como máquina de estados (ISSUE-124), borrado (se cierran) |
