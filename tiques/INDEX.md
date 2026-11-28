@@ -18,4 +18,4 @@
 | [TQ-012](TQ-012-captura-de-llegadas.md) | Captura de llegadas en vivo | hecho | feature | P0 | ISSUE-130 | TQ-011 | 2026-11-27 |
 | [TQ-013](TQ-013-salidas.md) | Salidas: tablero con reloj y salida real de oleada | hecho | feature | P1 | ISSUE-132, 133 | TQ-011 | 2026-11-27 |
 | [TQ-014](TQ-014-bitacora-y-correccion.md) | Registros: bitácora en vivo y corrección 1/2/3 | hecho | feature | P1 | ISSUE-134, 135 | TQ-011 | 2026-11-27 |
-| [TQ-015](TQ-015-ranking-panel.md) | Ranking del panel: clasificación del evento | abierto | feature | P1 | ISSUE-137 | TQ-011 | 2026-11-27 |
+| [TQ-015](TQ-015-ranking-panel.md) | Ranking del panel: clasificación del evento | en-curso | feature | P1 | ISSUE-137 | TQ-011 | 2026-11-27 |
