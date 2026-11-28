@@ -1,0 +1,28 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "test:e2e": "php artisan migrate:fresh --seed && playwright test tests/e2e/smoke.spec.js",
+        "test:e2e:station": "php artisan migrate:fresh --seed && playwright test tests/e2e/station-offline.spec.js"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.65.1",
+        "@tailwindcss/vite": "^4.0.0",
+        "concurrently": "^10.0.3",
+        "laravel-vite-plugin": "^3.1",
+        "playwright": "^1.65.1",
+        "tailwindcss": "^4.0.0",
+        "vite": "^8.0.0"
+    },
+    "optionalDependencies": {
+        "@laravel/multiplex": "^0.4.1"
+    },
+    "dependencies": {
+        "laravel-echo": "2.6.3",
+        "lucide": "^1.81.0",
+        "pusher-js": "8.6.0"
+    }
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Sin conexión · TDChronos</title>
+    <!--
+        Pantalla offline del shell (ISSUE-114, TQ-006): autocontenida, sin
+        assets externos — el SW la sirve sin red. Colores por token del
+        spec/09-ui-estilo §1.2: fondo neutral-950, botón primary-600, texto
+        neutral; tema oscuro (§1.6).
+    -->
+    <style>
+        :root { color-scheme: dark; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 1.5rem;
+            background: #020617;
+            color: #e2e8f0;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            text-align: center;
+        }
+        h1 { margin: 0 0 .5rem; font-size: 1.25rem; color: #f8fafc; }
+        p { margin: 0 0 1.5rem; line-height: 1.6; color: #94a3b8; }
+        button {
+            padding: .625rem 1.5rem;
+            border: 0;
+            border-radius: .5rem;
+            background: #0284c7;
+            color: #ffffff;
+            font-size: .9375rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button:focus-visible { outline: 2px solid #38bdf8; outline-offset: 2px; }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Sin conexión</h1>
+        <p>TDChronos necesita red para esta pantalla. Reintenta cuando vuelvas la conexión.</p>
+        <button type="button" onclick="location.reload()">Reintentar</button>
+    </main>
+</body>
+</html>

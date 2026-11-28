@@ -2,15 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Estado del repositorio (Entrega 1)
+## Estado del repositorio (Entrega 2 — fundaciones y núcleo del primer corte)
 
 TDChronos 2.0: plataforma de cronometraje, resultados en vivo y liga de carreras de calle, trail y OCR. Proyecto final de AI4Devs de Oscar Lobo y Gabriel Toro.
 
-**Este repositorio aún no contiene código de aplicación.** La Entrega 1 es especificación pura (Specification-Driven Development); la construcción de código arranca con la fase F1 del roadmap. Lo que existe:
+**Ya hay código**: el esqueleto Laravel 13 + PHP 8.4 está montado (ISSUE-105) con el núcleo del primer corte:
 
-- `spec/` — fuente única de verdad del producto y la arquitectura: PRD (01), SRS (02), ADRs 010–018 (03-arquitectura/), épicas EP-24…27 con issues ISSUE-105…155 (04-backlog/), DoD G1–G15 (05), invariantes INV-01…14 (06), estrategia de pruebas (07), roadmap fases F1–F4 e hitos M0–M6 (08).
-- `readme.md` — documento de entrega con la plantilla AI4Devs (arquitectura, modelo de datos, OpenAPI de `/api/v1`, HU y tickets de ejemplo).
-- `prompts.md` — prompts del curso, uno por sección del readme.
+- `spec/` — fuente única de verdad: PRD (01), SRS (02), ADRs 010–018 (03-arquitectura/), épicas EP-24…27 con issues ISSUE-105…158 (04-backlog/), DoD G1–G15 (05), invariantes INV-01…14 (06), estrategia de pruebas (07), roadmap F1–F4 (08).
+- **Migraciones del núcleo (ISSUE-157)**: `persons`+`accounts` (persona ≠ cuenta), `events`/`races`/`waves`/`categories`, `entries` con UNIQUE dorsal/persona-evento y CHECK XOR, `timing_marks` append-only con triggers que rechazan UPDATE/DELETE, `entry_adjustments`, `timing_mark_corrections`, `results`. PK `bigint` + ULID `char(26)` público (trait `App\Models\Concerns\HasPublicUlid`); sin tablas de liga (v2).
+- **API `/api/v1` (ISSUE-156)**: `GET /time`, `POST /events/{ulid}/timing-marks` (idempotente por `client_mark_id`, transaccional por lote) y `GET /events/{ulid}/entries` (roster público). Auth Sanctum con abilities `device:marks`/`device:roster`; controladores → Actions (ADR-012).
+- **UI TALL (ISSUE-106)**: Livewire 4 + Volt + Alpine + Tailwind 4 vía Vite. Convención: **pantallas = componentes Volt funcionales** en `resources/views/livewire/`; **CRUD con acciones = clases Livewire** en `app/Livewire/`. Layouts anónimos en `resources/views/components/layouts/`.
+- **Pantalla pública `/e/{slug}`** (ISSUE-137, corte 1): clasificación en vivo con sondeo `wire:poll.4s` al leaderboard, filtros por categoría/distancia, resaltado de llegadas nuevas, reloj, modo kiosco y sin PII (INV-06). Landing `/` con los eventos.
+- **Motor de resultados (ISSUE-158)**: `RecalculateEventResults` + job `afterCommit` por cada lote de marcas; `results` solo se escribe desde el motor (regla Pest Arch).
+- Seeders 100 % sintéticos: evento demo `vuela-caracas-21k` con 114 inscritos y admin bootstrap (`admin@tdchronos.test`).
+- **Panel operativo (noche 27/11, plan TQ-001 completo)**: login por sesiones (documento o correo, bloqueo 5/min, intended, 419→login), roles/permisos spatie teams con **equipo 0 = plataforma** (ISSUE-159), layout con menú por permisos reales y tema oscuro, kit `x-ui.*` completo con toasts/confirmación, CRUD demo Organizaciones, mapa de rutas to-be (`/events/{ulid}/…` con `permission:`), perfil con invalidación de sesiones, PWA base (manifest + SW + offline), i18n es total (`lang/es/ui.php`, `FormatDate`, chequeo anti-literales) y CI de GitHub Actions con los 8 gates + Playwright smoke. **Día de carrera (rebanada crítica EP-25, TQ-011 completa)**: captura de llegadas `/events/{ulid}/arrivals` (solo teclado, idempotente, huérfanas visibles), tablero de salidas con reloj resincronizado y salida real/deshacer, bitácora `/marks` con estados derivados y corrección 1/2/3 (`EffectiveMarks`: la última corrección decide; marca original intacta), ranking del panel `/results` leyendo `results` (INV-07). **Tiempo real (EP-26, plan TQ-016)**: Reverb + Redis/Horizon, canales `event.{ulid}.public/ops` autorizados, eventos de dominio tras commit (`mark.recorded`, `wave.started/undone`, `results.updated`) con puente `tcBridge`, live-indicator y sondeo de respaldo 15 s; broadcast *best-effort* (`ShouldRescue`, enmienda ADR-013). **F2 de sesión (planes TQ-024/027/029/033)**: CRUD de eventos+carreras y editores de categorías/oleadas con reprogramación en bloque (ISSUE-160), directorio de personas/equipos con PII enmascarada (ISSUE-161), inscripciones con categoría automática previsualizada y dorsal automático (ISSUE-162), cierre del evento con guardas + planilla PDF por inscripción con dompdf y `ops:backup` + runbook (`docs/procesos/runbook-operacion.md`, ISSUE-163). **Estación offline (EP-27, plan TQ-020)**: `/station` sin sesión con token `device:marks`, captura en IndexedDB con `client_mark_id` uuidv7 de cliente, sync idempotente por lotes con backoff y reloj por offset; suite `test:e2e:station` certifica el ciclo offline (INV-02). Entorno: Herd (`ai4devs-finalproject.test`) o Laragon.
+- Calidad: Pest (**458 tests** contra MySQL real: esquema + API + resultados + pantallas + arquitectura + rutas + PWA + i18n + captura/salidas/correcciones + canales/caos), Larastan nivel 8 limpio, Pint aplicado, Playwright smoke 3/3 + estación offline 3/3, `composer audit` limpio.
+- **Registro de trabajo**: carpeta `tiques/` — un tique `TQ-NNN` por actividad (plan + fases), con plantilla única, bitácora e índice en `tiques/INDEX.md`; lo gestiona el skill `tiques-gestionar`. Nada de trabajo sin tique.
 
 `spec/README.md` §5 mapea cada tipo de artefacto al archivo donde vive; §3 define el ciclo SDD; §4 recoge las reglas de oro del arranque limpio.
 
@@ -40,27 +47,33 @@ Monolito modular: Laravel 13 + PHP 8.4, MySQL 8.4, Redis 7, Horizon, Reverb, San
 
 ## Comandos
 
-En esta rama no hay nada que compilar, lintar ni probar: no existen composer.json, artisan ni suites ejecutables. El tooling exacto (invocación de Pest, de un test concreto y de Playwright) se fija en F1. Los comandos comprometidos en la documentación de entrega son:
+Entorno local (Laragon, PHP 8.4 en `C:\laragons\bin\php\php-8.4.16-Win32-vs17-x64`):
 
 ```bash
-# Instalación limpia prometida en readme.md (cuando exista el código)
 composer install && npm install
-cp .env.example .env
+cp .env.example .env            # y ajustar credenciales MySQL
 php artisan key:generate
-php artisan migrate --seed        # BD desde cero + datos sintéticos + usuarios nuevos
-npm run dev                       # o npm run build
-docker compose up -d              # stack completo: app, MySQL 8.4, Redis, Reverb, Horizon
+php artisan migrate --seed      # BD desde cero + evento demo (114 inscritos) + admin bootstrap
+npm run build                   # o npm run dev
 
-# Demo reproducible
-php artisan migrate:fresh --seed  # deja un entorno demo utilizable
+# Calidad (en este orden, como los gates de CI)
+./vendor/bin/pint               # estilo
+./vendor/bin/phpstan analyse    # Larastan nivel 8 (app + database)
+./vendor/bin/pest               # 26 tests contra MySQL real (crea tdchronos_testing)
+```
+
+La BD de desarrollo es `tdchronos` (MySQL 8.0 de Laragon); Pest usa `tdchronos_testing`. Admin demo: `admin@tdchronos.test` / `tdchronos-admin-2026` (sintético).
+
+```bash
+php artisan serve          # y abrir /  o  /e/vuela-caracas-21k
 ```
 
 ## Git y commits
 
-- Una rama `feature/entrega-N-<iniciales>` por entrega (actual: `feature/entrega-1-ol-gt`), integrada a `main` por PR; el código seguirá una PR por épica. Toda PR debe cumplir la DoD G1–G15.
+- Una rama `feature/entrega-N-<iniciales>` por entrega (actual: `feature/entrega-2-ol-gt`), integrada a `main` por PR; el código seguirá una PR por épica. Toda PR debe cumplir la DoD G1–G15.
 - Conventional Commits **en español y sin metadatos de autoría** (nada de Co-Authored-By, Signed-off-by ni «Generated with»). Un hook PreToolUse (`.claude/hooks/validate-commit.sh`) bloquea cualquier `git commit` con esos trailers y escanea el stage en busca de secretos.
 - El flujo completo de commit (verificar cambios, escanear secretos, redactar mensaje, bump SemVer, CHANGELOG, push) está automatizado en el skill `commit`.
 
 ## Nota sobre `.claude/`
 
-Los agentes (`agente-python`, `agente-laravel`, `agente-documentacion`, `orquestador`) y los skills `arq-planificar` y `docs-*` proceden del proyecto anterior del curso (microservicio de pagos) y mencionan rutas que aquí no existen (`payment_service/`, `docs/python`, `docs/laravel`): no apliques esas referencias de archivos. Vigente de esa configuración: el hook `validate-commit.sh`, el skill `commit` y los permisos de git de `settings.json`.
+Vigente y adaptado a este repositorio: el hook `validate-commit.sh` (bloquea autoría y secretos en commits), el skill `commit` (flujo completo de commit), el skill `spec-gestionar` (control de cambios de `spec/` con su mapa de artefactos), el skill `tiques-gestionar` (registro y control del trabajo en `tiques/` con plantilla única) y el skill `memoria-gestionar`. El agente `orquestador` (`.claude/agents/orquestador.md`) coordina el trabajo por tiques: valida la fase cerrada, delega implementación a subagentes, corre los gates de calidad y commitea. Los agentes y skills del proyecto anterior del curso (microservicio de pagos) fueron eliminados en la entrega 2 tras el feedback de la entrega 1.

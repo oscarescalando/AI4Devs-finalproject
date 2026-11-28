@@ -136,9 +136,9 @@ Reglas estrictas del mensaje:
   cabecera y cada `-m` adicional un párrafo/bullet del cuerpo.
 
 ```bash
-git commit -m "feat(pay): compensación de residual en moneda del pago" \
-  -m "- Python + Laravel: paymentreport n=99 en la moneda propia del pago." \
-  -m "- Evita IGTF/mixto al liquidar residuales < 0.009 USD."
+git commit -m "feat(cronometraje): endpoint idempotente de marcas por lotes" \
+  -m "- Deduplica por client_mark_id dentro de una transaccion por lote." \
+  -m "- Dorsal desconocido queda como marca huerfana con entry_id null."
 ```
 
 Si hay `BREAKING CHANGE`, el último `-m` empieza con `BREAKING CHANGE: descripción`.

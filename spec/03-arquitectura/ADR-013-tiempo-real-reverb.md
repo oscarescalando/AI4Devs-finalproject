@@ -79,6 +79,22 @@ Tiempo real con **Laravel Reverb**, con estas **reglas obligatorias**:
 | Requiere | ADR-010 (Reverb nativo), ADR-011 (consumo desde Livewire) |
 | Verificación | DoD "evento/broadcast" en [../05-dod.md §2](../05-dod.md) |
 
+---
+
+## Enmienda (2026-11-27): el broadcast es *best-effort* (`ShouldRescue`)
+
+**Hallazgo del caos (TQ-019, ISSUE-145):** con la cola `broadcast` caída, la excepción del push
+del `BroadcastEvent` escapaba por los callbacks `afterCommit` (fuera de la transacción) y la
+respuesta del lote devolvía 500 **aunque las marcas ya estaban persistidas** — violación directa
+de INV-08/RF-74.
+
+**Decisión:** los eventos de dominio con broadcast (`MarkRecorded`, `WaveStarted`, `WaveUndone`,
+`ResultsUpdated`) implementan además `ShouldRescue`: el mecanismo nativo del framework rescata
+la excepción (con `report()`, visible en logs) y el broadcast queda **best-effort** — un fallo de
+emisión jamás rompe la petición ni pierde la marca. El recálculo y la persistencia siguen su
+curso; la pantalla degrada a sondeo (RF-76). El aislamiento de la cola `broadcast` (payloads
+venenosos en `failed_jobs`) quedó probado en `tests/Feature/Broadcasting/ChaosTest.php`.
+
 ## Cumplimiento verificable
 
 - Los eventos de dominio que se emiten implementan `ShouldQueue` + `ShouldDispatchAfterCommit`; prueba de arquitectura

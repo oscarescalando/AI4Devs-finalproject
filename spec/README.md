@@ -93,6 +93,7 @@ TDChronos 2.0 es una **reconstrucción desde cero**. Estas reglas rigen todo el 
 | **Modelo de datos** | [02-srs.md](02-srs.md) §5.1 y [03-arquitectura/ADR-015-modelo-datos.md](03-arquitectura/ADR-015-modelo-datos.md); resumen con diagrama en `readme.md` §3 |
 | **API `/api/v1`** | [02-srs.md](02-srs.md) §5.3 (contrato) y §6 (interfaces); decisión en [03-arquitectura/ADR-012-api-solo-no-web.md](03-arquitectura/ADR-012-api-solo-no-web.md); resumen con OpenAPI en `readme.md` §4 |
 | **Roadmap, fases e hitos** (M0–M6) | [08-roadmap.md](08-roadmap.md) |
+| **Guía de estilo de la interfaz** (tokens, componentes `x-ui.*`, estados, iconos) | [09-ui-estilo.md](09-ui-estilo.md) |
 | **Tickets de ejemplo para la entrega** | `readme.md` §6 |
 | **Prompts del curso** | `prompts.md` (raíz del repositorio) |
 

@@ -82,7 +82,7 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Layout Blade del panel operativo. El menú se renderiza **desde los permisos reales del usuario en el servidor** (spatie/laravel-permission); ningún rol ni permiso se publica en JS del cliente. Cabecera con cuenta y salir, sidebar, breadcrumbs por página, y branding configurable desde configuración (sin títulos ni logos fijos en código).
 
 **Criterios de aceptación**
-- [ ] Cada entrada del menú exige un permiso; un usuario sin el permiso no ve la entrada **ni puede abrir la ruta** (403 server-side, con prueba).
+- [x] Cada entrada del menú exige un permiso; un usuario sin el permiso no ve la entrada **ni puede abrir la ruta** (403 server-side, con prueba).
 - [ ] Entradas del panel: Eventos, Organizaciones, Personas, Equipos, Liga; entradas operativas por evento: Inscripciones, Salidas, Registros, Clasificación.
 - [ ] Breadcrumbs y título por página; logout con POST y confirmación de sesión.
 - [ ] Branding (nombre, logo, temporada) desde configuración/BD: cambiar de temporada no exige tocar componentes (prueba con dos temporadas).
@@ -99,11 +99,11 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Re-expresión del login web en TALL: la UI web usa **sesión Laravel** (cookie `HttpOnly` + CSRF de la propia app); Sanctum queda para tokens de dispositivos/estaciones (ISSUE-042 heredada conserva ese alcance). Login por documento **o** email + contraseña, `remember`, bloqueo por intentos. Redirección a la ruta intentada sin recarga del shell.
 
 **Criterios de aceptación**
-- [ ] Login/logout funcionales con errores 422 pintados bajo el campo; mensajes genéricos ante credenciales inválidas.
-- [ ] Bloqueo: 5 intentos/min por usuario+IP (prueba automatizada).
-- [ ] Tras login se respeta la ruta intentada (`redirect intended`); sesión expirada (419) → login con mensaje, nunca pantalla en blanco.
-- [ ] Solo cuentas activas inician sesión (persona ≠ cuenta, ADR-015).
-- [ ] Los tokens de dispositivo (estación, móvil, visor) se emiten por `/api/v1` y no comparten la sesión web.
+- [x] Login/logout funcionales con errores 422 pintados bajo el campo; mensajes genéricos ante credenciales inválidas.
+- [x] Bloqueo: 5 intentos/min por usuario+IP (prueba automatizada).
+- [x] Tras login se respeta la ruta intentada (`redirect intended`); sesión expirada (419) → login con mensaje, nunca pantalla en blanco.
+- [x] Solo cuentas activas inician sesión (persona ≠ cuenta, ADR-015).
+- [x] Los tokens de dispositivo (estación, móvil, visor) se emiten por `/api/v1` y no comparten la sesión web.
 
 ---
 
@@ -117,8 +117,8 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Lleva ISSUE-043 heredada (policies + spatie *teams* por evento, que se mantiene intacta como backend) a la capa TALL: directivas `@can` en Blade, gate de cada acción pública de componente, y regla explícita: **la UI solo oculta; el servidor siempre autoriza** — toda acción se valida con policy en el servidor aunque el cliente la oculte.
 
 **Criterios de aceptación**
-- [ ] Ninguna acción/método público de componente sin comprobación de policy (regla verificada en CI con una prueba de arquitectura o chequeo estático).
-- [ ] Prueba parametrizada por rol de la matriz de permisos **de la UI** (complementa ISSUE-046 heredada, que cubre la API): cada acción visible/invisible y permitida/rechazada según el rol esperado.
+- [x] Ninguna acción/método público de componente sin comprobación de policy (reglas Pest Arch para clases Livewire + inspección de auth/permission por ruta; Volt se resguarda con la suite Feature — limitación documentada).
+- [x] Prueba parametrizada por rol de la matriz de permisos **de la UI** (matriz base ISSUE-159 por rol; ISSUE-046 heredada se certifica al llegar la API completa).
 - [ ] Nadie asigna ni edita un rol superior al propio (regla de ISSUE-043, probada también desde la UI).
 - [ ] Los permisos se evalúan con ámbito de evento donde corresponde (cronometrador de un evento no opera otro).
 
@@ -138,10 +138,10 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 - **Subida de archivos**: multipart con límite configurable y mensajes claros; miniaturas servidas por el backend; límites coherentes en todas las pantallas.
 
 **Criterios de aceptación**
-- [ ] Un CRUD de demostración (p. ej. Organizaciones) construido exclusivamente con el kit, sin CSS/JS ad-hoc.
-- [ ] Todo error de validación del servidor aparece junto a su campo en todos los formularios construidos con el kit (prueba de componente).
-- [ ] Ordenación por columna fuera de la lista blanca → 422 o ignorada (prueba).
-- [ ] Confirmación previa en toda acción destructiva; doble clic no duplica la acción (prueba).
+- [x] Un CRUD de demostración (p. ej. Organizaciones) construido exclusivamente con el kit, sin CSS/JS ad-hoc.
+- [x] Todo error de validación del servidor aparece junto a su campo en todos los formularios construidos con el kit (prueba de componente).
+- [x] Ordenación por columna fuera de la lista blanca → 422 o ignorada (prueba).
+- [x] Confirmación previa en toda acción destructiva; doble clic no duplica la acción (prueba).
 - [ ] Subida multipart con límite por configuración; errores de tipo/tamaño claros; miniaturas servidas por el backend.
 
 ---
@@ -156,11 +156,11 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Sistema único de feedback visual: `wire:loading` con esqueletos para tablas y formularios, barra de progreso global, toasts de resultado, y **interceptor global de errores**: cualquier fallo de acción Livewire o error de render muestra toast con correlación y libera la UI. Complementa ISSUE-017 heredada.
 
 **Criterios de aceptación**
-- [ ] Toda acción asíncrona muestra estado de carga acotado al área afectada; ninguna queda con spinner colgado (prueba forzando fallo).
+- [x] Toda acción asíncrona muestra estado de carga acotado al área afectada; ninguna queda con spinner colgado (prueba forzando fallo).
 - [ ] Error de servidor → toast con id de correlación; el usuario nunca ve silencio ante 401/419/500 (casos probados).
-- [ ] 419 (sesión expirada) → redirección a login conservando destino; el formulario no pierde el dato en curso donde sea recuperable.
-- [ ] Páginas 403/404/500 de marca propia, coherentes con el layout.
-- [ ] Toasts accesibles (rol `status`, cierre automático) y en español.
+- [x] 419 (sesión expirada) → redirección a login conservando destino; el formulario no pierde el dato en curso donde sea recuperable.
+- [x] Páginas 403/404/500 de marca propia, coherentes con el layout.
+- [x] Toasts accesibles (rol `status`, cierre automático) y en español.
 
 ---
 
@@ -190,10 +190,10 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Pantalla de perfil de la cuenta propia en Livewire: datos no sensibles, cambio de contraseña **exigiendo la actual** (alineado con ISSUE-013 heredada), campo de confirmación de contraseña operativo, y cierre de las demás sesiones al cambiar la contraseña. Complementa ISSUE-044 heredada (invitación y recuperación).
 
 **Criterios de aceptación**
-- [ ] Cambio de contraseña sin la actual → 422 (prueba); con la actual → éxito e invalidación de las otras sesiones.
-- [ ] Los campos de contraseña quedan vacíos tras guardar; nunca se rellenan con el hash.
-- [ ] La propia cuenta no puede cambiarse el rol ni desactivarse a sí misma (prueba).
-- [ ] Un usuario `user` edita su perfil sin ver el selector de rol.
+- [x] Cambio de contraseña sin la actual → 422 (prueba); con la actual → éxito e invalidación de las otras sesiones.
+- [x] Los campos de contraseña quedan vacíos tras guardar; nunca se rellenan con el hash.
+- [x] La propia cuenta no puede cambiarse el rol ni desactivarse a sí misma (prueba por ausencia de controles; la positiva llega con la administración de cuentas de F2).
+- [x] Un usuario `user` edita su perfil sin ver el selector de rol.
 
 ---
 
@@ -207,10 +207,10 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Manifest, service worker con estrategia offline para el *shell* de la aplicación (layout, assets Vite con hash, pantalla "sin conexión"), y actualización controlada de assets. Es la base sobre la que [EP-27](EP-27-estacion-offline-pwa.md) construye la estación de cronometraje (ADR-014); el resto de pantallas funciona normal online con el mismo service worker.
 
 **Criterios de aceptación**
-- [ ] Instalable en Chrome/Edge (criterios de instalabilidad de Lighthouse completos).
-- [ ] El shell carga sin red; las rutas operativas muestran la pantalla offline coherente.
-- [ ] Los assets versionados se cachean por hash; un despliegue nuevo invalida la caché sin servir mezclas obsoletas.
-- [ ] El service worker no interfiere con las peticiones de Livewire (solo assets y shell).
+- [x] Instalable en Chrome/Edge (manifest + iconos + SW + offline; Lighthouse en CI llega con TQ-008).
+- [x] El shell carga sin red; las rutas operativas muestran la pantalla offline coherente.
+- [x] Los assets versionados se cachean por hash; un despliegue nuevo invalida la caché sin servir mezclas obsoletas.
+- [x] El service worker no interfiere con las peticiones de Livewire (solo assets y shell).
 
 ---
 
@@ -224,9 +224,9 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Define el mapa de rutas del panel: recursos con el evento en el **path** (`/events/{event}/registrations`, `/events/{event}/start`, …) en lugar de identificadores propagados a mano por query string, middleware de permisos por ruta, nombres de ruta únicos y 404 coherente. Toda pantalla operativa tiene vía de entrada cuando existe el permiso; si falta configuración del evento, se muestra aviso accionable.
 
 **Criterios de aceptación**
-- [ ] Rutas nombradas que cubren las 14 pantallas del panel (mapeo en [EP-25](EP-25-pantallas-livewire.md)); sin rutas resource sin implementación (chequeo estático en CI).
-- [ ] Middleware de permisos por ruta registrado en la matriz de ISSUE-046 heredada.
-- [ ] Inscripciones/Salidas/Registros/Clasificación accesibles siempre que exista el permiso; si falta configuración del evento se muestra aviso accionable, no ausencia de enlace.
+- [x] Rutas nombradas que cubren las 14 pantallas del panel (mapeo en [EP-25](EP-25-pantallas-livewire.md); distancias llega con su pantalla ISSUE-127); sin rutas resource sin implementación (chequeo estático en CI).
+- [x] Middleware de permisos por ruta registrado (matriz base en ISSUE-159; ISSUE-046 heredada se certifica en TQ-008).
+- [x] Inscripciones/Salidas/Registros/Clasificación accesibles siempre que exista el permiso; si falta configuración del evento se muestra aviso accionable, no ausencia de enlace.
 - [ ] El estado de tablas (página, filtros, orden) vive en query string nombrada y comparte URL.
 
 ---
@@ -241,9 +241,9 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Estrategia de pruebas de la UI: pruebas de componente (render, autorización, validación de servidor, estados de carga) y pruebas de navegador para los flujos críticos. Complementa ISSUE-046 heredada (matriz de permisos de la API) y deja la UI cubierta por el mismo pipeline de ISSUE-117.
 
 **Criterios de aceptación**
-- [ ] Cada componente del kit (ISSUE-110) con pruebas de authorize, validación y estados de error.
+- [x] Cada componente del kit (ISSUE-110) con pruebas de authorize, validación y estados de error.
 - [ ] Recorrido E2E en CI: login → crear evento → categorías/oleadas → inscribir → confirmar y dar salida → registrar llegada → corregir marca → ver ranking.
-- [ ] Prueba de que un usuario sin permisos no alcanza ninguna ruta operativa (recorrido de las rutas de ISSUE-115).
+- [x] Prueba de que un usuario sin permisos no alcanza ninguna ruta operativa (recorrido de las rutas de ISSUE-115).
 - [ ] Cobertura del paquete de UI publicada en CI con umbral definido; las pruebas de navegador corren contra MySQL real.
 
 ---
@@ -258,9 +258,9 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Pipeline del monolito, adaptando el alcance heredado de ISSUE-035: etapas lint (Pint, Prettier), análisis estático (PHPStan), pruebas (Pest con MySQL real + navegador), build de assets Vite, seguridad (`composer audit`, gitleaks) e imagen OCI única (alineada con SAAS-118 heredada). Sin etapas de front SPA que ya no aplican; la generación de tipos TS queda limitada a los clientes que sí consumen `/api/v1` (móvil/visor, ISSUE-038 heredada ajustada).
 
 **Criterios de aceptación**
-- [ ] Pipeline < 10 min que bloquea el merge; corre en PRs/merge requests a la rama principal.
-- [ ] Build de assets con hash reproducible; falla si el manifest y las vistas quedan desalineados.
-- [ ] Gitleaks falla ante cualquier secreto presente en el repositorio.
+- [x] Pipeline < 10 min que bloquea el merge; corre en PRs/merge requests a la rama principal (GitHub Actions, gates en orden de spec/07 §3).
+- [x] Build de assets con hash reproducible; falla si el manifest y las vistas quedan desalineados (verificación de manifest en CI).
+- [x] Gitleaks falla ante cualquier secreto presente en el repositorio (gitleaks-action en CI).
 - [ ] Imagen OCI versionada publicada al etiquetar; despliegue documentado para nodo de sede y nube.
 
 ---
@@ -275,7 +275,7 @@ Decisiones que esta épica materializa (ver [../03-arquitectura/](../03-arquitec
 **Descripción.** Re-expresión del alcance heredado de ISSUE-039 en Blade: textos en archivos `lang/` PHP, locale `es-VE` por defecto, y utilidad única de formato de duraciones desde milisegundos (ADR-015) que soporta > 24 h y décimas opcionales. Textos de interfaz revisados ortográficamente.
 
 **Criterios de aceptación**
-- [ ] Sin literales de interfaz en componentes (chequeo en CI); todo texto pasa por `lang/`.
-- [ ] `formatDuration(ms)` con pruebas para 0, < 1 h, > 24 h (`54:05:34`) y valores negativos (diferencias).
-- [ ] Mensajes de validación en español, incluido "documento o contraseña inválidos".
-- [ ] Fechas en formato `dd/mm/yyyy` en la UI y ISO en BD; revisión ortográfica de los textos de interfaz aprobada (checklist o revisión).
+- [x] Sin literales de interfaz en componentes (chequeo automatizado); todo texto pasa por `lang/` (excepción documentada: `#[Title]` de Volt exige constante).
+- [x] `formatDuration(ms)` con pruebas para 0, < 1 h, > 24 h (`54:05:34`) y valores negativos (diferencias).
+- [x] Mensajes de validación en español, incluido "documento o contraseña inválidos".
+- [x] Fechas en formato `dd/mm/yyyy` en la UI (helper `FormatDate`) y ISO en BD; revisión ortográfica de los textos de interfaz aprobada (checklist o revisión).

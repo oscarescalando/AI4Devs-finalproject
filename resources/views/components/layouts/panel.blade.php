@@ -1,0 +1,92 @@
+@props(['title' => null, 'subtitle' => null])
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TDChronos · {{ $title ?? __('ui.panel.title') }}</title>
+    {{-- PWA base instalable (ISSUE-114, TQ-006): solo en layouts con sesión;
+         las pantallas públicas/kiosco viven siempre frescas. Tokens spec/09. --}}
+    <link rel="manifest" href="/pwa/manifest">
+    <meta name="theme-color" content="#0284C7">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+        // Tema persistido; el panel arranca en oscuro salvo preferencia (§1.6).
+        try {
+            if (window.localStorage.getItem('tc.theme') !== 'light') {
+                document.documentElement.classList.add('dark');
+            }
+        } catch (e) { document.documentElement.classList.add('dark'); }
+    </script>
+</head>
+<body class="tc-shell">
+    @php($account = auth()->user())
+    <div class="panel-shell" x-data="{ menu: false }">
+        <div id="tc-sidebar-backdrop" onclick="window.tcToggleSidebar()" hidden></div>
+        <x-ui.sidebar />
+
+        <div class="panel-main">
+            <header class="header">
+                <button type="button" class="icon-btn lg:hidden" onclick="window.tcToggleSidebar()" aria-label="{{ __('ui.panel.open_menu') }}">
+                    <x-ui.icon name="menu" />
+                </button>
+
+                <div class="min-w-0">
+                    @if ($title)
+                        <p class="header-title truncate">{{ $title }}</p>
+                    @endif
+                    <nav class="header-crumb" aria-label="{{ __('ui.panel.breadcrumb') }}">
+                        <a href="{{ route('panel.home') }}">{{ __('ui.panel.title') }}</a>
+                        @if ($title)
+                            <span aria-hidden="true">›</span>
+                            <span class="truncate">{{ $title }}</span>
+                        @endif
+                    </nav>
+                </div>
+
+                <div class="ml-auto flex items-center gap-1.5">
+                    <button type="button" class="icon-btn" onclick="window.tcToggleTheme()" aria-label="{{ __('ui.panel.change_theme') }}">
+                        <x-ui.icon name="moon-star" />
+                    </button>
+
+                    <div class="relative" x-data="{ open: false }" @keydown.escape="open = false">
+                        <button type="button" class="icon-btn" @click="open = !open" aria-label="{{ __('ui.panel.account_menu') }}" aria-haspopup="menu" :aria-expanded="open ? 'true' : 'false'">
+                            <span class="avatar">{{ mb_substr($account?->person?->first_name ?? 'U', 0, 1) }}{{ mb_substr($account?->person?->last_name ?? '', 0, 1) }}</span>
+                        </button>
+                        <div class="menu-dd" x-cloak x-show="open" @click.outside="open = false">
+                            <div class="dd-header">
+                                <p class="dd-name">{{ $account?->person?->first_name }} {{ $account?->person?->last_name }}</p>
+                                <p class="dd-mail">{{ $account?->email }}</p>
+                            </div>
+                            <a href="{{ route('profile') }}" class="dd-item">
+                                <x-ui.icon name="user-round" />
+                                <span>{{ __('ui.panel.profile') }}</span>
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm('{{ __('ui.panel.logout_confirm') }}')">
+                                @csrf
+                                <button type="submit" class="dd-item">
+                                    <x-ui.icon name="log-out" />
+                                    <span>{{ __('ui.panel.logout') }}</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content">
+                {{-- El título de página vive en el header (#[Title]) y cada
+                     pantalla abre con x-ui.page-header (spec/09-ui-estilo
+                     §4): no se duplica aquí. --}}
+                {{ $slot }}
+            </main>
+        </div>
+    </div>
+    @livewireScripts
+    {{-- Registro defer del SW (TQ-006): cuando ya cargó todo, incluido el
+         módulo app.js que define tcRegisterSW. --}}
+    <script>window.addEventListener('load', () => window.tcRegisterSW?.());</script>
+</body>
+</html>
