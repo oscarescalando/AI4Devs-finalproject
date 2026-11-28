@@ -38,3 +38,4 @@
 | [TQ-032](TQ-032-kiosco-reloj-resync.md) | Kiosco por push + reloj pública con wave.started + resync | hecho | feature | P1 | ISSUE-141, 142, 143 | TQ-031 | 2026-11-28 |
 | [TQ-033](TQ-033-cierre-pdf-operacion.md) | Cierre del evento, planillas PDF y operación (ISSUE-163) | abierto | plan | P1 | ISSUE-163 | — | 2026-11-28 |
 | [TQ-034](TQ-034-cierre-y-pdf.md) | Cierre/publicación del evento + planilla PDF | hecho | feature | P1 | ISSUE-163 | TQ-033 | 2026-11-28 |
+| [TQ-035](TQ-035-runbook.md) | Runbook de operación y backups | en-curso | docs | P1 | ISSUE-163 | TQ-033 | 2026-11-28 |
