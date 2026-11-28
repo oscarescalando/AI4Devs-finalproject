@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.30.0] - 2026-11-28
+### 🚀 Agregado
+- **Runbook de operación y backups** (TQ-035 · ISSUE-163, cierra los 8 pasos de la noche): comando `ops:backup` (mysqldump vía Process seguro — contraseña en `MYSQL_PWD`, jamás en argv; `--single-transaction`, gzip, borrado de parciales) con backup **real verificado en local** (28 tablas) y prueba automatizada con skip documentado; `docs/procesos/runbook-operacion.md` con arranque, día de carrera en orden operativo con URLs/permisos, cierre (irreversible v1), backups/restauración y emergencias (Reverb caído → sondeo 15 s, cola → Horizon, reversa).
+- Suite a **458 tests**.
+
 ## [0.29.0] - 2026-11-28
 ### 🚀 Agregado
 - **Cierre y publicación del evento + planilla PDF** (TQ-034 · ISSUE-163 rebanada): `PreviewCloseEvent` como única fuente de guardas accionables (ya cerrado, oleada sin salida nombrada, cero llegadas), `CloseEvent` transaccional que oficializa sincrónicamente (conciliación provisional == official probada) y emite `event.closed` dual sin PII — la pública pasa a OFICIAL al instante; botón en el hub con confirmación y blockers visibles (permiso `results.publish`). **Planilla PDF por inscripción** con dompdf ^3.1 (ADR-017): `/entries/{ulid}/planilla`, dorsal grande mono, nombre público (iniciales si menor), tiempos/posiciones si llegò — sin documento ni nacimiento jamás (probado en binario y vista). Suite a **457 tests** (24 nuevas).

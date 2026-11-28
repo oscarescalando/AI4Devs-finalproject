@@ -32,6 +32,8 @@ coverage/
 .zcode/
 
 # Laravel
+# Backups locales de ops:backup (ISSUE-163/TQ-035) — jamás al repo
+/storage/app/backups
 /public/build
 /public/hot
 /public/storage

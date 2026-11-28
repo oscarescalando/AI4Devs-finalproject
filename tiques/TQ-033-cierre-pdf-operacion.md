@@ -4,7 +4,7 @@ titulo: "Cierre del evento, planillas PDF y operación (F2 · ISSUE-163)"
 tipo: plan
 prioridad: P1
 estimacion: L
-estado: abierto
+estado: hecho
 refiere_a: ISSUE-163
 parte_de: —
 rama: feature/entrega-2-ol-gt
@@ -17,7 +17,7 @@ actualizado: 2026-11-28
 ## Fases
 
 - [x] [TQ-034](TQ-034-cierre-y-pdf.md) — Cierre/publicación del evento + planilla PDF por inscripción
-- [ ] [TQ-035](TQ-035-runbook.md) — Runbook de operación y backups
+- [x] [TQ-035](TQ-035-runbook.md) — Runbook de operación y backups
 
 ## Siguiente paso
 
@@ -25,7 +25,7 @@ Ejecutar TQ-035 (runbook de operación y backups): última fase.
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-163 completa en su rebanada.
+- [x] ISSUE-163 completa en su rebanada.
 
 ## Bitácora
 
