@@ -21,3 +21,4 @@
 | [TQ-015](TQ-015-ranking-panel.md) | Ranking del panel: clasificación del evento | hecho | feature | P1 | ISSUE-137 | TQ-011 | 2026-11-27 |
 | [TQ-016](TQ-016-tiempo-real-reverb.md) | Tiempo real con Reverb en las pantallas (EP-26) | abierto | plan | P0 | ISSUE-141…146 | — | 2026-11-27 |
 | [TQ-017](TQ-017-infra-reverb.md) | Infra de tiempo real: Reverb + Redis/Horizon + canales + Echo | hecho | chore | P0 | ISSUE-141, 143, 144 | TQ-016 | 2026-11-27 |
+| [TQ-018](TQ-018-eventos-y-pantallas.md) | Eventos de dominio afterCommit y pantallas escuchando | en-curso | feature | P0 | ISSUE-141, 142, 143 | TQ-016 | 2026-11-27 |
