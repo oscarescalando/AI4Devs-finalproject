@@ -3,6 +3,10 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.13.4] - 2026-11-27
+### 🧹 Otros
+- gitleaks (Gate 5) fallaba sin hallazgos: con checkout superficial no podía resolver el diff del PR y escaneaba 0 bytes. El checkout del pipeline ahora trae el historial completo (`fetch-depth: 0`).
+
 ## [0.13.3] - 2026-11-27
 ### 🐛 Corregido
 - El Gate 3 (Pest) del CI fallaba con `ViteManifestNotFoundException`: el build de assets ahora corre antes de la suite en el pipeline (la imagen OCI sigue siendo el gate 8) y la suite es independiente del build (`withoutVite` en el `TestCase` base, verificado con `public/build` ausente).

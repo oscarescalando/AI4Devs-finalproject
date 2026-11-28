@@ -69,8 +69,12 @@ jobs:
       DB_PASSWORD: ''
 
     steps:
+      # Historial completo: gitleaks resuelve el diff del PR contra main
+      # y con depth 1 muere con un error de git (escaneo parcial de 0 bytes).
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # ------------------------------------------------------------------
       # Preparación: PHP 8.4 + Node con sus cachés (composer-install trae
