@@ -19,7 +19,7 @@
 
 | Métrica | Valor |
 |---|---|
-| Issues nuevas | **57** — ISSUE-105…161 |
+| Issues nuevas | **58** — ISSUE-105…162 |
 | Épicas nuevas | 4 — EP-24…EP-27 |
 | P0 nuevas | 21 (ver §6) |
 | Issues heredadas ajustadas por la decisión TALL | ~20 (§3) — ninguna pierde alcance de dominio |
@@ -154,6 +154,7 @@ Issues nuevas que no pertenecen a una sola pantalla (continúan la numeración I
 | ISSUE-156 | Endpoint idempotente de marcas del servidor | feature | P0 | M | `POST /api/v1/events/{e}/timing-marks`: lotes transaccionales, deduplicación por `client_mark_id`, asignación a inscripción por `(event_id, bib)`, huérfanas y respuesta por marca. **Trae al repo el primer corte de ISSUE-067 heredada** | ISSUE-157 |
 | ISSUE-157 | Migraciones del núcleo con pruebas de esquema | feature | P0 | M | Migraciones del núcleo to-be (ADR-015) con **pruebas de esquema escritas antes**: UNIQUE dorsal-evento y persona-evento, CHECK persona XOR equipo, `client_mark_id` UNIQUE, `timing_marks` append-only, FKs físicas | ISSUE-105 |
 | ISSUE-158 | Motor de resultados del servidor | feature | P0 | L | Cálculo de la clasificación en jobs del servidor (`RANK()` sobre `net_ms = llegada − salida + Σ ajustes`), resultados derivados nunca editados a mano y conciliación en vivo ↔ oficial. **Trae al repo el primer corte de ISSUE-074 heredada** | ISSUE-157 |
+| ISSUE-162 | Inscripciones: alta con categoría automática, dorsal y listado | feature | P0 | L | Alta individual con picker de personas (ISSUE-129 heredada): carrera/oleada, categoría automática por edad y género con previsualización (CategoryRange), dorsal asignado automáticamente (ISSUE-063 minimal) y edición; listado con filtros por carrera/categoría/estado (ISSUE-128). Ajustes acumulables y recategorización en bloque llegan con su fase propia | ISSUE-161, ISSUE-160 |
 | ISSUE-161 | Directorio: gestión de personas y equipos con PII por rol | feature | P1 | L | CRUD de personas (documento único, nombre, nacimiento, género) y equipos (por organización) sustituyendo los placeholders del panel (ISSUE-055…058 heredadas). PII enmascarada para roles sin permiso (RNF-13), búsqueda y validación de servidor | ISSUE-105, ISSUE-157 |
 | ISSUE-160 | Configuración de eventos: CRUD de eventos, carreras, oleadas y categorías | feature | P1 | L | CRUD del evento y su configuración (ISSUE-048…051 heredadas): crear/editar evento con carreras (distancia/tipo), oleadas con hora programada y categorías por rango, reprogramación de oleadas en bloque. Sustituye los placeholders del panel | ISSUE-105, ISSUE-157 |
 | ISSUE-159 | Base de autenticación y matriz de permisos del panel | feature | P0 | M | spatie teams (equipo 0 = plataforma), `accounts.active`, matriz base de roles/permisos del SRS §2 y middleware `permission:` con 403 probado. **Trae al repo las heredadas ISSUE-041/043** | ISSUE-105, ISSUE-157 |
@@ -260,6 +261,21 @@ dentro de este repositorio.
 - [ ] CRUD de personas y equipos operativo con validaciones (documento único) y 403 por rol.
 - [ ] PII enmascarada para roles sin permiso (prueba de render por rol).
 - [ ] Búsqueda parcial sin enumeración (documento enmascarado en resultados).
+
+---
+
+### ISSUE-162 — Inscripciones: alta con categoría automática, dorsal y listado
+
+| Tipo | Prioridad | Estimación | Labels | Depende de |
+|---|---|---|---|---|
+| feature | P0 | L | `feature`, `frontend`, `inscripciones`, `rebuild` | ISSUE-161, ISSUE-160 |
+
+**Descripción.** Trae las heredadas ISSUE-060/061/063/064/129/128 (F2/EP-07) en su rebanada esencial: alta individual desde el panel con picker de personas del directorio (búsqueda parcial, documento enmascarado), selección de carrera y oleada, **categoría automática** por edad y género con previsualización antes de guardar (reglas de `CategoryRange`), **dorsal automático** (siguiente libre del evento) editable, y listado con filtros por carrera/categoría/estado. Ajustes acumulables (entry_adjustments), recategorización en bloque con previsualización e inscripciones por equipo quedan para su fase propia.
+
+**Criterios de aceptación**
+- [ ] Alta individual con categoría automática previsualizada y dorsal automático (prueba de la regla por edad/género).
+- [ ] Listado con filtros y búsqueda por dorsal/nombre; 403 por rol (entries.manage para escribir).
+- [ ] UNIQUE (event_id, person_id) y (event_id, bib) respetados con errores claros (INV-03/04).
 
 ---
 
