@@ -3,6 +3,10 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.13.5] - 2026-11-27
+### 📝 Documentación
+- Plan **TQ-011** (rebanada crítica de EP-25: captura de llegadas, salidas, bitácora/corrección y ranking del panel) con sus fases TQ-012…015 registradas. Acuerdo de sesión: la base es `feature/entrega-2-ol-gt` y no se envía nada a main.
+
 ## [0.13.4] - 2026-11-27
 ### 🧹 Otros
 - gitleaks (Gate 5) fallaba sin hallazgos: con checkout superficial no podía resolver el diff del PR y escaneaba 0 bytes. El checkout del pipeline ahora trae el historial completo (`fetch-depth: 0`).
