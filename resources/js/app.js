@@ -34,6 +34,45 @@ window.tcToggleSidebar = () => {
     document.getElementById('tc-sidebar-backdrop')?.classList.toggle('sidebar-backdrop');
 };
 
+/* ---------- Puente WS→Livewire de las pantallas vivas (TQ-018, RF-77) ----------
+ * PATRÓN ELEGIDO (idéntico en las cinco pantallas, ver comentarios de las
+ * vistas): cada Volt declara en su raíz x-data="tcBridge(@js([...]))" con
+ * su canal y el mapa {evento WS → evento Livewire}. El puente SOLO
+ * retransmite: window.tcEcho (TQ-017) escucha el canal y cada payload se
+ * convierte en window.Livewire.dispatch('<tc-*>', { payload }) que el Volt
+ * recibe con #[On('tc-*')] y resuelve comparando seq contra la última
+ * versión vista (delta simple, ISSUE-141 mínima).
+ * Suscripción en el init de Alpine; limpieza en destroy() → leaveChannel
+ * cuando el morph elimina el nodo o se navega fuera: sin listeners
+ * huérfanos. Sin tcEcho (sin clave VITE_, degradación O1) el puente no
+ * hace nada y la pantalla vive del sondeo de respaldo de 15 s. */
+window.tcBridge = ({ channel, events = {}, private: isPrivate = true }) => ({
+    wireName: null,
+    init() {
+        if (! window.tcEcho) {
+            return;
+        }
+
+        this.wireName = isPrivate ? `private-${channel}` : channel;
+
+        const connection = isPrivate
+            ? window.tcEcho.private(channel)
+            : window.tcEcho.channel(channel);
+
+        Object.entries(events).forEach(([wsEvent, livewireEvent]) => {
+            connection.listen(wsEvent, (payload) => {
+                window.Livewire?.dispatch(livewireEvent, { payload: payload ?? {} });
+            });
+        });
+    },
+    destroy() {
+        if (this.wireName) {
+            window.tcEcho?.leaveChannel(this.wireName);
+            this.wireName = null;
+        }
+    },
+});
+
 /* ---------- Toasts (ISSUE-111): rol status, cierre automático, español ---------- */
 
 const TOAST_ICONS = {

@@ -36,7 +36,7 @@ mínimas de ISSUE-145 (la marca jamás falla por el broadcast).
 
 ## Siguiente paso
 
-Ejecutar TQ-018 (eventos de dominio y pantallas escuchando).
+Ejecutar TQ-019 (caos mínimo): última fase de la rebanada EP-26.
 
 ## Criterios de aceptación
 

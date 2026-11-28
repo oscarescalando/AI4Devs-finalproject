@@ -124,7 +124,7 @@ it('traza el tablero: reloj con server_now, sondeo y botones según el estado', 
 
     $html = $this->actingAs(startBoardAccount('official'))->get(route('events.start', $event))->getContent();
 
-    expect($html)->toContain('wire:poll.5s')
+    expect($html)->toContain('wire:poll.15s')
         ->and($html)->toContain('tcStartClock')
         // El demo viene con las tres salidas marcadas: deshacer sí, marcar no.
         ->and($html)->toContain('Deshacer salida')

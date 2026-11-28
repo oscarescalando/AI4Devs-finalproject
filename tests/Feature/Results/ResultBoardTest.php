@@ -354,5 +354,5 @@ it('muestra el empty-state cuando el evento no tiene llegadas', function () {
 
     expect($html)->toContain(__('ui.events.results_none_title'))
         ->and($html)->toContain(__('ui.events.results_none_text'))
-        ->and($html)->toContain('wire:poll.10s');
+        ->and($html)->toContain('wire:poll.15s');
 });

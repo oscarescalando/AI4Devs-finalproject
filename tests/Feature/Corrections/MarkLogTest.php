@@ -15,8 +15,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
  * ISSUE-134 (TQ-014, versión mínima F1) — Bitácora de marcas en vivo del
  * juez: contadores por estado coherentes con la tabla (misma derivación del
  * motor, EffectiveMarks), paginación server-side de 25 por hora efectiva
- * descendente, huérfanas visibles y sondeo interino wire:poll.5s (el push
- * < 2 s llega con EP-26).
+ * descendente, huérfanas visibles y sondeo de respaldo wire:poll.15s
+ * (el push por WS llegó con TQ-018/EP-26).
  */
 uses(RefreshDatabase::class);
 
@@ -136,7 +136,7 @@ it('pagina server-side de 25 por hora efectiva descendente', function () {
 it('traza la pantalla: sondeo interino, contadores y modales del kit', function () {
     $html = $this->actingAs(logAccount('organizer'))->get(route('events.marks', $this->event))->getContent();
 
-    expect($html)->toContain('wire:poll.5s')
+    expect($html)->toContain('wire:poll.15s')
         ->and($html)->toContain('tcConfirm')
         ->and($html)->toContain('markModal')
         ->and($html)->toContain('historyModal')

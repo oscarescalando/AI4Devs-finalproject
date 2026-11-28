@@ -4,7 +4,7 @@ titulo: "Eventos de dominio afterCommit y pantallas escuchando"
 tipo: feature
 prioridad: P0
 estimacion: L
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-141, ISSUE-142, ISSUE-143
 parte_de: TQ-016
 rama: feature/entrega-2-ol-gt
@@ -40,22 +40,22 @@ cada tick).
 
 ## Tareas
 
-- [ ] Eventos nuevos + emisión afterCommit desde batch/motor/deshacer (rollback no emite).
-- [ ] Pantallas panel: listeners que refrescan SU dato (lista recientes, tablero, bitácora,
+- [x] Eventos nuevos + emisión afterCommit desde batch/motor/deshacer (rollback no emite).
+- [x] Pantallas panel: listeners que refrescan SU dato (lista recientes, tablero, bitácora,
       ranking) y live-indicator ligado a tc-echo-status.
-- [ ] Pantalla pública: ResultsUpdated la refresca sin PII; live-indicator; poll a 15 s.
-- [ ] Sondeo de respaldo 15 s en todas (RF-76) — hoy 4-10 s.
-- [ ] Pruebas: emisión encolada por acción (Queue::fake), listeners registrados en los Volt,
+- [x] Pantalla pública: ResultsUpdated la refresca sin PII; live-indicator; poll a 15 s.
+- [x] Sondeo de respaldo 15 s en todas (RF-76) — hoy 4-10 s.
+- [x] Pruebas: emisión encolada por acción (Queue::fake), listeners registrados en los Volt,
       refresco dirigido tras dispatch del evento, sin PII en canal public.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-142 mínima: puente operativo — llegada/salida/corrección se reflejan por WS en las
+- [x] ISSUE-142 mínima: puente operativo — llegada/salida/corrección se reflejan por WS en las
       pantallas abiertas sin intervención, con respaldo por sondeo si el WS cae.
-- [ ] ISSUE-141 mínima: contrato uniforme {eventUlid, seq, …} y nada de PII en canal public.
+- [x] ISSUE-141 mínima: contrato uniforme {eventUlid, seq, …} y nada de PII en canal public.
 
 ## Bitácora
 
@@ -63,3 +63,4 @@ cada tick).
 |-------|--------|------|
 | 2026-11-27 | abierto | Creado como fase 2 del plan TQ-016 |
 | 2026-11-27 | en-curso | Delegado a subagent (orquestador) |
+| 2026-11-27 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 278/278 (13 nuevas) · polls 15 s en las cinco pantallas ✓ · E2E REAL del agente: llegada por tinker visible en pública y bitácora en 1,6 s por WS; Reverb muerto → indicador degrada <1 s y el poll de 15 s mantiene ambas vivas. Contrato: seq = timing_marks.id (mark) y MAX(results.id) (results); duplicate no emite; emisión de ResultsUpdated vive en el job. Fixes a infra TQ-017 documentados (estados de conexión nunca se emitían). Pendientes para TQ-019/EP-26 completo: kiosco de llegadas por push, reloj pública con wave.started, contador de pendientes del indicador, resaltado por push, resync por gap de seq |

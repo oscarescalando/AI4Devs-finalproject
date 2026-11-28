@@ -7,6 +7,7 @@ use App\Actions\Start\UndoWaveStart;
 use App\Models\Event;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
 
@@ -19,13 +20,29 @@ use Livewire\Volt\Component;
 | la programada (RF-15) y rechazan fuera de orden con errores de negocio
 | consumibles como toasts. El reloj pica en Alpine con offset contra el
 | server_now sembrado en el render y se re-resincroniza cada 60 s con
-| syncClock (RF-42); wire:poll.5s refresca el tablero mientras el
-| broadcast wave.started llega con EP-26 (diferido documentado).
+| syncClock (RF-42).
+|
+| TQ-018 (EP-26, ISSUE-142): el tablero reacciona por WS — puente tcBridge
+| (patrón compartido, ver arrival-capture) que escucha `wave.started` y
+| `wave.undone` en ops y los retransmite como evento Livewire `tc-wave`.
+| Los eventos de oleada no versionan datos (seq null): al recibirlos se
+| refresca el tablero dirigido (with() → ListWaveBoard) y el reloj NO se
+| toca — su offset es local y se re-resincroniza solo. Sondeo de respaldo
+| a 15 s (RF-76).
 */
 
 new #[Layout('components.layouts.panel')] #[Title('Salidas')] class extends Component
 {
     public Event $event;
+
+    /** Puente WS→Livewire (tcBridge en la vista): salida marcada o deshecha. */
+    #[On('tc-wave')]
+    public function onWaveChanged(): void
+    {
+        // wave.started/wave.undone no llevan seq: refresco dirigido del
+        // tablero — la respuesta al evento re-renderiza y ListWaveBoard
+        // vuelve a leer el estado real de las oleadas.
+    }
 
     /** Hora oficial (ms de época) para re-resincronizar el reloj del cliente. */
     public function syncClock(): int
@@ -132,8 +149,17 @@ new #[Layout('components.layouts.panel')] #[Title('Salidas')] class extends Comp
     </script>
 @endonce
 
-<div class="flex flex-col gap-4" wire:poll.5s>
-    <x-ui.page-header :title="__('ui.events.start_title')" subtitle="{{ $event->name }}" />
+<div
+    class="flex flex-col gap-4"
+    wire:poll.15s
+    x-data="tcBridge(@js(['channel' => 'event.'.$event->ulid.'.ops', 'events' => ['.wave.started' => 'tc-wave', '.wave.undone' => 'tc-wave']]))"
+>
+    <x-ui.page-header :title="__('ui.events.start_title')" subtitle="{{ $event->name }}">
+        <x-slot:actions>
+            {{-- Indicador de conexión WS ligado a tc-echo-status (G13, TQ-018). --}}
+            <x-ui.live-indicator :wire="true" />
+        </x-slot:actions>
+    </x-ui.page-header>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
         {{-- Reloj oficial: wire:ignore — el tick vive en Alpine y wire:poll

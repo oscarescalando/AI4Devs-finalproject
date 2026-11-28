@@ -4,15 +4,26 @@ use App\Actions\Results\GetPublicLeaderboard;
 use App\Models\Event;
 use App\Support\FormatDuration;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 
 /*
 | ISSUE-137 (versión mínima del corte 1) — Clasificación pública en vivo.
 | Convención (ISSUE-106): las pantallas son componentes Volt funcionales;
 | el dato llega por Actions del servidor y nunca se calcula en el cliente
-| (INV-07). El sondeo (wire:poll) sustituye a Reverb hasta que el flujo
-| completo funcione; el contrato v/seq del leaderboard permite detectar
-| cambios y resaltar llegadas nuevas.
+| (INV-07). El contrato v/seq del leaderboard permite detectar cambios y
+| resaltar llegadas nuevas.
+|
+| TQ-018 (EP-26, ISSUE-142/RF-75): reacción por WS — puente tcBridge
+| (patrón compartido, ver arrival-capture) que escucha `results.updated`
+| en el canal ABIERTO event.{ulid}.public y lo retransmite como evento
+| Livewire `tc-results`; el método compara el seq del push con la última
+| versión recibida y llama al refresh() existente. OJO: el seq del push
+| (versión de results, MAX id) y el seq del payload público (conteo de
+| marcas del contrato v/seq) son dominios distintos — se vigilan por
+| separado. Sondeo de respaldo degradado a 15 s (RF-76): el WS hace el
+| trabajo fino; sin WS (kiosco sin clave, Reverb caído) el poll mantiene
+| la pantalla viva.
 */
 
 new #[Layout('components.layouts.public')] class extends Component
@@ -37,6 +48,9 @@ new #[Layout('components.layouts.public')] class extends Component
     /** @var list<int> */
     public array $newBibs = [];
 
+    /** Última versión de results anunciada por WS: deduplica los push. */
+    public int $lastPushSeq = 0;
+
     public function mount(string $slug): void
     {
         $event = Event::query()->where('slug', $slug)->firstOrFail();
@@ -44,6 +58,25 @@ new #[Layout('components.layouts.public')] class extends Component
         $this->slug = $slug;
         $this->eventUlid = $event->ulid;
         $this->eventName = $event->name;
+        $this->refresh();
+    }
+
+    /** Puente WS→Livewire (tcBridge en la vista): el motor recalculó. */
+    #[On('tc-results')]
+    public function onResultsUpdated(array $payload = []): void
+    {
+        if (($payload['eventUlid'] ?? null) !== $this->eventUlid) {
+            return;
+        }
+
+        $seq = (int) ($payload['seq'] ?? 0);
+
+        if ($seq <= $this->lastPushSeq) {
+            return; // versión ya reflejada
+        }
+
+        $this->lastPushSeq = $seq;
+
         $this->refresh();
     }
 
@@ -96,18 +129,27 @@ new #[Layout('components.layouts.public')] class extends Component
 
 ?>
 
-<div class="mx-auto max-w-6xl px-4 py-6" wire:poll.4s="refresh" wire:key="leaderboard-{{ $eventUlid }}">
+<div
+    class="mx-auto max-w-6xl px-4 py-6"
+    wire:poll.15s="refresh"
+    wire:key="leaderboard-{{ $eventUlid }}"
+    {{-- Puente WS→Livewire (patrón compartido, ver arrival-capture): canal
+         ABIERTO del evento (sin «private-»), feed sin PII (RF-75/INV-06). --}}
+    x-data="tcBridge(@js(['channel' => 'event.'.$eventUlid.'.public', 'private' => false, 'events' => ['.results.updated' => 'tc-results']]))"
+>
     <header class="mb-6 flex flex-wrap items-center justify-between gap-4"
             x-data="{ now: new Date().toLocaleTimeString('es-VE', { hour12: false }) }"
             x-init="setInterval(() => now = new Date().toLocaleTimeString('es-VE', { hour12: false }), 1000)">
         <div>
             <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ $eventName }}</h1>
-            <p class="mt-1 text-sm text-neutral-400">
+            <p class="mt-1 flex flex-wrap items-center gap-x-1 text-sm text-neutral-400">
                 <span class="me-1 inline-flex items-center gap-1 font-medium text-success-400">
                     <span class="size-2 animate-pulse rounded-full bg-success-400"></span>
                     {{ $status === 'official' ? __('ui.public.official') : __('ui.public.live') }}
                 </span>
                 · {{ __('ui.public.arrivals', ['count' => count($rows)]) }} · {{ __('ui.public.refresh') }} · <span class="font-mono tabular-nums" x-text="now"></span>
+                {{-- Indicador de conexión WS ligado a tc-echo-status (G13, TQ-018). --}}
+                <x-ui.live-indicator :wire="true" class="ms-2" />
             </p>
         </div>
         <button type="button"

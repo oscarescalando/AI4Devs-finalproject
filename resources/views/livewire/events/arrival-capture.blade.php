@@ -5,6 +5,7 @@ use App\Actions\Timing\ListRecentArrivals;
 use App\Actions\Timing\RegisterManualArrival;
 use App\Models\Event;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
 
@@ -14,9 +15,17 @@ use Livewire\Volt\Component;
 | base (ADR-011/ADR-012): escribe por RegisterManualArrival — que delega en
 | el conducto del lote y dispara el recálculo afterCommit sin bloquear la
 | captura (INV-08) — y lee por las Actions de listado. Tras cada envío el
-| dorsal queda limpio y recupera el foco (evento arrival-recorded), la
-| lista refresca sola cada 5 s y el feedback por estado es un toast
-| (success asignada · warning huérfana · info duplicada).
+| dorsal queda limpio y recupera el foco (evento arrival-recorded) y el
+| feedback por estado es un toast (success asignada · warning huérfana ·
+| info duplicada).
+|
+| TQ-018 (EP-26, ISSUE-142): reacción por WS — puente tcBridge (script en
+| app.js, patrón compartido con las otras pantallas vivas) que escucha
+| `mark.recorded` en el canal privado ops del evento y lo retransmite como
+| evento Livewire `tc-mark`; este método compara seq con la última marca
+| vista y deja que el render dirigido reconsulte las Actions de listado
+| (refresco de SU dato, sin recargar nada más). Sondeo de respaldo a 15 s
+| (RF-76): el WS hace el trabajo fino y el poll es la red de seguridad.
 */
 
 new #[Layout('components.layouts.panel')] #[Title('Captura de llegadas')] class extends Component
@@ -26,9 +35,33 @@ new #[Layout('components.layouts.panel')] #[Title('Captura de llegadas')] class 
     /** Dorsal tecleado en crudo: viaja validado a la Action. */
     public string $bib = '';
 
+    /** Última marca anunciada por WS (timing_marks.id): deduplica eventos. */
+    public int $lastMarkSeq = 0;
+
     public function mount(Event $event): void
     {
         $this->event = $event;
+    }
+
+    /** Puente WS→Livewire (tcBridge en la vista): una marca nueva en ops. */
+    #[On('tc-mark')]
+    public function onMarkRecorded(array $payload = []): void
+    {
+        if (($payload['eventUlid'] ?? null) !== $this->event->ulid) {
+            return; // evento de otro evento (dos pantallas abiertas): ignorar
+        }
+
+        $seq = (int) ($payload['seq'] ?? 0);
+
+        if ($seq <= $this->lastMarkSeq) {
+            return; // evento repetido/viejo: la vista ya muestra ese dato
+        }
+
+        $this->lastMarkSeq = $seq;
+
+        // El dato vive en with() (ListRecentArrivals/ListOrphanMarks): al
+        // responder al evento Livewire re-renderiza y esas Actions vuelven
+        // a consultar exactamente su dato — el loader dirigido existente.
     }
 
     public function capture(): void
@@ -84,8 +117,17 @@ new #[Layout('components.layouts.panel')] #[Title('Captura de llegadas')] class 
 
 ?>
 
-<div class="flex flex-col gap-4" wire:poll.5s>
-    <x-ui.page-header :title="__('ui.events.arrivals_title')" subtitle="{{ $event->name }}" />
+<div
+    class="flex flex-col gap-4"
+    wire:poll.15s
+    x-data="tcBridge(@js(['channel' => 'event.'.$event->ulid.'.ops', 'events' => ['.mark.recorded' => 'tc-mark']]))"
+>
+    <x-ui.page-header :title="__('ui.events.arrivals_title')" subtitle="{{ $event->name }}">
+        <x-slot:actions>
+            {{-- Indicador de conexión WS ligado a tc-echo-status (G13, TQ-018). --}}
+            <x-ui.live-indicator :wire="true" />
+        </x-slot:actions>
+    </x-ui.page-header>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
         <div class="lg:col-span-2 flex flex-col gap-4">

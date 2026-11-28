@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Start;
 
+use App\Broadcasting\WaveUndone;
 use App\Models\Event;
 use App\Models\Wave;
 use Illuminate\Support\Collection;
@@ -17,6 +18,10 @@ use Illuminate\Validation\ValidationException;
  * sin tocar la programada; la oleada vuelve a Pendiente y puede marcarse
  * de nuevo. La auditoría del deshacer (ISSUE-045) llega con F2: hoy el
  * cambio se registra vía `updated_at` (diferido documentado en TQ-013).
+ *
+ * TQ-018: tras el save se despacha `wave.undone` (WaveUndone) — espejo de
+ * wave.started: afterCommit y cola `broadcast` (ADR-013), canal ops. Si la
+ * transacción en curso revierte, no se emite nada.
  */
 final readonly class UndoWaveStart
 {
@@ -55,6 +60,10 @@ final readonly class UndoWaveStart
         }
 
         $wave->fill(['actual_start_at' => null])->save();
+
+        // ADR-013: persistir antes de emitir; el afterCommit retiene la
+        // emisión hasta el commit (rollback = nada emitido).
+        WaveUndone::dispatch($event->ulid, $wave->ulid);
 
         return [
             'ulid' => $wave->ulid,

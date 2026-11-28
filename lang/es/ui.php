@@ -114,7 +114,7 @@ return [
         'start_clock_title' => 'Hora oficial',
         'start_clock_text' => 'Reloj del servidor; se resincroniza cada 60 s.',
         'start_table_title' => 'Oleadas',
-        'start_table_text' => 'actualiza cada 5 s',
+        'start_table_text' => 'actualiza cada 15 s',
         'start_none_title' => 'Sin oleadas',
         'start_wave_fallback' => 'Oleada',
         'header_wave' => 'Oleada',
@@ -141,7 +141,7 @@ return [
         'marks_title' => 'Registros',
 
         // Bitácora de marcas en vivo y corrección 1/2/3 (ISSUE-134/135, TQ-014).
-        'log_text' => 'Bitácora de marcas con estado derivado · actualiza cada 5 s',
+        'log_text' => 'Bitácora de marcas con estado derivado · actualiza cada 15 s',
         'log_none_title' => 'Sin marcas todavía',
         'log_none_text' => 'La primera marca del evento aparecerá aquí.',
         'log_count_assigned' => 'Asignadas',
@@ -212,7 +212,7 @@ return [
 
         // Ranking del panel (ISSUE-137/TQ-015): clasificación operativa del
         // evento leyendo la tabla derivada results (INV-07).
-        'results_text' => 'posiciones del motor · actualiza cada 10 s',
+        'results_text' => 'posiciones del motor · actualiza cada 15 s',
         'results_status_provisional' => 'Provisional',
         'results_status_official' => 'Oficial',
         'results_kpi_arrived' => 'Llegadas',
@@ -249,7 +249,7 @@ return [
         'arrivals_sending' => 'Registrando…',
         'arrivals_invalid_bib' => 'El dorsal debe ser un número entre 1 y 99999.',
         'arrivals_recent_title' => 'Últimas llegadas',
-        'arrivals_recent_text' => 'actualiza cada 5 s',
+        'arrivals_recent_text' => 'actualiza cada 15 s',
         'arrivals_none_title' => 'Sin llegadas todavía',
         'arrivals_none_text' => 'La primera llegada que registres aparecerá aquí.',
         'arrivals_header_time' => 'Hora',
@@ -392,7 +392,7 @@ return [
         'official' => 'OFICIAL',
         'live' => 'EN VIVO',
         'arrivals' => ':count llegadas',
-        'refresh' => 'actualiza cada 4 s',
+        'refresh' => 'actualiza cada 15 s',
         'fullscreen' => 'Pantalla completa',
         'category' => 'Categoría',
         'distance' => 'Distancia',

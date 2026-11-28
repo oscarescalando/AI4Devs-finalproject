@@ -17,12 +17,22 @@ import Pusher from 'pusher-js';
 
 const STATUS_EVENT = 'tc-echo-status';
 
+// Espejo del último estado (TQ-018): el evento DOM lo pierden los
+// listeners que arranquen DESPUÉS de la conexión (Alpine inicializa más
+// tarde que este módulo), así que el live-indicator también puede leer el
+// estado vigente en window.tcEchoStatus al montarse.
 const emitStatus = (state) => {
+    window.tcEchoStatus = state;
     window.dispatchEvent(new CustomEvent(STATUS_EVENT, { detail: { state } }));
 };
 
 const bindStatus = (echo) => {
-    const connection = echo.connector?.connection;
+    // laravel-echo no expone el ConnectionManager de pusher-js de forma
+    // uniforme: con cliente inyectado (nuestro caso) vive en
+    // connector.pusher.connection; connector.connection es undefined y los
+    // binds caerían en el vacío (hallazgo TQ-018: el indicador se quedaba
+    // en Reconectando aunque el socket ya tenía socketId).
+    const connection = echo.connector?.connection ?? echo.connector?.pusher?.connection;
     if (! connection) {
         return;
     }

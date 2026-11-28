@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.19.0] - 2026-11-27
+### 🚀 Agregado
+- **Tiempo real en las pantallas** (TQ-018 · EP-26 fase 2): eventos de dominio tras commit — `mark.recorded` (ops con detalle; **public sin PII**: solo dorsal/hora/seq), `wave.undone` y `results.updated` (seq = `MAX(results.id)`) — con puente `tcBridge` (suscripción en init, limpieza en destroy, RF-77), live-indicator ligado a los estados de conexión, render dirigido por seq y **sondeo de respaldo a 15 s** en las cinco pantallas vivas (RF-76). E2E real: llegada visible en pública y bitácora en **1,6 s** por WS; con Reverb caído, indicador degradado y poll manteniendo ambas actualizadas. Fixes a la infra: los estados de conexión de `tcEcho` nunca se emitían.
+- Suite a **278 tests** (13 nuevas).
+
 ## [0.18.0] - 2026-11-27
 ### 🚀 Agregado
 - **Infraestructura de tiempo real** (TQ-017 · EP-26 fase 1, ADR-013/010): Reverb operativo con colas Redis + Horizon (gate superadmin), canales por evento autorizados — `event.{ulid}.public` anónimo sin PII (valida el evento) y `event.{ulid}.ops` privado para roles operativos (RF-75, probado vía `/broadcasting/auth`) —, evento piloto `WaveStarted` (`ShouldDispatchAfterCommit`, cola broadcast; rollback no emite, INV-08), cliente `tcEcho` (Echo + Pusher, evento `tc-echo-status`) y componente `x-ui.live-indicator` (G13, tres estados accesibles). E2E real verificada: navegador suscrito recibió `wave.started` tras marcar salida; sin WS todo degrada sin errores.

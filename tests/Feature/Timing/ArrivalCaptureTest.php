@@ -47,7 +47,7 @@ it('traza la pantalla de captura: input grande con foco y sondeo', function () {
 
     expect($html)->toContain('id="arrival-bib"')
         ->and($html)->toContain('autofocus')
-        ->and($html)->toContain('wire:poll.5s');
+        ->and($html)->toContain('wire:poll.15s');
 });
 
 it('captura una llegada asignada: persiste la marca manual y dispara el recálculo en cola', function () {

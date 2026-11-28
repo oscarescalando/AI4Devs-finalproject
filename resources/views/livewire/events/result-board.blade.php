@@ -3,6 +3,7 @@
 use App\Actions\Results\ListEventClassification;
 use App\Models\Event;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Volt\Component;
@@ -13,10 +14,16 @@ use Livewire\WithPagination;
 | sesión de la proyección pública /e/{slug}. Cero cálculo en pantalla
 | (INV-07): posiciones, netos y diferencias salen de la tabla derivada
 | results vía ListEventClassification (los escribió el motor). Filtros de
-| carrera/categoría por ULID en la URL (#[Url], compartible) y sondeo
-| interino wire:poll.10s — el push < 2 s por el canal ops llega con EP-26.
-| Ver exige results.view (ruta, matriz ISSUE-159); las filas DSQ rojas y
-| las exportaciones quedan diferidas (tique TQ-015).
+| carrera/categoría por ULID en la URL (#[Url], compartible). Ver exige
+| results.view (ruta, matriz ISSUE-159); las filas DSQ rojas y las
+| exportaciones quedan diferidas (tique TQ-015).
+|
+| TQ-018 (EP-26, ISSUE-142): reacción por WS — puente tcBridge (patrón
+| compartido, ver arrival-capture) que escucha `results.updated` en ops y
+| lo retransmite como evento Livewire `tc-results`; el método compara seq
+| con la última versión vista y re-renderiza: with() vuelve a consultar
+| ListEventClassification (el loader dirigido existente, con los filtros
+| activos intactos). Sondeo de respaldo a 15 s (RF-76).
 */
 
 new #[Layout('components.layouts.panel')] #[Title('Clasificación')] class extends Component
@@ -31,9 +38,32 @@ new #[Layout('components.layouts.panel')] #[Title('Clasificación')] class exten
     #[Url(except: '')]
     public string $category = '';
 
+    /** Último recálculo anunciado por WS (versión de results): deduplica. */
+    public int $lastResultsSeq = 0;
+
     public function mount(Event $event): void
     {
         $this->event = $event;
+    }
+
+    /** Puente WS→Livewire (tcBridge en la vista): el motor recalculó. */
+    #[On('tc-results')]
+    public function onResultsUpdated(array $payload = []): void
+    {
+        if (($payload['eventUlid'] ?? null) !== $this->event->ulid) {
+            return;
+        }
+
+        $seq = (int) ($payload['seq'] ?? 0);
+
+        if ($seq <= $this->lastResultsSeq) {
+            return; // versión ya reflejada
+        }
+
+        $this->lastResultsSeq = $seq;
+
+        // with() → ListEventClassification: el render dirigido relee la
+        // tabla results SIN tocar los filtros ni la página en curso.
     }
 
     public function updatedRace(): void
@@ -64,9 +94,15 @@ new #[Layout('components.layouts.panel')] #[Title('Clasificación')] class exten
 
 ?>
 
-<div class="flex flex-col gap-4" wire:poll.10s>
+<div
+    class="flex flex-col gap-4"
+    wire:poll.15s
+    x-data="tcBridge(@js(['channel' => 'event.'.$event->ulid.'.ops', 'events' => ['.results.updated' => 'tc-results']]))"
+>
     <x-ui.page-header :title="__('ui.events.results_title')" subtitle="{{ $event->name }} · {{ __('ui.events.results_text') }}">
         <x-slot:actions>
+            {{-- Indicador de conexión WS ligado a tc-echo-status (G13, TQ-018). --}}
+            <x-ui.live-indicator :wire="true" />
             <x-ui.badge :variant="$status === 'official' ? 'success' : 'warning'" dot>
                 {{ $status === 'official' ? __('ui.events.results_status_official') : __('ui.events.results_status_provisional') }}
             </x-ui.badge>

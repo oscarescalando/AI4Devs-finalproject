@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Timing;
 
+use App\Broadcasting\MarkRecorded;
 use App\Jobs\Results\RecalculateEventResultsJob;
 use App\Models\Entry;
 use App\Models\Event;
@@ -19,6 +20,11 @@ use Illuminate\Support\Facades\DB;
  * asigna cada marca a su inscripción por (event_id, bib) o la deja huérfana,
  * y responde por marca: assigned / orphan / duplicate. Todo el lote dentro
  * de una única transacción: o se persiste completo o nada.
+ *
+ * TQ-018: cada marca NUEVA emite `mark.recorded` en sus dos variantes de
+ * canal (ops con detalle, público sin PII — MarkRecorded). Al ser
+ * ShouldDispatchAfterCommit, el dispatcher retiene las emisiones hasta el
+ * commit del lote; los `duplicate` no emiten (no hay dato nuevo).
  */
 final class RecordTimingMarkBatch
 {
@@ -49,7 +55,7 @@ final class RecordTimingMarkBatch
             $entriesByBib = Entry::query()
                 ->where('event_id', $event->id)
                 ->whereIn('bib', $bibList)
-                ->with(['wave', 'adjustments'])
+                ->with(['wave', 'adjustments', 'person', 'team'])
                 ->get()
                 ->keyBy('bib');
 
@@ -77,6 +83,12 @@ final class RecordTimingMarkBatch
                     'source' => (string) ($mark['source'] ?? 'station'),
                 ]);
 
+                // ADR-013/TQ-018: persistir antes de emitir — una marca
+                // nueva anuncia su llegada en ops (detalle del juez) y en
+                // el feed público (solo dorsal y hora, INV-06). El
+                // afterCommit retiene ambas hasta el commit del lote.
+                $this->announce($event->ulid, $created, $bib, $entry);
+
                 $results[] = $this->resultFor($created, $entry !== null ? 'assigned' : 'orphan');
             }
 
@@ -101,6 +113,35 @@ final class RecordTimingMarkBatch
         $correctedMs = (int) $mark['device_time_ms'] + (int) ($mark['clock_offset_ms'] ?? 0);
 
         return CarbonImmutable::createFromTimestampMs($correctedMs, config('app.timezone'));
+    }
+
+    /**
+     * Emisión de la marca nueva (TQ-018): variante ops (con nombre público
+     * y estado) y variante pública (sin PII, RF-75/INV-06). `seq` = id de
+     * la marca: creciente y deduplicable en las pantallas.
+     */
+    private function announce(string $eventUlid, TimingMark $mark, ?int $bib, ?Entry $entry): void
+    {
+        $capturedAtMs = (int) $mark->captured_at->getTimestampMs();
+        $name = $entry?->person?->publicName() ?? $entry?->team?->name;
+        $status = $entry !== null ? 'assigned' : 'orphan';
+
+        MarkRecorded::dispatch(
+            eventUlid: $eventUlid,
+            seq: (int) $mark->id,
+            bib: $bib,
+            capturedAtMs: $capturedAtMs,
+            name: $name,
+            status: $status,
+        );
+
+        MarkRecorded::dispatch(
+            eventUlid: $eventUlid,
+            seq: (int) $mark->id,
+            bib: $bib,
+            capturedAtMs: $capturedAtMs,
+            public: true,
+        );
     }
 
     /**

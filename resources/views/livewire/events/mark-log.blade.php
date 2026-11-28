@@ -10,6 +10,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
@@ -23,7 +24,15 @@ use Livewire\WithPagination;
 | exige corrections.manage (Gate en submit, ISSUE-159). La reasignación a un
 | dorsal con llegada efectiva se confirma dos veces: tcConfirm al enviar y
 | el error `confirm` del servidor reabre tcConfirm para reenviar con
-| confirm=true. El push < 2 s queda para EP-26: interino wire:poll.5s.
+| confirm=true.
+|
+| TQ-018 (EP-26, ISSUE-142): reacción por WS — puente tcBridge (patrón
+| compartido, ver arrival-capture) que escucha `mark.recorded` (bitácora
+| nueva) y `results.updated` (una corrección recalculó el estado efectivo)
+| en ops y los retransmite como eventos Livewire `tc-mark`/`tc-results`;
+| cada método compara su seq con la última vista y re-renderiza: with()
+| vuelve a consultar ListMarkLog (contador + tabla, el loader dirigido
+| existente). Sondeo de respaldo a 15 s (RF-76).
 */
 
 new #[Layout('components.layouts.panel')] #[Title('Registros')] class extends Component
@@ -43,6 +52,51 @@ new #[Layout('components.layouts.panel')] #[Title('Registros')] class extends Co
     public int $delta = 0;
 
     public string $targetBib = '';
+
+    /** Última marca anunciada por WS (timing_marks.id): deduplica eventos. */
+    public int $lastMarkSeq = 0;
+
+    /** Último recálculo anunciado por WS (versión de results): deduplica. */
+    public int $lastResultsSeq = 0;
+
+    /** Puente WS→Livewire (tcBridge en la vista): una marca nueva en ops. */
+    #[On('tc-mark')]
+    public function onMarkRecorded(array $payload = []): void
+    {
+        if (($payload['eventUlid'] ?? null) !== $this->event->ulid) {
+            return;
+        }
+
+        $seq = (int) ($payload['seq'] ?? 0);
+
+        if ($seq <= $this->lastMarkSeq) {
+            return; // evento repetido/viejo: la bitácora ya lo muestra
+        }
+
+        $this->lastMarkSeq = $seq;
+
+        // with() → ListMarkLog: el render dirigido refresca contadores y tabla.
+    }
+
+    /** Puente WS→Livewire: una corrección recalculó los estados efectivos. */
+    #[On('tc-results')]
+    public function onResultsUpdated(array $payload = []): void
+    {
+        if (($payload['eventUlid'] ?? null) !== $this->event->ulid) {
+            return;
+        }
+
+        $seq = (int) ($payload['seq'] ?? 0);
+
+        if ($seq <= $this->lastResultsSeq) {
+            return; // versión ya reflejada
+        }
+
+        $this->lastResultsSeq = $seq;
+
+        // with() → ListMarkLog: el estado derivado (void/reassign/adjust)
+        // cambió con el recálculo — misma consulta, refresco dirigido.
+    }
 
     public function mount(Event $event): void
     {
@@ -232,7 +286,7 @@ new #[Layout('components.layouts.panel')] #[Title('Registros')] class extends Co
 
 <div
     class="flex flex-col gap-4"
-    wire:poll.5s
+    wire:poll.15s
     x-data="{ markModal: false, historyModal: false }"
     @open-mark-modal.window="markModal = true"
     @close-mark-modal.window="markModal = false"
@@ -244,7 +298,19 @@ new #[Layout('components.layouts.panel')] #[Title('Registros')] class extends Co
         danger: true,
     }).then((ok) => ok && $wire.submit(true))"
 >
-    <x-ui.page-header :title="__('ui.events.marks_title')" :subtitle="__('ui.events.log_text')" />
+    {{-- Puente WS→Livewire (patrón compartido, ver comentario de cabecera):
+         envoltorio display:contents para no mezclarlo con el x-data de los
+         modales — Alpine anida ambos componentes y limpia cada uno. --}}
+    <div
+        class="contents"
+        x-data="tcBridge(@js(['channel' => 'event.'.$event->ulid.'.ops', 'events' => ['.mark.recorded' => 'tc-mark', '.results.updated' => 'tc-results']]))"
+    >
+    <x-ui.page-header :title="__('ui.events.marks_title')" :subtitle="__('ui.events.log_text')">
+        <x-slot:actions>
+            {{-- Indicador de conexión WS ligado a tc-echo-status (G13, TQ-018). --}}
+            <x-ui.live-indicator :wire="true" />
+        </x-slot:actions>
+    </x-ui.page-header>
 
     {{-- Contadores por estado derivado (ISSUE-134): coherentes con la tabla
          porque ambos salen de la misma consulta de EffectiveMarks. --}}
@@ -478,4 +544,5 @@ new #[Layout('components.layouts.panel')] #[Title('Registros')] class extends Co
             @endif
         @endif
     </x-ui.modal>
+    </div>
 </div>
