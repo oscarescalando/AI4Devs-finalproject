@@ -4,7 +4,7 @@ titulo: "Inscripciones: alta con categoría automática y dorsal (F2 · ISSUE-16
 tipo: plan
 prioridad: P0
 estimacion: L
-estado: abierto
+estado: hecho
 refiere_a: ISSUE-162
 parte_de: —
 rama: feature/entrega-2-ol-gt
@@ -16,15 +16,15 @@ actualizado: 2026-11-28
 
 ## Fases
 
-- [ ] [TQ-030](TQ-030-alta-y-listado.md) — Alta individual con categoría automática, dorsal y listado filtrable
+- [x] [TQ-030](TQ-030-alta-y-listado.md) — Alta individual con categoría automática, dorsal y listado filtrable
 
 ## Siguiente paso
 
-Ejecutar TQ-030.
+Plan COMPLETO: ISSUE-162/EP-07 en su rebanada. Siguiente: EP-26 completo (paso 7).
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-162 completa en su rebanada (ajustes/recategorización/equipos DEFER).
+- [x] ISSUE-162 completa en su rebanada (ajustes/recategorización/equipos DEFER).
 
 ## Bitácora
 

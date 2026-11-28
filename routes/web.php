@@ -7,6 +7,7 @@ use App\Livewire\Directory\ManageOrganizations;
 use App\Livewire\Directory\PersonManager;
 use App\Livewire\Directory\TeamManager;
 use App\Livewire\Events\CategoryManager;
+use App\Livewire\Events\EntryManager;
 use App\Livewire\Events\EventList;
 use App\Livewire\Events\WaveManager;
 use App\Models\Event;
@@ -67,7 +68,11 @@ Route::get('/events', EventList::class)->name('events.index')
     ->middleware(['auth', 'permission:events.view']);
 Volt::route('/events/{event}', 'events.event-hub')->name('events.show')
     ->middleware(['auth', 'permission:events.view']);
-Volt::route('/events/{event}/entries', 'events.entry-list')->name('events.entries')
+// Inscripciones del evento (ISSUE-162, TQ-030): deja de ser el adelanto
+// Volt — gestor con acciones = clase Livewire (convención del proyecto),
+// mismo nombre de ruta y mismo permiso de lectura; la escritura la autoriza
+// cada acción con entries.manage.
+Route::get('/events/{event}/entries', EntryManager::class)->name('events.entries')
     ->middleware(['auth', 'permission:entries.view']);
 Volt::route('/events/{event}/start', 'events.start-board')->name('events.start')
     ->middleware(['auth', 'permission:start.manage']);

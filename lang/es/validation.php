@@ -49,5 +49,11 @@ return [
         'birthdate' => 'fecha de nacimiento',
         'gender' => 'género',
         'organization_ulid' => 'organización',
+
+        // Gestor de inscripciones (ISSUE-162, TQ-030).
+        'person_ulid' => 'atleta',
+        'race_ulid' => 'carrera',
+        'wave_ulid' => 'oleada',
+        'bib' => 'dorsal',
     ],
 ];

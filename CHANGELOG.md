@@ -3,6 +3,10 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.27.0] - 2026-11-28
+### 🚀 Agregado
+- **Inscripciones: alta con categoría automática, dorsal y listado** (TQ-030 · ISSUE-162 rebanada, EP-07): `/events/{ulid}/entries` real con filtros `#[Url]` (carrera/categoría/estado + búsqueda dorsal/nombre), modal de alta con picker de personas (documento enmascarado), **categoría automática previsualizada en vivo** (edad al día del evento + género vía `CategoryMatch`, compartida entre preview y persistencia — lo visible es lo guardado; cae a categorías sin token para menores), **dorsal automático** MAX+1 editable y baja lógica con reactivación. INV-03/04 con errores de campo claros (duplicado de persona cubre canceladas). Suite a **432 tests** (30 nuevas). DEFERs: ajustes acumulables, recategorización en bloque, equipos, importación.
+
 ## [0.26.0] - 2026-11-28
 ### 🚀 Agregado
 - **Directorio de personas y equipos** (TQ-028 · ISSUE-161, cierra EP-06 en panel): `/directory/persons` y `/directory/teams` reales con búsqueda parcial (nombre o documento), documento normalizado `^[VE]-[0-9]{6,8}$` único global, **PII enmascarada en listados** (`MaskDocument` tipo «V-1••••54», RNF-13; nacimiento nunca en lista — solo edad), modal con el documento completo solo con `directory.write`, y borrados bloqueados por inscripciones/cuentas. Suite a **402 tests** (52 nuevas).

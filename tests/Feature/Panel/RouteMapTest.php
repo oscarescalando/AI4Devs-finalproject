@@ -161,9 +161,10 @@ it('inscripciones lista dorsales y atletas con el contrato público del roster',
 
     $html = $response->getContent();
 
-    // Dorsal en mono tabular (§1.3) y paginación server-side de 10 en 10.
+    // Dorsal en mono tabular (§1.3) y paginación server-side de 25 en 25
+    // (TQ-030: el gestor real reemplazó al adelanto de 10 en 10).
     expect($html)->toContain('td-right mono')
-        ->and($html)->toContain('1–10 de 114')
+        ->and($html)->toContain('1–25 de 114')
         // Sin PII extra (INV-06): ni documento ni contacto en la pantalla.
         ->and($html)->not->toContain((string) $first->person->document);
 });
