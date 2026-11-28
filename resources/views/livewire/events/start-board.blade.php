@@ -98,57 +98,6 @@ new #[Layout('components.layouts.panel')] #[Title('Salidas')] class extends Comp
 
 ?>
 
-@once
-    <script>
-        /* Reloj vivo del tablero (ISSUE-132, RF-42): offset = server_now −
-           Date.now() del navegador; el tick deriva del reloj local y cada
-           60 s vuelve a pedir la hora oficial ($wire.syncClock), así la
-           deriva queda < 1 s/h. El store tcClock publica la hora formateada
-           para que las confirmaciones muestren la hora de sistema. */
-        window.tcStartClock ||= (config) => ({
-            offsetMs: 0,
-            clock: '',
-            init() {
-                this.applyServerNow(config.server_now);
-                this.tick();
-                setInterval(() => this.tick(), 500);
-                setInterval(async () => {
-                    try {
-                        this.applyServerNow(await this.$wire.syncClock());
-                    } catch (error) {
-                        /* sin respuesta: el offset vigente sigue mandando */
-                    }
-                }, 60000);
-            },
-            applyServerNow(serverNow) {
-                if (! Number.isFinite(serverNow)) {
-                    return;
-                }
-                this.offsetMs = serverNow - Date.now();
-                window.Alpine?.store('tcClock', { now: this.clock, offsetMs: this.offsetMs });
-            },
-            tick() {
-                const moment = new Date(Date.now() + this.offsetMs);
-                this.clock = this.format(moment);
-                window.Alpine?.store('tcClock', { now: this.clock, offsetMs: this.offsetMs });
-            },
-            format(moment) {
-                try {
-                    return new Intl.DateTimeFormat('es-VE', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hourCycle: 'h23',
-                        timeZone: config.timezone,
-                    }).format(moment);
-                } catch (error) {
-                    return moment.toTimeString().slice(0, 8);
-                }
-            },
-        });
-    </script>
-@endonce
-
 <div
     class="flex flex-col gap-4"
     wire:poll.15s
@@ -244,3 +193,54 @@ new #[Layout('components.layouts.panel')] #[Title('Salidas')] class extends Comp
         </x-ui.card>
     </div>
 </div>
+
+@once
+    <script>
+        /* Reloj vivo del tablero (ISSUE-132, RF-42): offset = server_now −
+           Date.now() del navegador; el tick deriva del reloj local y cada
+           60 s vuelve a pedir la hora oficial ($wire.syncClock), así la
+           deriva queda < 1 s/h. El store tcClock publica la hora formateada
+           para que las confirmaciones muestren la hora de sistema. */
+        window.tcStartClock ||= (config) => ({
+            offsetMs: 0,
+            clock: '',
+            init() {
+                this.applyServerNow(config.server_now);
+                this.tick();
+                setInterval(() => this.tick(), 500);
+                setInterval(async () => {
+                    try {
+                        this.applyServerNow(await this.$wire.syncClock());
+                    } catch (error) {
+                        /* sin respuesta: el offset vigente sigue mandando */
+                    }
+                }, 60000);
+            },
+            applyServerNow(serverNow) {
+                if (! Number.isFinite(serverNow)) {
+                    return;
+                }
+                this.offsetMs = serverNow - Date.now();
+                window.Alpine?.store('tcClock', { now: this.clock, offsetMs: this.offsetMs });
+            },
+            tick() {
+                const moment = new Date(Date.now() + this.offsetMs);
+                this.clock = this.format(moment);
+                window.Alpine?.store('tcClock', { now: this.clock, offsetMs: this.offsetMs });
+            },
+            format(moment) {
+                try {
+                    return new Intl.DateTimeFormat('es-VE', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hourCycle: 'h23',
+                        timeZone: config.timezone,
+                    }).format(moment);
+                } catch (error) {
+                    return moment.toTimeString().slice(0, 8);
+                }
+            },
+        });
+    </script>
+@endonce

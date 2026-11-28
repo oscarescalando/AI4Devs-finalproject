@@ -11,6 +11,7 @@ use App\Models\Event;
 use App\Models\Result;
 use App\Models\TimingMark;
 use App\Models\Wave;
+use Carbon\CarbonImmutable;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -26,6 +27,9 @@ use Illuminate\Support\Str;
  * mano y documentado en resources/js/app.js (tcBridge).
  */
 uses(RefreshDatabase::class);
+
+// El test del single-flight congela el reloj: nunca gotea a los demás.
+afterEach(fn () => CarbonImmutable::setTestNow(null));
 
 function liveAccount(string $role): Account
 {
@@ -186,14 +190,83 @@ it('la pantalla pública refresca con tc-results y resalta la llegada nueva', fu
         ->assertSet('lastPushSeq', $next);
 });
 
+it('la pública refresca por tc-mark de seq nueva, deduplica viejos y colapsa el gap en un solo refetch', function () {
+    $entry = liveEntry($this->event, 150);
+
+    // Tiempo congelado (TQ-032): la ventana single-flight de 500 ms se
+    // ejerce determinista, sin depender de la velocidad del runner.
+    CarbonImmutable::setTestNow('2026-11-28 12:00:00');
+
+    $component = Livewire::test('public.leaderboard-page', ['slug' => $this->event->slug])
+        ->assertSet('lastMarkSeq', 0)
+        ->assertSet('refetches', 1); // el mount cuenta su carga inicial
+
+    app(RegisterManualArrival::class)($this->event, 150);
+
+    $seq = (int) TimingMark::query()->where('event_id', $this->event->id)->max('id');
+
+    // Push de seq nueva (lo que entrega el puente tras su debounce):
+    // refetch dirigido inmediato, sin esperar al sondeo ni al motor. El
+    // dorsal del push queda sellado como llegada nueva y el refresh lo
+    // resalta (recalculo síncrono en la prueba: la fila ya está).
+    $component->dispatch('tc-mark', payload: ['eventUlid' => $this->event->ulid, 'seq' => $seq, 'bib' => 150])
+        ->assertSet('lastMarkSeq', $seq)
+        ->assertSet('refetches', 2)
+        ->assertSet('newBibs', [150]);
+
+    // El resaltado SOBREVIVE al refresh encadenado del motor (tc-mark y
+    // tc-results batched en el mismo commit): sello de 30 s por dorsal,
+    // no diff de la última carga (hallazgo E2E TQ-032).
+    $version = liveResultsVersion($this->event);
+
+    $component->dispatch('tc-results', payload: ['eventUlid' => $this->event->ulid, 'seq' => $version])
+        ->assertSet('newBibs', [150]);
+
+    // Push repetido/viejo y de otro evento: sin refetch.
+    $component->dispatch('tc-mark', payload: ['eventUlid' => $this->event->ulid, 'seq' => $seq])
+        ->dispatch('tc-mark', payload: ['eventUlid' => (string) Str::ulid(), 'seq' => $seq + 100])
+        ->assertSet('refetches', 3);
+
+    // GAP de seq en ráfaga (dos saltos inmediatos, < 500 ms): el seq
+    // avanza pero NO se acumulan refetchs — queda UNO pendiente que el
+    // siguiente disparo resuelve.
+    $component->dispatch('tc-mark', payload: ['eventUlid' => $this->event->ulid, 'seq' => $seq + 7])
+        ->dispatch('tc-mark', payload: ['eventUlid' => $this->event->ulid, 'seq' => $seq + 9])
+        ->assertSet('lastMarkSeq', $seq + 9)
+        ->assertSet('refetches', 3)
+        ->assertSet('pendingRefetch', true);
+
+    // Fuera de la ventana: la RECONEXIÓN (tc-resync del puente) dispara un
+    // único refetch que consume el pendiente y cierra el hueco.
+    CarbonImmutable::setTestNow(now()->addMilliseconds(600));
+
+    $component->dispatch('tc-resync')
+        ->assertSet('refetches', 4)
+        ->assertSet('pendingRefetch', false);
+
+    CarbonImmutable::setTestNow(null);
+});
+
 it('las cinco pantallas vivas trazan puente WS, indicador y sondeo de respaldo a 15 s', function () {
     $public = $this->get("/e/{$this->event->slug}")->getContent();
 
     expect($public)->toContain('wire:poll.15s')
         ->and($public)->toContain('tcBridge')
         ->and($public)->toContain('.results.updated')
+        // TQ-032: la pública también escucha la marca y la salida (push),
+        // y su reloj se alinea contra /time público (fetch sin Bearer).
+        ->and($public)->toContain('.mark.recorded')
+        ->and($public)->toContain('.wave.started')
+        ->and($public)->toContain('tcPublicClock')
+        ->and($public)->toContain('/api/v1/time')
         ->and($public)->toContain('tc-echo-status')
         ->and($public)->not->toContain('wire:poll.4s');
+
+    // Regresión TQ-032: /time SIN cabecera sigue siendo público (200) —
+    // el reloj de la pública no tiene sesión ni token.
+    $this->getJson('/api/v1/time')
+        ->assertOk()
+        ->assertJsonStructure(['server_ms', 'timezone']);
 
     $screens = [
         ['events.arrivals', 'timekeeper', ['event' => $this->event], '.mark.recorded', 'wire:poll.5s'],

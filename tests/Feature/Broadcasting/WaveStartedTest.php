@@ -58,31 +58,55 @@ it('encola wave.started en la cola broadcast al marcar la salida', function () {
     app(MarkWaveStart::class)($event, $wave->ulid);
 
     Queue::assertPushedOn('broadcast', BroadcastEvent::class);
-    Queue::assertPushed(
-        BroadcastEvent::class,
-        function (BroadcastEvent $job) use ($event, $wave): bool {
-            /** @var WaveStarted $broadcast */
-            $broadcast = $job->event;
 
-            if (! $broadcast instanceof WaveStarted) {
-                return false;
-            }
+    // TQ-032: DOS variantes como MarkRecorded — ops (privado, con detalle
+    // de oleada) y pública (canal abierto, subconjunto sin PII).
+    $started = [];
+    Queue::pushed(BroadcastEvent::class, function (BroadcastEvent $job) use (&$started): void {
+        if ($job->event instanceof WaveStarted) {
+            $started[] = $job->event;
+        }
+    });
 
-            $channels = $broadcast->broadcastOn();
-            $payload = $broadcast->broadcastWith();
-            $persistedMs = (int) $wave->fresh()->actual_start_at->getTimestampMs();
+    expect($started)->toHaveCount(2);
 
-            return $broadcast->broadcastAs() === 'wave.started'
-                && count($channels) === 1
-                // PrivateChannel prefija «private-»: es el nombre de cable
-                // que Reverb/Echo autorizan contra routes/channels.php.
-                && $channels[0]->name === "private-event.{$event->ulid}.ops"
-                && $payload['eventUlid'] === $event->ulid
-                && $payload['waveUlid'] === $wave->ulid
-                && abs($payload['actualStartAt'] - $persistedMs) <= 1_000
-                && $payload['seq'] === null;
-        },
-    );
+    $ops = array_values(array_filter($started, static fn (WaveStarted $b): bool => ! $b->public));
+    $public = array_values(array_filter($started, static fn (WaveStarted $b): bool => $b->public));
+
+    expect($ops)->toHaveCount(1)
+        ->and($public)->toHaveCount(1);
+
+    $persistedMs = (int) $wave->fresh()->actual_start_at->getTimestampMs();
+
+    // Variante ops: canal PRIVADO (PrivateChannel prefija «private-»: es el
+    // nombre de cable que Reverb/Echo autorizan contra routes/channels.php)
+    // con el detalle completo de la oleada.
+    $opsPayload = $ops[0]->broadcastWith();
+
+    expect($ops[0]->broadcastAs())->toBe('wave.started')
+        ->and($ops[0]->broadcastOn())->toHaveCount(1)
+        ->and($ops[0]->broadcastOn()[0]->name)->toBe("private-event.{$event->ulid}.ops")
+        ->and(array_keys($opsPayload))->toBe(['eventUlid', 'waveUlid', 'actualStartAt', 'seq'])
+        ->and($opsPayload['eventUlid'])->toBe($event->ulid)
+        ->and($opsPayload['waveUlid'])->toBe($wave->ulid)
+        ->and($opsPayload['seq'])->toBeNull()
+        // datetime(3): el ms persistido puede redondear contra el Carbon
+        // original que viajó en el evento — misma hora, tolerancia 1 s.
+        ->and(abs($opsPayload['actualStartAt'] - $persistedMs))->toBeLessThanOrEqual(1_000);
+
+    // Variante pública: canal ABIERTO con el subconjunto {eventUlid, seq,
+    // actualStartAt} — asserts de FORMA (RF-75/INV-06): sin waveUlid ni
+    // dato de persona alguno (aquí no aplica, el contrato lo garantiza).
+    $payload = $public[0]->broadcastWith();
+
+    expect($public[0]->broadcastAs())->toBe('wave.started')
+        ->and($public[0]->broadcastOn())->toHaveCount(1)
+        ->and($public[0]->broadcastOn()[0]->name)->toBe("event.{$event->ulid}.public")
+        ->and($payload)->toHaveCount(3)
+        ->and($payload)->not->toHaveKey('waveUlid')
+        ->and($payload['eventUlid'])->toBe($event->ulid)
+        ->and($payload['seq'])->toBeNull()
+        ->and(abs($payload['actualStartAt'] - $persistedMs))->toBeLessThanOrEqual(1_000);
 });
 
 it('retiene la emisión hasta el commit de la transacción', function () {

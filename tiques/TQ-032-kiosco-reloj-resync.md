@@ -4,7 +4,7 @@ titulo: "Kiosco por push + reloj pública con wave.started + resync por gap"
 tipo: feature
 prioridad: P1
 estimacion: M
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-141, ISSUE-142, ISSUE-143
 parte_de: TQ-031
 rama: feature/entrega-2-ol-gt
@@ -29,21 +29,21 @@ sin PII) y resincronización por gap de seq al reconectar (pide deltas, no la co
 
 ## Tareas
 
-- [ ] WaveStarted también a event.{ulid}.public (payload sin PII) con prueba.
-- [ ] Pública: escuchar mark.recorded → resaltado/fila inmediata sin esperar el refresh del
+- [x] WaveStarted también a event.{ulid}.public (payload sin PII) con prueba.
+- [x] Pública: escuchar mark.recorded → resaltado/fila inmediata sin esperar el refresh del
       sondeo (delta sobre lo visible; poll 15 s queda de respaldo).
-- [ ] Reloj de la pública: offset contra /time + alineación al recibir wave.started
+- [x] Reloj de la pública: offset contra /time + alineación al recibir wave.started
       (hora oficial de salida como base del tiempo de carrera si aplica).
-- [ ] Resync por gap: al reconectar (o detectar hueco de seq), pedir el leaderboard una vez
+- [x] Resync por gap: al reconectar (o detectar hueco de seq), pedir el leaderboard una vez
       (contrato v/seq ya existente) en lugar de acumular; documentar la estrategia.
-- [ ] Pruebas: emisión a public sin PII; listeners registrados; gap dispara refetch unitario.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Pruebas: emisión a public sin PII; listeners registrados; gap dispara refetch unitario.
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] RF-54 en su versión F2: llegada reflejada por delta sin recargar la colección; reconexión
+- [x] RF-54 en su versión F2: llegada reflejada por delta sin recargar la colección; reconexión
       sin huecos visibles.
 
 ## Bitácora
@@ -52,3 +52,4 @@ sin PII) y resincronización por gap de seq al reconectar (pide deltas, no la co
 |-------|--------|------|
 | 2026-11-28 | abierto | Creado como fase del plan TQ-031 |
 | 2026-11-28 | en-curso | Delegado a subagent (orquestador); noche autónoma |
+| 2026-11-28 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 433/433 · build ✓. E2E REAL: push→fila resaltada 758 ms; reconexión tras matar Reverb → EXACTAMENTE 1 refetch (resync); wave.started→cronómetro 0:00:00; 0 errores JS. HALLAZGOS: pusher-js deja canales muertos al reconectar (auto-resuscripción añadida al puente) y bug preexistente en start-board (script antes del div raíz rompe el morph de Livewire 4 — el orquestador lo corrige a continuación). DEFERs: endpoint de deltas, sembrar salida vigente en el contrato, contador de pendientes, suites nocturnas/k6 |

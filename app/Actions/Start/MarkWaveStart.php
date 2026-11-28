@@ -21,7 +21,8 @@ use Illuminate\Validation\ValidationException;
  * dadas forman un prefijo del tablero.
  *
  * La confirmación y el toast los resuelve la pantalla; tras el save se
- * despacha `wave.started` (WaveStarted, TQ-017): afterCommit y en la cola
+ * despacha `wave.started` (WaveStarted, TQ-017) en sus DOS variantes de
+ * canal (ops y pública sin PII, TQ-032): afterCommit y en la cola
  * `broadcast` (ADR-013) — persistido antes de emitir, y si la transacción
  * en curso revierte, no se emite nada.
  */
@@ -65,17 +66,36 @@ final readonly class MarkWaveStart
 
         $wave->fill(['actual_start_at' => $now])->save();
 
-        // ADR-013: persistir antes de emitir. El evento es
-        // ShouldDispatchAfterCommit, así que dentro de una transacción el
-        // dispatcher retiene la emisión hasta el commit (rollback = nada
-        // emitido) y fuera de ella se encola de inmediato en `broadcast`.
-        WaveStarted::dispatch($event->ulid, $wave->ulid, $now->getTimestampMs());
+        $this->announce($event->ulid, $wave->ulid, (int) $now->getTimestampMs());
 
         return [
             'ulid' => $wave->ulid,
             'name' => $this->label($wave),
             'actual' => FormatClock::timeOfDay($now, $event->timezone),
         ];
+    }
+
+    /**
+     * Emisión de la salida (TQ-017 ops; TQ-032 añade la pública): variante
+     * ops (con waveUlid) y variante pública (subconjunto sin PII, RF-75/
+     * INV-06) — mismo patrón que RecordTimingMarkBatch::announce(). ADR-013:
+     * persistir antes de emitir; ShouldDispatchAfterCommit retiene ambas
+     * hasta el commit (rollback = nada emitido) y van a la cola `broadcast`.
+     */
+    private function announce(string $eventUlid, string $waveUlid, int $actualStartAtMs): void
+    {
+        WaveStarted::dispatch(
+            eventUlid: $eventUlid,
+            waveUlid: $waveUlid,
+            actualStartAtMs: $actualStartAtMs,
+        );
+
+        WaveStarted::dispatch(
+            eventUlid: $eventUlid,
+            waveUlid: $waveUlid,
+            actualStartAtMs: $actualStartAtMs,
+            public: true,
+        );
     }
 
     /**

@@ -45,13 +45,90 @@ window.tcToggleSidebar = () => {
  * Suscripción en el init de Alpine; limpieza en destroy() → leaveChannel
  * cuando el morph elimina el nodo o se navega fuera: sin listeners
  * huérfanos. Sin tcEcho (sin clave VITE_, degradación O1) el puente no
- * hace nada y la pantalla vive del sondeo de respaldo de 15 s. */
-window.tcBridge = ({ channel, events = {}, private: isPrivate = true }) => ({
+ * hace nada y la pantalla vive del sondeo de respaldo de 15 s.
+ *
+ * TQ-032 — tres opciones nuevas, TODAS opt-in y por pantalla (las cinco
+ * pantallas de TQ-018 no las usan y quedan intactas):
+ *
+ * · debounce: { '<tc-*>': ms } — colapsa ráfagas de pushes en UN solo
+ *   dispatch Livewire por ventana (trailing edge, 500 ms en la pública).
+ *   Con payloads que llevan `seq` se conserva el de seq MÁXIMO: el
+ *   refetch dirigido del servidor ve la versión más nueva y las marcas
+ *   intermedias llegan igual (el leaderboard vive en el servidor). Así
+ *   N llegadas en ráfaga (lote de la estación) = UN refetch, no N.
+ * · resync: '<tc-*>' — al RECONECTAR (tc-echo-status vuelve a connected
+ *   tras un estado no-live POSTERIOR a una conexión lograda: el
+ *   connecting inicial de la carga no cuenta, no se perdió nada; ver
+ *   nota de pusher-js en el init) dispara UN dispatch único con el mismo
+ *   debounce: el Volt responde con su refetch dirigido y actualiza el seq
+ *   del contrato v/seq del servidor. Sin acumulación: la ventana de
+ *   500 ms traga los rebotes de conexión.
+ * · browser: { '<.ws-event>': '<dom-event>' } — además del dispatch
+ *   Livewire (que va al servidor), retransmite el payload como CustomEvent
+ *   en window para consumidores Alpine PURAMENTE de cliente (el reloj de
+ *   carrera de la pública con wave.started, que no necesita servidor). */
+window.tcBridge = ({
+    channel,
+    events = {},
+    private: isPrivate = true,
+    debounce = {},
+    resync = null,
+    browser = {},
+}) => ({
     wireName: null,
+    config: null,
+    timers: {},
+    latest: {},
+    wasDown: false,
+    everConnected: false,
+    resyncTimer: null,
+    onStatus: null,
     init() {
         if (! window.tcEcho) {
             return;
         }
+
+        this.config = { channel, events, isPrivate, debounce, resync, browser };
+        this.connect();
+
+        // Vigilancia de la conexión (siempre que hay puente): al volver
+        // una conexión perdida se RESUSCRIBE el canal — hallazgo E2E
+        // TQ-032: tras reconectar, pusher-js puede dejar el canal sin
+        // suscripción viva y los pushes dejan de llegar en silencio para
+        // siempre; el puente se auto-repara (leave + suscripción nueva)
+        // y, si se pidió `resync`, dispara además el refetch dirigido.
+        // Caída real = cualquier estado no-live DESPUÉS de una conexión
+        // lograda (pusher-js no emite «disconnected» al caerse el socket:
+        // pasa a connecting/unavailable; el connecting inicial de la
+        // carga no cuenta, no se perdió nada).
+        this.onStatus = (event) => {
+            const state = event?.detail?.state;
+            if (state !== 'connected') {
+                if (this.everConnected) {
+                    this.wasDown = true;
+                }
+                return;
+            }
+            if (this.wasDown) {
+                this.wasDown = false;
+                this.connect();
+                if (this.config.resync) {
+                    clearTimeout(this.resyncTimer);
+                    this.resyncTimer = setTimeout(() => {
+                        window.Livewire?.dispatch(this.config.resync);
+                    }, 500);
+                }
+            }
+            this.everConnected = true;
+        };
+        window.addEventListener(window.tcEchoStatusEvent, this.onStatus);
+    },
+    connect() {
+        if (this.wireName) {
+            window.tcEcho?.leaveChannel(this.wireName);
+        }
+
+        const { channel, events, isPrivate, debounce, browser } = this.config;
 
         this.wireName = isPrivate ? `private-${channel}` : channel;
 
@@ -59,13 +136,56 @@ window.tcBridge = ({ channel, events = {}, private: isPrivate = true }) => ({
             ? window.tcEcho.private(channel)
             : window.tcEcho.channel(channel);
 
-        Object.entries(events).forEach(([wsEvent, livewireEvent]) => {
+        // Suscripción de TODOS los eventos declarados: los de `events`
+        // (retransmisión a Livewire) y los que SOLO existen en `browser`
+        // (relay de cliente, p. ej. el reloj con wave.started) — sin
+        // entrada en events no habría listener que los escuchara.
+        const wired = [...new Set([...Object.keys(events), ...Object.keys(browser)])];
+
+        wired.forEach((wsEvent) => {
             connection.listen(wsEvent, (payload) => {
-                window.Livewire?.dispatch(livewireEvent, { payload: payload ?? {} });
+                const livewireEvent = events[wsEvent];
+                if (livewireEvent) {
+                    this.relay(livewireEvent, payload ?? {}, debounce[livewireEvent] ?? 0);
+                }
+
+                const domEvent = browser[wsEvent];
+                if (domEvent) {
+                    window.dispatchEvent(new CustomEvent(domEvent, { detail: { payload: payload ?? {} } }));
+                }
             });
         });
     },
+    /* Dispatch Livewire inmediato o colapsado: dentro de la ventana se
+     * guarda el payload de seq máximo y se espera al trailing edge. */
+    relay(livewireEvent, payload, windowMs) {
+        if (! windowMs) {
+            window.Livewire?.dispatch(livewireEvent, { payload });
+            return;
+        }
+
+        const held = this.latest[livewireEvent];
+        const incomingSeq = Number(payload.seq ?? -1);
+        const heldSeq = Number(held?.seq ?? -1);
+        if (! held || incomingSeq >= heldSeq) {
+            this.latest[livewireEvent] = payload;
+        }
+
+        clearTimeout(this.timers[livewireEvent]);
+        this.timers[livewireEvent] = setTimeout(() => {
+            const latest = this.latest[livewireEvent];
+            this.latest[livewireEvent] = null;
+            if (latest) {
+                window.Livewire?.dispatch(livewireEvent, { payload: latest });
+            }
+        }, windowMs);
+    },
     destroy() {
+        Object.values(this.timers).forEach((timer) => clearTimeout(timer));
+        clearTimeout(this.resyncTimer);
+        if (this.onStatus) {
+            window.removeEventListener(window.tcEchoStatusEvent, this.onStatus);
+        }
         if (this.wireName) {
             window.tcEcho?.leaveChannel(this.wireName);
             this.wireName = null;

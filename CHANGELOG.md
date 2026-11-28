@@ -3,6 +3,13 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.28.0] - 2026-11-28
+### 🚀 Agregado
+- **EP-26 completo** (TQ-032 · ISSUE-141/142/143 en su versión de sesión): la pantalla pública reacciona **por push** a `mark.recorded` (refetch dirigido — nada se calcula en cliente; resaltado 30 s sellado), `wave.started` también al canal público sin PII con cronómetro de carrera, reloj con offset contra `/time` y **resync por gap de seq** con un único refetch (debounce + reconexión). Puente `tcBridge` con auto-resuscripción (hallazgo E2E: pusher-js dejaba canales muertos). E2E real: push→fila en 758 ms; reconexión con exactamente 1 refetch.
+### 🐛 Corregido
+- Bug preexistente destapado por la E2E: un `<script>` antes del div raíz hacía que Livewire 4 colgara `wire:id` del script y el morph no actualizara el DOM de `start-board` — movido al final de la vista.
+- Suite a **433 tests**.
+
 ## [0.27.0] - 2026-11-28
 ### 🚀 Agregado
 - **Inscripciones: alta con categoría automática, dorsal y listado** (TQ-030 · ISSUE-162 rebanada, EP-07): `/events/{ulid}/entries` real con filtros `#[Url]` (carrera/categoría/estado + búsqueda dorsal/nombre), modal de alta con picker de personas (documento enmascarado), **categoría automática previsualizada en vivo** (edad al día del evento + género vía `CategoryMatch`, compartida entre preview y persistencia — lo visible es lo guardado; cae a categorías sin token para menores), **dorsal automático** MAX+1 editable y baja lógica con reactivación. INV-03/04 con errores de campo claros (duplicado de persona cubre canceladas). Suite a **432 tests** (30 nuevas). DEFERs: ajustes acumulables, recategorización en bloque, equipos, importación.
