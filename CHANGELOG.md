@@ -3,6 +3,12 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.21.0] - 2026-11-28
+### 🚀 Agregado
+- **Shell de la estación de cronometraje** (TQ-021 · ISSUE-147/148 mínima F1, ADR-014): `/station` sin sesión web con emparejamiento por token de dispositivo (`device:marks`) validado contra `/time`, captura 100 % local en IndexedDB (`client_mark_id` UUIDv7 generado en cliente, cola persistente que sobrevive recargas) y service worker que abre la estación offline tras la primera visita. Comando artesanal `station:token {ulid}` (cuenta sintética sin roles) para el emparejamiento.
+- Seguridad aditiva: `/api/v1/time` exige Bearer válido con `device:marks` cuando se presenta cabecera (cerraba un hueco del emparejamiento; sin cabecera sigue público por ADR-012).
+- Suite a **289 tests**; entry Vite propio para la estación (bundle del panel intacto).
+
 ## [0.20.0] - 2026-11-27
 ### 🚀 Agregado
 - **Caos mínimo del tiempo real** (TQ-019 · ISSUE-145/146, cierra el plan TQ-016/EP-26 rebanada F1): fallo de la cola `broadcast` simulado con un driver de caos real → **bug destapado y corregido con prueba roja primero**: el 500 escapaba tras el commit pese a marcas persistidas (violaba INV-08) → los 4 eventos de dominio ahora usan `ShouldRescue` (broadcast *best-effort* con reporte, **enmienda registrada en ADR-013**). Worker real con broadcaster muerto: recálculo intacto y veneno aislado en `failed_jobs`. Ráfaga de 100 marcas con duplicados y huérfanas en 1,59 s: cero duplicados, 89 resultados conciliados exactos.

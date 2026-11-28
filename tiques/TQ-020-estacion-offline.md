@@ -31,13 +31,13 @@ en IndexedDB con `client_mark_id` generado en cliente, sincroniza de forma idemp
 
 ## Fases
 
-- [ ] [TQ-021](TQ-021-shell-y-captura.md) — Shell de la estación: emparejamiento + captura local en IndexedDB
+- [x] [TQ-021](TQ-021-shell-y-captura.md) — Shell de la estación: emparejamiento + captura local en IndexedDB
 - [ ] [TQ-022](TQ-022-sync-idempotente.md) — Sync idempotente por lotes + reloj con offset
 - [ ] [TQ-023](TQ-023-e2e-offline.md) — E2E offline (Playwright) y doble envío
 
 ## Siguiente paso
 
-Ejecutar TQ-021 (shell + captura local).
+Ejecutar TQ-022 (sync idempotente + reloj con offset).
 
 ## Criterios de aceptación
 

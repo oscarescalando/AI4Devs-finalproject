@@ -16,8 +16,10 @@ use Illuminate\Support\Facades\Route as RouteFacade;
 uses(RefreshDatabase::class);
 
 /**
- * Públicas por contrato (ISSUE-137/108/114): landing, pantalla de evento,
- * login y estáticos/manifest del shell PWA — sin sesión ni permiso.
+ * Públicas por contrato (ISSUE-137/108/114/147): landing, pantalla de
+ * evento, login, estáticos/manifest del shell PWA y la estación de
+ * cronometraje /station (TQ-021: captura local sin sesión, ADR-014) —
+ * sin sesión ni permiso.
  *
  * @return list<string>
  */
@@ -27,6 +29,7 @@ function routeInspectionPublicUris(): array
         '/',
         'e/{slug}',
         'login',
+        'station',
         'manifest.webmanifest',
         'pwa/manifest',
         'sw.js',

@@ -69,6 +69,19 @@ it('sirve la pantalla offline autocontenida en español', function () {
         ->assertSee('location.reload()');
 });
 
+it('precachea la estación para abrir offline tras la primera visita con red', function () {
+    $sw = $this->get('/sw.js');
+
+    $sw->assertOk();
+
+    // ISSUE-147 (TQ-021): el HTML de /station entra al precache del
+    // install y su navegación se respalda a sí misma (los assets con hash
+    // se calientan en la primera visita con red por la rama /build/assets/).
+    expect($sw->getContent())
+        ->toContain("'/station'")
+        ->toContain('STATION_URL');
+});
+
 it('sirve los tres iconos del manifest como PNG', function (string $file) {
     $this->get("/icons/{$file}")
         ->assertOk()

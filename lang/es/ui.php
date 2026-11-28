@@ -409,6 +409,45 @@ return [
         'footer' => 'TDChronos · datos públicos por diseño: nombre y club; sin documento, contacto ni nacimiento.',
     ],
 
+    // Estación de cronometraje (ISSUE-147/148, TQ-021): shell público sin
+    // sesión; emparejamiento por token de dispositivo y captura local en
+    // IndexedDB. El JS de la estación recibe ESTE dominio completo vía @js.
+    'station' => [
+        'title' => 'Estación de cronometraje',
+        'subtitle' => 'Captura local de dorsales: funciona sin conexión.',
+        'clock_label' => 'Reloj local',
+        'pair_title' => 'Emparejar estación',
+        'pair_text' => 'Pega el ULID del evento y el token que emitió el comando station:token.',
+        'event_ulid' => 'ULID del evento',
+        'event_ulid_placeholder' => '26 caracteres (01J…)',
+        'token' => 'Token de la estación',
+        'token_placeholder' => 'El que imprime station:token',
+        'pair_submit' => 'Emparejar',
+        'pair_checking' => 'Validando…',
+        'pair_err_empty' => 'Indica el ULID del evento y el token.',
+        'pair_err_ulid' => 'El ULID del evento debe tener 26 caracteres.',
+        'pair_err_unauthorized' => 'Token rechazado por el servidor: pide uno nuevo con station:token.',
+        'pair_err_forbidden' => 'El token no sirve para capturar marcas (falta el permiso device:marks).',
+        'pair_err_status' => 'No se pudo validar el emparejamiento (error :status).',
+        'pair_err_network' => 'Sin conexión con el servidor: el emparejamiento necesita red una sola vez.',
+        'unpair' => 'Desvincular',
+        'unpair_confirm' => '¿Desvincular la estación? Las marcas guardadas en este dispositivo se conservan.',
+        'paired_event' => 'Evento',
+        'capture_title' => 'Captura de dorsales',
+        'capture_text' => 'Teclea el dorsal y presiona Enter: la marca queda guardada en este dispositivo.',
+        'bib_label' => 'Dorsal',
+        'bib_placeholder' => 'Dorsal…',
+        'bib_invalid' => 'El dorsal debe ser un número entre 1 y 99999.',
+        'queue_title' => 'Últimas marcas',
+        'queue_empty_title' => 'Sin marcas todavía',
+        'queue_empty_text' => 'La primera marca que captures quedará guardada en este dispositivo.',
+        'status_pending' => 'Pendiente',
+        'pending_count' => ':count pendiente|:count pendientes',
+        'delete_tip' => 'Eliminar marca pendiente',
+        'delete_confirm' => '¿Eliminar la marca del dorsal :bib de las :time? Se pierde para siempre.',
+        'sync_hint' => 'Sin red se captura igual: las marcas se sincronizan cuando vuelva la conexión.',
+    ],
+
     // Páginas de error propias (403/404/419/500).
     'errors' => [
         'title' => 'Error :code',

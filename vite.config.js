@@ -9,7 +9,10 @@ export default defineConfig({
     envPrefix: 'VITE_',
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            // TQ-021: station.js es un entry APARTE que solo carga la
+            // pantalla /station (Alpine + IndexedDB, sin Livewire ni Echo);
+            // el bundle del panel (app.js) no lo referencia ni lo paga.
+            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/js/station.js'],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {

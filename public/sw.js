@@ -2,8 +2,10 @@
  * TDChronos — service worker del shell (ISSUE-114, TQ-006, ADR-014).
  *
  * Alcance mínimo para ser instalable y dar pantalla offline sin estorbar:
- *   - precache de /offline.html y los iconos del manifest;
- *   - navegaciones: red primero, /offline.html precacheada como respaldo;
+ *   - precache de /offline.html, los iconos del manifest y la estación
+ *     /station (ISSUE-147, TQ-021): su HTML queda listo antes de activar;
+ *   - navegaciones: red primero, /offline.html precacheada como respaldo —
+ *     salvo /station, que se respalda a sí misma (ver abajo);
  *   - assets Vite con hash (/build/assets/*): caché primero (inmutables);
  *   - /livewire/* y /api/* NUNCA se interceptan (estado y datos siempre frescos).
  *
@@ -13,12 +15,17 @@
  * estación de cronometraje.
  */
 
-const CACHE = 'tdchronos-shell-v1';
+const CACHE = 'tdchronos-shell-v2';
 const OFFLINE_URL = '/offline.html';
+const STATION_URL = '/station';
 
 /* ---------- install: precache del shell ---------- */
-/* La "T" offline y los iconos del manifest quedan listos antes de activar;
- * skipWaiting() para que un SW nuevo tome el control sin esperar pestañas. */
+/* La "T" offline, los iconos del manifest y la estación quedan listos antes
+ * de activar; skipWaiting() para que un SW nuevo tome el control sin esperar
+ * pestañas. OJO: los assets con hash de /station NO se precachean aquí (el
+ * nombre cambia con cada build): se calientan en caché en la PRIMERA visita
+ * con red por la rama /build/assets/ — hasta entonces la estación no abre
+ * offline. */
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches
@@ -28,6 +35,7 @@ self.addEventListener('install', (event) => {
                 '/icons/icon-192.png',
                 '/icons/icon-512.png',
                 '/icons/icon-maskable-512.png',
+                STATION_URL,
             ]))
             .then(() => self.skipWaiting()),
     );
@@ -83,6 +91,26 @@ self.addEventListener('fetch', (event) => {
 
                 return response;
             })),
+        );
+
+        return;
+    }
+
+    // Navegación a la estación (TQ-021, ADR-014): red primero para tener el
+    // HTML vigente (referencia assets con hash nuevos) y el acierto se
+    // re-guarda; sin red se sirve la copia cacheada — el respaldo siempre
+    // corresponde a la última build vista, cuyos assets ya quedaron en
+    // caché por la rama /build/assets/.
+    if (request.mode === 'navigate' && url.pathname === STATION_URL) {
+        event.respondWith(
+            fetch(request)
+                .then((response) => {
+                    const copy = response.clone();
+                    caches.open(CACHE).then((cache) => cache.put(STATION_URL, copy));
+
+                    return response;
+                })
+                .catch(() => caches.match(STATION_URL).then((hit) => hit || Response.error())),
         );
 
         return;

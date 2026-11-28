@@ -17,6 +17,12 @@ Route::get('/', function () {
 // Pantalla pública de clasificación en vivo (ISSUE-137, corte 1: sondeo).
 Volt::route('/e/{slug}', 'public.leaderboard-page')->name('public.event');
 
+// Estación de cronometraje (ISSUE-147, TQ-021, ADR-014): shell público SIN
+// sesión — la captura corre 100 % local (Alpine + IndexedDB en station.js)
+// y solo habla con la API con el token de dispositivo emparejado. Nada de
+// auth() aquí; el layout del panel no viaja en esta página.
+Route::view('/station', 'station')->name('station.home');
+
 // Acceso (RF-68): login por documento o correo + contraseña, sesiones web.
 Volt::route('/login', 'auth.login')->name('login')->middleware('guest');
 Route::post('/logout', LogoutController::class)->name('logout')->middleware('auth');
