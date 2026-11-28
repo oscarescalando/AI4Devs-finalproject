@@ -5,7 +5,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); vers
 
 ## [0.25.0] - 2026-11-28
 ### 🚀 Agregado
-- **Editor de categorías y oleadas + reprogramación en bloque** (TQ-026 · ISSUE-160/ISSUE-050, cierra EP-05 en panel):  y  reales con validaciones de coherencia de rangos (token de género documentado), horas con milisegundos ( pared del evento ↔ zona de la app;  intocable RF-15), borrados bloqueados por inscripciones, y **reprogramación en bloque** de las oleadas de una carrera (hora inicial + intervalo) en una transacción con  y confirmación de N afectadas.
+- **Editor de categorías y oleadas + reprogramación en bloque** (TQ-026 · ISSUE-160/ISSUE-050, cierra EP-05 en panel): `/events/{ulid}/categories` y `/waves` reales con validaciones de coherencia de rangos (token de género documentado), horas con milisegundos (`EventTime` pared del evento ↔ zona de la app; `actual_start_at` intocable RF-15), borrados bloqueados por inscripciones, y **reprogramación en bloque** de las oleadas de una carrera (hora inicial + intervalo) en una transacción con `lockForUpdate` y confirmación de N afectadas.
 - Suite a **350 tests** (37 nuevas).
 
 ## [0.24.0] - 2026-11-28
