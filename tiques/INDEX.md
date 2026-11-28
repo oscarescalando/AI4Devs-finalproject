@@ -26,3 +26,4 @@
 | [TQ-020](TQ-020-estacion-offline.md) | Estación de cronometraje offline-first (EP-27) | abierto | plan | P0 | ISSUE-147…152 | — | 2026-11-28 |
 | [TQ-021](TQ-021-shell-y-captura.md) | Shell de la estación: emparejamiento + captura en IndexedDB | hecho | feature | P0 | ISSUE-147, 148 | TQ-020 | 2026-11-28 |
 | [TQ-022](TQ-022-sync-idempotente.md) | Sync idempotente por lotes + reloj con offset | hecho | feature | P0 | ISSUE-149, 150 | TQ-020 | 2026-11-28 |
+| [TQ-023](TQ-023-e2e-offline.md) | E2E offline de la estación (Playwright) y doble envío | en-curso | test | P0 | ISSUE-152 | TQ-020 | 2026-11-28 |
