@@ -3,6 +3,10 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.13.2] - 2026-11-27
+### 🧹 Otros
+- Se rastrea `bootstrap/cache/.gitignore` y se deja de ignorar el directorio en el `.gitignore` raíz (patrón del esqueleto Laravel): sin él, los checkouts limpios —como el runner de CI— no tienen el directorio y `package:discover` falla en el post-autoload-dump.
+
 ## [0.13.1] - 2026-11-27
 ### 🐛 Corregido
 - Iconos Lucide no renderizaban en el navegador (TQ-010, hallazgo de la revisión de la mañana): `createIcons` exige el objeto `icons` y se llamaba sin él (además el `root` iba como segundo argumento ignorado). Ahora `tcRenderIcons` llama `createIcons({ icons, nameAttr, root })`; build y suite reverificados.

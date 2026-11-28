@@ -47,7 +47,6 @@ Homestead.yaml
 _ide_helper.php
 
 # Cache generada del framework
-/bootstrap/cache/
 /database/database.sqlite
 public/fonts-manifest.dev.json
 
