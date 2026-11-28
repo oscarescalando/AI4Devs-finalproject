@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
+ * @property Race $race
  * @property CarbonInterface|null $scheduled_start_at
  * @property CarbonInterface|null $actual_start_at
  */

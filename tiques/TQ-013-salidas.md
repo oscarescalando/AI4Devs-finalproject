@@ -4,7 +4,7 @@ titulo: "Salidas: tablero con reloj y salida real de oleada"
 tipo: feature
 prioridad: P1
 estimacion: M
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-132, ISSUE-133
 parte_de: TQ-011
 rama: feature/entrega-2-ol-gt
@@ -40,27 +40,27 @@ que guarda la hora real sin tocar la programada, con deshacer confirmado.
 
 ## Tareas
 
-- [ ] ListWaveBoard: oleadas con inscritos totales, programada, real y estado derivado
+- [x] ListWaveBoard: oleadas con inscritos totales, programada, real y estado derivado
       (Pendiente/Iniciada) — contadores sobre el total (RF-16).
-- [ ] Reloj vivo: hora del servidor vía offset (GetServerTime/GetEventClock), re-resincroniza
+- [x] Reloj vivo: hora del servidor vía offset (GetServerTime/GetEventClock), re-resincroniza
       cada 60 s, deriva < 1 s/h (RF-42), mono tabular.
-- [ ] «Marcar salida» SOLO en la primera oleada sin real; confirmación que muestra la hora de
+- [x] «Marcar salida» SOLO en la primera oleada sin real; confirmación que muestra la hora de
       sistema; guarda actual_start_at sin tocar scheduled (RF-15).
-- [ ] Deshacer salida con confirmación (tcConfirm) y ventana de aviso; autorización server-side
+- [x] Deshacer salida con confirmación (tcConfirm) y ventana de aviso; autorización server-side
       (permission start.manage + 403 probado).
-- [ ] Textos por lang/; toasts en cada acción; wire:poll.5s del tablero.
-- [ ] Pruebas: contadores sobre total con > 100 inscritos paginados, marcar/deshacer con sus
+- [x] Textos por lang/; toasts en cada acción; wire:poll.5s del tablero.
+- [x] Pruebas: contadores sobre total con > 100 inscritos paginados, marcar/deshacer con sus
       guardas (solo primera sin marcar; no sobrescribe programada), 403 sin permiso, reloj
       (offset calculado), render por rol.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-132 mínima: tablero con reloj resincronizado y contadores sobre el total
+- [x] ISSUE-132 mínima: tablero con reloj resincronizado y contadores sobre el total
       (check-in y broadcast diferidos con nota en EP-25).
-- [ ] ISSUE-133 mínima: programada ≠ real como columnas distintas, deshacer confirmado,
+- [x] ISSUE-133 mínima: programada ≠ real como columnas distintas, deshacer confirmado,
       autorización probada (broadcast/auditoría diferidos a EP-26/F2).
 
 ## Bitácora
@@ -69,3 +69,4 @@ que guarda la hora real sin tocar la programada, con deshacer confirmado.
 |-------|--------|------|
 | 2026-11-27 | abierto | Creado como fase del plan TQ-011 |
 | 2026-11-27 | en-curso | Alcance fijado tras leer ISSUE-132/133 y el esquema; diferidos documentados; delegado a subagent |
+| 2026-11-27 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 229/229 (8 nuevas) · humo HTTP 302. Decisiones: reloj Alpine con offset en wire:ignore + resync 60 s (RF-42); deshacer en orden INVERSO para preservar el prefijo de oleadas iniciadas (regla nueva a registrar en el SRS cuando se documente F2); contadores con withCount total (RF-16); ValidationException → toast de negocio |

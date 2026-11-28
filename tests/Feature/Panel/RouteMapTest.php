@@ -175,7 +175,7 @@ it('las operativas y configuraciones sin pantalla avisan que llegan con EP-25', 
     $this->actingAs($organizer)->get(route($name, $event))
         ->assertOk()
         ->assertSee('Llega con su pantalla completa en EP-25');
-})->with(['events.start', 'events.marks', 'events.results', 'events.categories', 'events.waves']);
+})->with(['events.marks', 'events.results', 'events.categories', 'events.waves']);
 
 it('las pantallas de directorio y liga avisan su llegada', function () {
     $superadmin = routeMapAccount('superadmin');
