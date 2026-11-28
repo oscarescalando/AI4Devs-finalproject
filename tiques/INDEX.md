@@ -34,3 +34,5 @@
 | [TQ-028](TQ-028-personas-y-equipos.md) | Personas y equipos con PII por rol | hecho | feature | P1 | ISSUE-161 | TQ-027 | 2026-11-28 |
 | [TQ-029](TQ-029-inscripciones.md) | Inscripciones: alta con categoría automática y dorsal (ISSUE-162) | hecho | plan | P0 | ISSUE-162 | — | 2026-11-28 |
 | [TQ-030](TQ-030-alta-y-listado.md) | Alta individual con categoría automática, dorsal y listado | hecho | feature | P0 | ISSUE-162 | TQ-029 | 2026-11-28 |
+| [TQ-031](TQ-031-ep26-completo.md) | EP-26 completo: kiosco por push, reloj y resync | abierto | plan | P1 | ISSUE-141…146 | — | 2026-11-28 |
+| [TQ-032](TQ-032-kiosco-reloj-resync.md) | Kiosco por push + reloj pública con wave.started + resync | en-curso | feature | P1 | ISSUE-141, 142, 143 | TQ-031 | 2026-11-28 |
