@@ -33,6 +33,7 @@ function routeMapNames(): array
         'events.entries',
         'events.start',
         'events.marks',
+        'events.arrivals',
         'events.results',
         'events.categories',
         'events.waves',
@@ -74,7 +75,7 @@ it('cada nombre del mapa de rutas existe', function (string $name) {
 it('redirige al login a los invitados en todas las rutas del mapa', function (string $name) {
     $event = routeMapEvent();
 
-    $byEvent = in_array($name, ['events.show', 'events.entries', 'events.start', 'events.marks', 'events.results', 'events.categories', 'events.waves'], true);
+    $byEvent = in_array($name, ['events.show', 'events.entries', 'events.start', 'events.marks', 'events.arrivals', 'events.results', 'events.categories', 'events.waves'], true);
     $url = $byEvent ? route($name, $event) : route($name);
 
     $this->get($url)->assertRedirect(route('login'));

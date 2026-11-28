@@ -15,7 +15,7 @@
 | [TQ-009](TQ-009-guia-estilo-ui.md) | Guía de estilo de la interfaz: Blade/Livewire/Tailwind | hecho | docs | P1 | ISSUE-107, 110 | TQ-001 | 2026-11-27 |
 | [TQ-010](TQ-010-corregir-iconos-lucide.md) | Corregir iconos Lucide: pasar objeto icons a createIcons | hecho | bug | P1 | — | — | 2026-11-27 |
 | [TQ-011](TQ-011-rebanada-critica-ep25.md) | Rebanada crítica de EP-25: pantallas operativas del día de carrera | abierto | plan | P0 | ISSUE-130, 132…137 | — | 2026-11-27 |
-| [TQ-012](TQ-012-captura-de-llegadas.md) | Captura de llegadas en vivo | en-curso | feature | P0 | ISSUE-130 | TQ-011 | 2026-11-27 |
+| [TQ-012](TQ-012-captura-de-llegadas.md) | Captura de llegadas en vivo | hecho | feature | P0 | ISSUE-130 | TQ-011 | 2026-11-27 |
 | [TQ-013](TQ-013-salidas.md) | Salidas: tablero con reloj y salida real de oleada | abierto | feature | P1 | ISSUE-132, 133 | TQ-011 | 2026-11-27 |
 | [TQ-014](TQ-014-bitacora-y-correccion.md) | Registros: bitácora en vivo y corrección 1/2/3 | abierto | feature | P1 | ISSUE-134, 135 | TQ-011 | 2026-11-27 |
 | [TQ-015](TQ-015-ranking-panel.md) | Ranking del panel: clasificación del evento | abierto | feature | P1 | ISSUE-137 | TQ-011 | 2026-11-27 |

@@ -59,6 +59,10 @@ Volt::route('/events/{event}/start', 'events.start-board')->name('events.start')
     ->middleware(['auth', 'permission:start.manage']);
 Volt::route('/events/{event}/marks', 'events.mark-log')->name('events.marks')
     ->middleware(['auth', 'permission:marks.view']);
+// Captura de llegadas en vivo (ISSUE-130, TQ-012): dorsal + Enter por el
+// conducto del lote; escribir marcas exige marks.manage, no solo verlas.
+Volt::route('/events/{event}/arrivals', 'events.arrival-capture')->name('events.arrivals')
+    ->middleware(['auth', 'permission:marks.manage']);
 Volt::route('/events/{event}/results', 'events.result-board')->name('events.results')
     ->middleware(['auth', 'permission:results.view']);
 Volt::route('/events/{event}/categories', 'events.category-list')->name('events.categories')

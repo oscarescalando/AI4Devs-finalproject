@@ -119,6 +119,21 @@ new #[Layout('components.layouts.panel')] #[Title('Evento')] class extends Compo
             </div>
         @endcan
 
+        {{-- Captura de llegadas (ISSUE-130, TQ-012): escribir marcas exige
+             marks.manage — la UI oculta, el servidor autoriza (ADR-011). --}}
+        @can('marks.manage')
+            <div class="card">
+                <div class="card-body flex flex-col gap-3">
+                    <span class="kpi-icon"><x-ui.icon name="keyboard" /></span>
+                    <div>
+                        <p class="card-title">{{ __('ui.events.op_arrivals') }}</p>
+                        <p class="text-sm text-muted">{{ __('ui.events.op_arrivals_text') }}</p>
+                    </div>
+                    <x-ui.button variant="secondary" icon="arrow-right" href="{{ route('events.arrivals', $event) }}">{{ __('ui.events.open_section') }}</x-ui.button>
+                </div>
+            </div>
+        @endcan
+
         @can('results.view')
             <div class="card">
                 <div class="card-body flex flex-col gap-3">

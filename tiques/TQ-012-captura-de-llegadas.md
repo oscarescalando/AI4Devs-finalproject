@@ -4,7 +4,7 @@ titulo: "Captura de llegadas en vivo (ISSUE-130)"
 tipo: feature
 prioridad: P0
 estimacion: L
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-130
 parte_de: TQ-011
 rama: feature/entrega-2-ol-gt
@@ -36,24 +36,25 @@ duplicados y con huérfanas visibles para su resolución.
 
 ## Tareas
 
-- [ ] Action RegisterManualArrival: valida evento/inscripción, delega en RecordTimingMarkBatch
+- [x] Action RegisterManualArrival: valida evento/inscripción, delega en RecordTimingMarkBatch
       (una marca), devuelve estado + datos para la UI.
-- [ ] Pantalla Volt: input de dorsal grande y autofocus (solo teclado, Enter envía), foco
-      recupera tras cada envío, bloqueo de doble envío, `wire:loading` acotado.
-- [ ] Llegadas recientes (últimas 15): dorsal mono tabular, nombre, hora del día, badge de
-      estado; resaltado de la última.
-- [ ] Huérfanas visibles (dorsal sin inscripción) con aviso accionable y duplicados rechazados
-      sin crear fila (INV-02).
-- [ ] Textos por lang/ y sin PII más allá de nombre/club.
-- [ ] Pruebas: assigned dispara el job (Queue::fake), orphan y duplicate reportados, 403 sin
-      marks.manage, render por rol, foco/input en la respuesta.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Pantalla Volt: input de dorsal grande y autofocus (solo teclado, Enter envía), foco
+      recupera tras cada envío (evento 'arrival-recorded'), bloqueo de doble envío, wire:loading
+      acotado.
+- [x] Llegadas recientes (últimas 15) con wire:poll.5s: dorsal mono tabular, nombre, club,
+      hora del día (FormatClock), resaltado de la última.
+- [x] Huérfanas visibles (hora + origen; el dorsal tecleado vive solo en el toast — ver bitácora)
+      y duplicados rechazados sin crear segunda fila (INV-02).
+- [x] Textos por lang/ (~30 claves) y sin PII más allá de nombre/club.
+- [x] Pruebas: assigned dispara el job (Queue::fake), orphan y duplicate reportados, 403 sin
+      marks.manage, render por rol, FormatClock cubierto.
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-130 (versión mínima F1): captura por teclado idempotente, huérfanas visibles,
+- [x] ISSUE-130 (versión mínima F1): captura por teclado idempotente, huérfanas visibles,
       recálculo en cola sin bloquear la captura, usable con una mano durante la carrera.
 
 ## Bitácora
@@ -62,3 +63,4 @@ duplicados y con huérfanas visibles para su resolución.
 |-------|--------|------|
 | 2026-11-27 | abierto | Creado como fase 1 del plan TQ-011 |
 | 2026-11-27 | en-curso | Delegado a subagent implementador (orquestador) |
+| 2026-11-27 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 222/222 (11 nuevas + FormatClock) · build ✓ · humo HTTP (302 sin sesión, 404 por patrón ULID). Reuso limpio del conducto del batch (UUIDv7 del servidor, source manual, transacción + job afterCommit heredados). NOTA de producto para TQ-014: timing_marks no persiste el dorsal tecleado de una huérfana (la asignación vive en entries): la lista muestra hora+origen; si ISSUE-135 necesita reasignar por dorsal, decidir entre columna raw nueva (toca ADR-015/spec) o resolución manual. Broadcast Reverb y feedback sonoro quedan para EP-26 |

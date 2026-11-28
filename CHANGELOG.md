@@ -3,6 +3,10 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.14.0] - 2026-11-27
+### 🚀 Agregado
+- **Captura de llegadas en vivo** (TQ-012 · ISSUE-130, mínima F1):  (marks.manage) con input de dorsal solo-teclado que recupera el foco tras cada envío, llegadas recientes con sondeo 5 s (dorsal mono tabular, nombre, club, hora  en zona del evento), huérfanas visibles y duplicados rechazados sin segunda fila.  reutiliza el conducto del batch (UUIDv7 del servidor, transacción, job ) — hereda idempotencia INV-02. Suite a **222 tests**.
+
 ## [0.13.5] - 2026-11-27
 ### 📝 Documentación
 - Plan **TQ-011** (rebanada crítica de EP-25: captura de llegadas, salidas, bitácora/corrección y ranking del panel) con sus fases TQ-012…015 registradas. Acuerdo de sesión: la base es `feature/entrega-2-ol-gt` y no se envía nada a main.
