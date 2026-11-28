@@ -94,6 +94,11 @@ jobs:
       - name: Instalar dependencias npm
         run: npm ci
 
+      # Assets ANTES de Pest: las vistas renderizadas por la suite usan
+      # @vite y exigen manifest (la IMAGEN OCI sigue siendo el gate 8).
+      - name: Build de assets Vite
+        run: npm run build
+
       # .env de CI: el catálogo .env.example + APP_KEY + credenciales del
       # servicio MySQL. Pest además fuerza tdchronos_testing vía phpunit.xml.
       - name: Preparar .env de CI
