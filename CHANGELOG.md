@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.23.0] - 2026-11-28
+### ✅ Pruebas
+- **Suite E2E `estacion-offline`** (TQ-023 · ISSUE-152 mínima, cierra EP-27 y TODO el alcance F1 de la sesión): 3 specs con Playwright — captura offline → sync al volver con assert en BD, **reenvío idempotente del mismo lote sin filas nuevas (INV-02)** y desempareje por token revocado. Script `test:e2e:station` separado del smoke (CI nocturno diferido).
+- Flakiness cazada por la verificación del orquestador: el badge de red se auto-sana por intervalo (el evento `online` del navegador no siempre llega vía CDP) y el spec (b) tolera la carrera botón-manual vs reintento automático. Certificada **5/5 corridas** en verde.
+
 ## [0.22.0] - 2026-11-28
 ### 🚀 Agregado
 - **Sync idempotente y reloj de la estación** (TQ-022 · ISSUE-149/150 mínima F1): flush por lotes de 50 ordenados por `captured_at` (disparo manual, al volver online y cada 30 s con pendientes), estado final por marca persistido en la cola (asignada/huérfana/duplicada), backoff exponiente con reintento manual siempre disponible, desempareje limpio ante 401/403, reloj corregido por mediana de 3 muestras contra `/time` (alerta de desfase > 500 ms) y aviso al cerrar con pendientes. Hallazgo real corregido: los booleanos no son claves IndexedDB → `synced` 0/1 con migración v1→v2. Verificado en Chromium: ciclo offline→online con reenvío idempotente (INV-02).

@@ -5,7 +5,8 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "test:e2e": "php artisan migrate:fresh --seed && playwright test"
+        "test:e2e": "php artisan migrate:fresh --seed && playwright test tests/e2e/smoke.spec.js",
+        "test:e2e:station": "php artisan migrate:fresh --seed && playwright test tests/e2e/station-offline.spec.js"
     },
     "devDependencies": {
         "@playwright/test": "^1.65.1",

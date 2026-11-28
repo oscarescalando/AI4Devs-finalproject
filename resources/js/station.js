@@ -288,6 +288,17 @@ window.tcStation = (texts) => ({
         window.addEventListener('online', this.onOnline);
         window.addEventListener('offline', this.onOffline);
 
+        // Auto-sanado del indicador: el evento 'online' del navegador no
+        // siempre llega (visto en Chromium al alternar la red por CDP);
+        // releer navigator.onLine cada 2 s mantiene el badge fiel.
+        this.netTimer = window.setInterval(() => {
+            const was = this.online;
+            this.online = navigator.onLine;
+            if (! was && this.online && this.pending > 0) {
+                this.flush();
+            }
+        }, 2_000);
+
         this.syncTimer = window.setInterval(() => {
             if (this.pending > 0 && this.online) {
                 this.flush();
@@ -321,6 +332,7 @@ window.tcStation = (texts) => ({
         window.clearInterval(this.clockTimer);
         window.clearTimeout(this.bibTimer);
         window.clearInterval(this.syncTimer);
+        window.clearInterval(this.netTimer);
         window.clearInterval(this.offsetTimer);
         window.removeEventListener('online', this.onOnline);
         window.removeEventListener('offline', this.onOffline);

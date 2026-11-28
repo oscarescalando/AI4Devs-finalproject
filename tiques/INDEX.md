@@ -23,7 +23,7 @@
 | [TQ-017](TQ-017-infra-reverb.md) | Infra de tiempo real: Reverb + Redis/Horizon + canales + Echo | hecho | chore | P0 | ISSUE-141, 143, 144 | TQ-016 | 2026-11-27 |
 | [TQ-018](TQ-018-eventos-y-pantallas.md) | Eventos de dominio afterCommit y pantallas escuchando | hecho | feature | P0 | ISSUE-141, 142, 143 | TQ-016 | 2026-11-27 |
 | [TQ-019](TQ-019-caos-minimo.md) | Caos mínimo del tiempo real | hecho | test | P1 | ISSUE-145, 146 | TQ-016 | 2026-11-27 |
-| [TQ-020](TQ-020-estacion-offline.md) | Estación de cronometraje offline-first (EP-27) | abierto | plan | P0 | ISSUE-147…152 | — | 2026-11-28 |
+| [TQ-020](TQ-020-estacion-offline.md) | Estación de cronometraje offline-first (EP-27) | hecho | plan | P0 | ISSUE-147…152 | — | 2026-11-28 |
 | [TQ-021](TQ-021-shell-y-captura.md) | Shell de la estación: emparejamiento + captura en IndexedDB | hecho | feature | P0 | ISSUE-147, 148 | TQ-020 | 2026-11-28 |
 | [TQ-022](TQ-022-sync-idempotente.md) | Sync idempotente por lotes + reloj con offset | hecho | feature | P0 | ISSUE-149, 150 | TQ-020 | 2026-11-28 |
-| [TQ-023](TQ-023-e2e-offline.md) | E2E offline de la estación (Playwright) y doble envío | en-curso | test | P0 | ISSUE-152 | TQ-020 | 2026-11-28 |
+| [TQ-023](TQ-023-e2e-offline.md) | E2E offline de la estación (Playwright) y doble envío | hecho | test | P0 | ISSUE-152 | TQ-020 | 2026-11-28 |

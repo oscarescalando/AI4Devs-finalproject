@@ -4,7 +4,7 @@ titulo: "E2E offline de la estación (Playwright) y doble envío"
 tipo: test
 prioridad: P0
 estimacion: M
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-152
 parte_de: TQ-020
 rama: feature/entrega-2-ol-gt
@@ -35,18 +35,18 @@ duplicados → 401 desempareja. Deja el flujo certificado como suite separada de
 
 ## Tareas
 
-- [ ] Spec: emparejar → 3 capturas offline → online → estados finales correctos → reenvío del
+- [x] Spec: emparejar → 3 capturas offline → online → estados finales correctos → reenvío del
       mismo lote (forzar segundo flush) ⇒ duplicate y BD sin filas nuevas.
-- [ ] Spec: token inválido ⇒ desempareje con aviso.
-- [ ] Script npm separado + readme breve de cómo correrla.
-- [ ] Gates completos en verde (pest no se toca; build si hace falta).
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Spec: token inválido ⇒ desempareje con aviso.
+- [x] Script npm separado + readme breve de cómo correrla.
+- [x] Gates completos en verde (pest no se toca; build si hace falta).
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-152 mínima: la suite corre verde de punta a punta contra el sitio servido y
+- [x] ISSUE-152 mínima: la suite corre verde de punta a punta contra el sitio servido y
       certifica idempotencia extrema a extremo (INV-02) en navegador.
 
 ## Bitácora
@@ -55,3 +55,4 @@ duplicados → 401 desempareja. Deja el flujo certificado como suite separada de
 |-------|--------|------|
 | 2026-11-28 | abierto | Creado como fase 3 del plan TQ-020 |
 | 2026-11-28 | en-curso | Delegado a subagent (orquestador); noche autónoma autorizada |
+| 2026-11-28 | hecho | Verificado por el ORQUESTADOR con corrida propia que cazó flakiness invisible para las 2 corridas del agente: (1) badge «En línea» dependía del evento online del navegador (a veces no llega vía CDP) → auto-sanado por intervalo de 2 s en station.js; (2) carrera botón-manual vs reintento automático en el spec (b) → spec tolera ambas vías. Certificada 5/5 en verde (~5 s): captura offline, sync idempotente con assert en BD (INV-02), desempareje por 401. Script test:e2e:station separado del smoke (CI nocturno defer) |
