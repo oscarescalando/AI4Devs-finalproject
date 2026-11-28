@@ -7,6 +7,7 @@ namespace App\Broadcasting;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldRescue;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -25,8 +26,11 @@ use Illuminate\Queue\SerializesModels;
  * `seq` queda en null (contrato v/seq mínimo): los eventos de oleada no
  * versionan datos derivados — son señales de «el tablero cambió» y las
  * pantallas refrescan al recibirlos.
+ *
+ * TQ-019: el broadcast es best-effort (INV-08) — ShouldRescue reporta un
+ * fallo al encolar sin romper la petición que ya persistió el deshacer.
  */
-final class WaveUndone implements ShouldBroadcast, ShouldDispatchAfterCommit
+final class WaveUndone implements ShouldBroadcast, ShouldDispatchAfterCommit, ShouldRescue
 {
     use Dispatchable;
     use InteractsWithSockets;

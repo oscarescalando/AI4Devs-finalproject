@@ -4,7 +4,7 @@ titulo: "Caos mínimo del tiempo real (la marca jamás falla por el broadcast)"
 tipo: test
 prioridad: P1
 estimacion: M
-estado: abierto
+estado: hecho
 refiere_a: ISSUE-145, ISSUE-146
 parte_de: TQ-016
 rama: feature/entrega-2-ol-gt
@@ -35,25 +35,26 @@ estable).
 
 ## Tareas
 
-- [ ] Fallo del broadcast: broadcaster/cola lanzando excepción → la marca persiste, la
+- [x] Fallo del broadcast: broadcaster/cola lanzando excepción → la marca persiste, la
       respuesta HTTP es la normal y nada se pierde (prueba doble: fallo al encolar y fallo
       del worker).
-- [ ] Ráfaga: N lotes concurrentes/seguidos (>= 100 marcas mezcladas con reenvíos duplicados
+- [x] Ráfaga: N lotes concurrentes/seguidos (>= 100 marcas mezcladas con reenvíos duplicados
       por client_mark_id) → cero duplicados, una pasada de recálculo coherente, resultados
       conciliados.
-- [ ] Pantalla con WS muerto + cola viva: la degradación no encola eventos fantasma ni rompe
+- [x] Pantalla con WS muerto + cola viva: la degradación no encola eventos fantasma ni rompe
       la UI (assert liviano).
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-145 mínima: 0 marcas perdidas por fallos de broadcast (probado en dos niveles).
-- [ ] ISSUE-146 mínima: ráfaga sin duplicados y clasificación estable.
+- [x] ISSUE-145 mínima: 0 marcas perdidas por fallos de broadcast (probado en dos niveles).
+- [x] ISSUE-146 mínima: ráfaga sin duplicados y clasificación estable.
 
 ## Bitácora
 
 | Fecha | Estado | Nota |
 |-------|--------|------|
 | 2026-11-27 | abierto | Creado como fase 3 del plan TQ-016; se ejecuta tras TQ-018 |
+| 2026-11-27 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 282/282 (4 pruebas de caos con 497 aserciones; ráfaga de 100 marcas en 1,59 s). BUG REAL destapado y corregido con roja primero: cola broadcast caída → 500 pese a marcas persistidas (violaba INV-08) → ShouldRescue en los 4 eventos (broadcast best-effort con reporte) + enmienda registrada en ADR-013. Worker real de colas con broadcaster muerto: recálculo completo, veneno aislado en failed_jobs. Defer documentado: caos con Reverb/Redis reales → suites nocturnas |

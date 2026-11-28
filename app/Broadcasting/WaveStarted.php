@@ -7,6 +7,7 @@ namespace App\Broadcasting;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldRescue;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -29,8 +30,11 @@ use Illuminate\Queue\SerializesModels;
  *
  * `seq` (secuencia por evento para resincronizarse tras reconectar) queda
  * en null hasta que TQ-018 fije el contrato v/seq del leaderboard.
+ *
+ * TQ-019: el broadcast es best-effort (INV-08) — ShouldRescue reporta un
+ * fallo al encolar sin romper la petición que ya persistió la salida.
  */
-final class WaveStarted implements ShouldBroadcast, ShouldDispatchAfterCommit
+final class WaveStarted implements ShouldBroadcast, ShouldDispatchAfterCommit, ShouldRescue
 {
     use Dispatchable;
     use InteractsWithSockets;

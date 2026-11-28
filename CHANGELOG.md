@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.20.0] - 2026-11-27
+### 🚀 Agregado
+- **Caos mínimo del tiempo real** (TQ-019 · ISSUE-145/146, cierra el plan TQ-016/EP-26 rebanada F1): fallo de la cola `broadcast` simulado con un driver de caos real → **bug destapado y corregido con prueba roja primero**: el 500 escapaba tras el commit pese a marcas persistidas (violaba INV-08) → los 4 eventos de dominio ahora usan `ShouldRescue` (broadcast *best-effort* con reporte, **enmienda registrada en ADR-013**). Worker real con broadcaster muerto: recálculo intacto y veneno aislado en `failed_jobs`. Ráfaga de 100 marcas con duplicados y huérfanas en 1,59 s: cero duplicados, 89 resultados conciliados exactos.
+- Suite a **282 tests**.
+
 ## [0.19.0] - 2026-11-27
 ### 🚀 Agregado
 - **Tiempo real en las pantallas** (TQ-018 · EP-26 fase 2): eventos de dominio tras commit — `mark.recorded` (ops con detalle; **public sin PII**: solo dorsal/hora/seq), `wave.undone` y `results.updated` (seq = `MAX(results.id)`) — con puente `tcBridge` (suscripción en init, limpieza en destroy, RF-77), live-indicator ligado a los estados de conexión, render dirigido por seq y **sondeo de respaldo a 15 s** en las cinco pantallas vivas (RF-76). E2E real: llegada visible en pública y bitácora en **1,6 s** por WS; con Reverb caído, indicador degradado y poll manteniendo ambas actualizadas. Fixes a la infra: los estados de conexión de `tcEcho` nunca se emitían.

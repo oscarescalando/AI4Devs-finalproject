@@ -22,4 +22,4 @@
 | [TQ-016](TQ-016-tiempo-real-reverb.md) | Tiempo real con Reverb en las pantallas (EP-26) | abierto | plan | P0 | ISSUE-141…146 | — | 2026-11-27 |
 | [TQ-017](TQ-017-infra-reverb.md) | Infra de tiempo real: Reverb + Redis/Horizon + canales + Echo | hecho | chore | P0 | ISSUE-141, 143, 144 | TQ-016 | 2026-11-27 |
 | [TQ-018](TQ-018-eventos-y-pantallas.md) | Eventos de dominio afterCommit y pantallas escuchando | hecho | feature | P0 | ISSUE-141, 142, 143 | TQ-016 | 2026-11-27 |
-| [TQ-019](TQ-019-caos-minimo.md) | Caos mínimo del tiempo real | abierto | test | P1 | ISSUE-145, 146 | TQ-016 | 2026-11-27 |
+| [TQ-019](TQ-019-caos-minimo.md) | Caos mínimo del tiempo real | hecho | test | P1 | ISSUE-145, 146 | TQ-016 | 2026-11-27 |

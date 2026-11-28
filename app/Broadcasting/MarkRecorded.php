@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldRescue;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -40,8 +41,14 @@ use Illuminate\Queue\SerializesModels;
  *
  * `seq` = id autoincremental de la marca (monotónico por BD): permite a
  * las pantallas descartar eventos repetidos/viejos tras reconectar.
+ *
+ * TQ-019: el broadcast es best-effort (INV-08) — ShouldRescue hace que
+ * un fallo al ENCOLAR (cola caída) se reporte al log y NO reviente el
+ * commit ya hecho del lote: la marca responde igual (ISSUE-145). Las
+ * pantallas tienen el sondeo de respaldo; la emisión se recupera con la
+ * marca siguiente.
  */
-final class MarkRecorded implements ShouldBroadcast, ShouldDispatchAfterCommit
+final class MarkRecorded implements ShouldBroadcast, ShouldDispatchAfterCommit, ShouldRescue
 {
     use Dispatchable;
     use InteractsWithSockets;
