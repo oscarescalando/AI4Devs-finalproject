@@ -3,6 +3,10 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.26.0] - 2026-11-28
+### 🚀 Agregado
+- **Directorio de personas y equipos** (TQ-028 · ISSUE-161, cierra EP-06 en panel): `/directory/persons` y `/directory/teams` reales con búsqueda parcial (nombre o documento), documento normalizado `^[VE]-[0-9]{6,8}$` único global, **PII enmascarada en listados** (`MaskDocument` tipo «V-1••••54», RNF-13; nacimiento nunca en lista — solo edad), modal con el documento completo solo con `directory.write`, y borrados bloqueados por inscripciones/cuentas. Suite a **402 tests** (52 nuevas).
+
 ## [0.25.0] - 2026-11-28
 ### 🚀 Agregado
 - **Editor de categorías y oleadas + reprogramación en bloque** (TQ-026 · ISSUE-160/ISSUE-050, cierra EP-05 en panel): `/events/{ulid}/categories` y `/waves` reales con validaciones de coherencia de rangos (token de género documentado), horas con milisegundos (`EventTime` pared del evento ↔ zona de la app; `actual_start_at` intocable RF-15), borrados bloqueados por inscripciones, y **reprogramación en bloque** de las oleadas de una carrera (hora inicial + intervalo) en una transacción con `lockForUpdate` y confirmación de N afectadas.

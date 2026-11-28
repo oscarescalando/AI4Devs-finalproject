@@ -41,5 +41,13 @@ return [
         'date' => 'fecha',
         'status' => 'estado',
         'races.*.name' => 'nombre de la carrera',
+
+        // Directorio de personas y equipos (ISSUE-161, TQ-028).
+        'document' => 'documento',
+        'first_name' => 'nombres',
+        'last_name' => 'apellidos',
+        'birthdate' => 'fecha de nacimiento',
+        'gender' => 'género',
+        'organization_ulid' => 'organización',
     ],
 ];

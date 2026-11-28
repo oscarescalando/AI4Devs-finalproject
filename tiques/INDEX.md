@@ -30,5 +30,5 @@
 | [TQ-024](TQ-024-configuracion-eventos.md) | Configuración de eventos (F2 · ISSUE-160) | hecho | plan | P1 | ISSUE-160 | — | 2026-11-28 |
 | [TQ-025](TQ-025-crud-eventos-carreras.md) | CRUD de eventos y carreras | hecho | feature | P1 | ISSUE-160 | TQ-024 | 2026-11-28 |
 | [TQ-026](TQ-026-categorias-oleadas.md) | Editor de categorías y oleadas + reprogramación en bloque | hecho | feature | P1 | ISSUE-160 | TQ-024 | 2026-11-28 |
-| [TQ-027](TQ-027-directorio.md) | Directorio completo: personas y equipos (F2 · ISSUE-161) | abierto | plan | P1 | ISSUE-161 | — | 2026-11-28 |
-| [TQ-028](TQ-028-personas-y-equipos.md) | Personas y equipos con PII por rol | en-curso | feature | P1 | ISSUE-161 | TQ-027 | 2026-11-28 |
+| [TQ-027](TQ-027-directorio.md) | Directorio completo: personas y equipos (F2 · ISSUE-161) | hecho | plan | P1 | ISSUE-161 | — | 2026-11-28 |
+| [TQ-028](TQ-028-personas-y-equipos.md) | Personas y equipos con PII por rol | hecho | feature | P1 | ISSUE-161 | TQ-027 | 2026-11-28 |

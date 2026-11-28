@@ -179,13 +179,14 @@ it('las pantallas de categorías y oleadas exigen events.manage y renderizan su 
         ->assertSee($event->name);
 })->with(['events.categories', 'events.waves']);
 
-it('las pantallas de directorio y liga avisan su llegada', function () {
+it('las pantallas del directorio renderizan su gestor y la liga avisa su llegada', function () {
     $superadmin = routeMapAccount('superadmin');
 
+    // Personas y equipos dejaron de ser placeholders (ISSUE-161/TQ-028).
     $this->actingAs($superadmin)->get(route('directory.persons'))
-        ->assertOk()->assertSee('EP-25');
+        ->assertOk()->assertSee('Personas');
     $this->actingAs($superadmin)->get(route('directory.teams'))
-        ->assertOk()->assertSee('EP-25');
+        ->assertOk()->assertSee('Equipos');
     $this->actingAs($superadmin)->get(route('championships.index'))
         ->assertOk()->assertSee('Liga — v2');
 });

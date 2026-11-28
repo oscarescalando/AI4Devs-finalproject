@@ -4,7 +4,7 @@ titulo: "Directorio completo: personas y equipos (F2 · ISSUE-161)"
 tipo: plan
 prioridad: P1
 estimacion: L
-estado: abierto
+estado: hecho
 refiere_a: ISSUE-161
 parte_de: —
 rama: feature/entrega-2-ol-gt
@@ -21,15 +21,15 @@ CRUD real de personas y equipos sustituyendo los placeholders, con PII gobernada
 
 ## Fases
 
-- [ ] [TQ-028](TQ-028-personas-y-equipos.md) — Personas y equipos con PII por rol
+- [x] [TQ-028](TQ-028-personas-y-equipos.md) — Personas y equipos con PII por rol
 
 ## Siguiente paso
 
-Ejecutar TQ-028.
+Plan COMPLETO (1/1): ISSUE-161/EP-06 cerrada en panel. Siguiente: EP-07 inscripciones.
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-161 completa en su versión panel.
+- [x] ISSUE-161 completa en su versión panel (402/402).
 
 ## Bitácora
 

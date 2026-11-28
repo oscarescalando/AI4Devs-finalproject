@@ -4,7 +4,7 @@ titulo: "Personas y equipos con PII por rol"
 tipo: feature
 prioridad: P1
 estimacion: L
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-161
 parte_de: TQ-027
 rama: feature/entrega-2-ol-gt
@@ -35,20 +35,20 @@ restringidos y a las pantallas públicas), borrados bloqueados por FK (inscripci
 
 ## Tareas
 
-- [ ] Personas: lista paginada con búsqueda (nombre o documento parcial — documento
+- [x] Personas: lista paginada con búsqueda (nombre o documento parcial — documento
       enmascarado en la lista: V-1•••••99), modal alta/edición con validaciones (documento
       formato y único, nacimiento pasada, género del esquema), borrado bloqueado con
       inscripciones/cuentas.
-- [ ] Equipos: lista por organización + modal (nombre, organización), borrado bloqueado con
+- [x] Equipos: lista por organización + modal (nombre, organización), borrado bloqueado con
       inscripciones.
-- [ ] Pruebas por rol, unicidad de documento, enmascarado, bloqueos, búsqueda.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Pruebas por rol, unicidad de documento, enmascarado, bloqueos, búsqueda.
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-161 completa: CRUD + PII enmascarada en listados + bloqueos probados.
+- [x] ISSUE-161 completa: CRUD + PII enmascarada en listados + bloqueos probados.
 
 ## Bitácora
 
@@ -56,3 +56,4 @@ restringidos y a las pantallas públicas), borrados bloqueados por FK (inscripci
 |-------|--------|------|
 | 2026-11-28 | abierto | Creado como fase del plan TQ-027 |
 | 2026-11-28 | en-curso | Delegado a subagent (orquestador); noche autónoma |
+| 2026-11-28 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 402/402 (52 nuevas) · build ✓ · humo 302. Máscara de documento en listados (MaskDocument, RNF-13), nacimiento nunca en lista (solo edad), documento completo solo en modal con directory.write, borrados bloqueados por FK y cuenta. Nota para EP-07: picker de personas reusa ListPersons; team_user sin UI (borrado con membresías hace cascade — revisar con la alineación) |

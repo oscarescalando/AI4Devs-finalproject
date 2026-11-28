@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Auth\LogoutController;
 use App\Livewire\Directory\ManageOrganizations;
+use App\Livewire\Directory\PersonManager;
+use App\Livewire\Directory\TeamManager;
 use App\Livewire\Events\CategoryManager;
 use App\Livewire\Events\EventList;
 use App\Livewire\Events\WaveManager;
@@ -86,9 +88,13 @@ Route::get('/events/{event}/categories', CategoryManager::class)->name('events.c
 Route::get('/events/{event}/waves', WaveManager::class)->name('events.waves')
     ->middleware(['auth', 'permission:events.manage']);
 
-Volt::route('/directory/persons', 'directory.person-list')->name('directory.persons')
+// Directorio de personas y equipos (ISSUE-161, TQ-028): dejan de ser los
+// placeholders Volt — CRUD con acciones = clase Livewire (convención del
+// proyecto), mismo nombre de ruta y mismo permiso de lectura; la escritura
+// la autoriza cada acción con la habilidad directory.write.
+Route::get('/directory/persons', PersonManager::class)->name('directory.persons')
     ->middleware(['auth', 'permission:directory.view']);
-Volt::route('/directory/teams', 'directory.team-list')->name('directory.teams')
+Route::get('/directory/teams', TeamManager::class)->name('directory.teams')
     ->middleware(['auth', 'permission:directory.view']);
 
 // Liga: sin tablas de liga en v1 (ADR-015); placeholder "Liga — v2".
