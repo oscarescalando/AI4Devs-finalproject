@@ -19,7 +19,7 @@
 
 | Métrica | Valor |
 |---|---|
-| Issues nuevas | **56** — ISSUE-105…160 |
+| Issues nuevas | **57** — ISSUE-105…161 |
 | Épicas nuevas | 4 — EP-24…EP-27 |
 | P0 nuevas | 21 (ver §6) |
 | Issues heredadas ajustadas por la decisión TALL | ~20 (§3) — ninguna pierde alcance de dominio |
@@ -154,6 +154,7 @@ Issues nuevas que no pertenecen a una sola pantalla (continúan la numeración I
 | ISSUE-156 | Endpoint idempotente de marcas del servidor | feature | P0 | M | `POST /api/v1/events/{e}/timing-marks`: lotes transaccionales, deduplicación por `client_mark_id`, asignación a inscripción por `(event_id, bib)`, huérfanas y respuesta por marca. **Trae al repo el primer corte de ISSUE-067 heredada** | ISSUE-157 |
 | ISSUE-157 | Migraciones del núcleo con pruebas de esquema | feature | P0 | M | Migraciones del núcleo to-be (ADR-015) con **pruebas de esquema escritas antes**: UNIQUE dorsal-evento y persona-evento, CHECK persona XOR equipo, `client_mark_id` UNIQUE, `timing_marks` append-only, FKs físicas | ISSUE-105 |
 | ISSUE-158 | Motor de resultados del servidor | feature | P0 | L | Cálculo de la clasificación en jobs del servidor (`RANK()` sobre `net_ms = llegada − salida + Σ ajustes`), resultados derivados nunca editados a mano y conciliación en vivo ↔ oficial. **Trae al repo el primer corte de ISSUE-074 heredada** | ISSUE-157 |
+| ISSUE-161 | Directorio: gestión de personas y equipos con PII por rol | feature | P1 | L | CRUD de personas (documento único, nombre, nacimiento, género) y equipos (por organización) sustituyendo los placeholders del panel (ISSUE-055…058 heredadas). PII enmascarada para roles sin permiso (RNF-13), búsqueda y validación de servidor | ISSUE-105, ISSUE-157 |
 | ISSUE-160 | Configuración de eventos: CRUD de eventos, carreras, oleadas y categorías | feature | P1 | L | CRUD del evento y su configuración (ISSUE-048…051 heredadas): crear/editar evento con carreras (distancia/tipo), oleadas con hora programada y categorías por rango, reprogramación de oleadas en bloque. Sustituye los placeholders del panel | ISSUE-105, ISSUE-157 |
 | ISSUE-159 | Base de autenticación y matriz de permisos del panel | feature | P0 | M | spatie teams (equipo 0 = plataforma), `accounts.active`, matriz base de roles/permisos del SRS §2 y middleware `permission:` con 403 probado. **Trae al repo las heredadas ISSUE-041/043** | ISSUE-105, ISSUE-157 |
 
@@ -244,6 +245,21 @@ dentro de este repositorio.
 - [ ] Crear/editar evento con carreras, oleadas y categorías desde el panel (sin seeder).
 - [ ] Reprogramación de oleadas en bloque (hora inicial + intervalo) con una sola notificación.
 - [ ] Validaciones de servidor (slugs únicos, rangos de categoría coherentes) y 403 por rol.
+
+---
+
+### ISSUE-161 — Directorio: gestión de personas y equipos con PII por rol
+
+| Tipo | Prioridad | Estimación | Labels | Depende de |
+|---|---|---|---|---|
+| feature | P1 | L | `feature`, `frontend`, `identity`, `rebuild` | ISSUE-105, ISSUE-157 |
+
+**Descripción.** Trae las heredadas ISSUE-055…058 (F2/EP-06): gestión del directorio desde el panel — personas (documento único, nombre, nacimiento, género) y equipos por organización — sustituyendo los placeholders directory.persons/teams. La PII (documento, nacimiento) solo visible con el permiso de directorio (RNF-13); para el resto, enmascarada o ausente. Búsqueda por nombre/documento (parcial, sin enumeración), validación de servidor y borrado bloqueado por inscripciones/cuentas.
+
+**Criterios de aceptación**
+- [ ] CRUD de personas y equipos operativo con validaciones (documento único) y 403 por rol.
+- [ ] PII enmascarada para roles sin permiso (prueba de render por rol).
+- [ ] Búsqueda parcial sin enumeración (documento enmascarado en resultados).
 
 ---
 
