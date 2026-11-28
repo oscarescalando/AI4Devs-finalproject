@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Start;
 
+use App\Broadcasting\WaveStarted;
 use App\Models\Event;
 use App\Models\Wave;
 use App\Support\FormatClock;
@@ -19,8 +20,10 @@ use Illuminate\Validation\ValidationException;
  * anterior sigue pendiente, rechaza con error de negocio — las salidas
  * dadas forman un prefijo del tablero.
  *
- * La confirmación y el toast los resuelve la pantalla; el broadcast
- * `wave.started` afterCommit llega con EP-26 (diferido documentado).
+ * La confirmación y el toast los resuelve la pantalla; tras el save se
+ * despacha `wave.started` (WaveStarted, TQ-017): afterCommit y en la cola
+ * `broadcast` (ADR-013) — persistido antes de emitir, y si la transacción
+ * en curso revierte, no se emite nada.
  */
 final readonly class MarkWaveStart
 {
@@ -61,6 +64,12 @@ final readonly class MarkWaveStart
         $now = CarbonImmutable::now(config('app.timezone'));
 
         $wave->fill(['actual_start_at' => $now])->save();
+
+        // ADR-013: persistir antes de emitir. El evento es
+        // ShouldDispatchAfterCommit, así que dentro de una transacción el
+        // dispatcher retiene la emisión hasta el commit (rollback = nada
+        // emitido) y fuera de ella se encola de inmediato en `broadcast`.
+        WaveStarted::dispatch($event->ulid, $wave->ulid, $now->getTimestampMs());
 
         return [
             'ulid' => $wave->ulid,

@@ -344,6 +344,16 @@ return [
         'pagination_next' => 'Página siguiente',
     ],
 
+    // Indicador de conexión en vivo (x-ui.live-indicator, G13/ISSUE-141):
+    // estados del cliente Echo frente a Reverb; las pantallas lo consumen
+    // desde TQ-018.
+    'live' => [
+        'online' => 'En vivo',
+        'reconnecting' => 'Reconectando…',
+        'offline' => 'Sin conexión',
+        'pending' => ':count pendiente|:count pendientes',
+    ],
+
     // Perfil propio y cambio de contraseña (ISSUE-113, RF-71).
     'profile' => [
         'title' => 'Perfil',

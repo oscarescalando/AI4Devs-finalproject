@@ -396,6 +396,53 @@ it('page-header junta título, subtítulo y acciones', function () {
 
 /*
 |--------------------------------------------------------------------------
+| x-ui.live-indicator (G13/ISSUE-141, TQ-017): estado de la conexión Echo
+|--------------------------------------------------------------------------
+*/
+
+it('live-indicator pinta los tres estados con data-state y rol status', function (string $state) {
+    $html = kitRender("<x-ui.live-indicator state=\"{$state}\" />");
+
+    $label = match ($state) {
+        'live' => __('ui.live.online'),
+        'reconnecting' => __('ui.live.reconnecting'),
+        default => __('ui.live.offline'),
+    };
+
+    expect($html)
+        ->toContain('live-indicator')
+        ->toContain('data-state="'.$state.'"')
+        ->toContain('role="status"')
+        ->toContain('aria-live="polite"')
+        ->toContain('live-dot')
+        ->toContain($label);
+})->with(['live', 'reconnecting', 'offline']);
+
+it('live-indicator muestra las pendientes solo sin conexión', function () {
+    $offline = kitRender('<x-ui.live-indicator state="offline" :pending="7" />');
+
+    expect($offline)
+        ->toContain('(7 pendientes)')
+        ->toContain('live-pending');
+
+    // Con conexión viva no se pintan pendientes: no hay cola que mostrar.
+    $live = kitRender('<x-ui.live-indicator state="live" :pending="7" />');
+
+    expect($live)
+        ->not->toContain('live-pending')
+        ->not->toContain('pendientes');
+});
+
+it('live-indicator cae a offline ante un estado desconocido', function () {
+    $html = kitRender('<x-ui.live-indicator state="reiniciado" />');
+
+    expect($html)
+        ->toContain('data-state="offline"')
+        ->toContain(__('ui.live.offline'));
+});
+
+/*
+|--------------------------------------------------------------------------
 | Paginación del kit (links de Livewire)
 |--------------------------------------------------------------------------
 */

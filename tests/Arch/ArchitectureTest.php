@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
  * Reglas de arquitectura del monolito (ADR-011/ADR-012, ISSUE-105):
@@ -67,3 +69,21 @@ arch('los componentes Livewire no acceden a la base de datos directamente')
 arch('los componentes Livewire no importan modelos Eloquent: van por Actions')
     ->expect('App\Models')
     ->not->toBeUsedIn('App\Livewire');
+
+/*
+|--------------------------------------------------------------------------
+| Eventos de broadcast (ADR-013, TQ-017)
+|--------------------------------------------------------------------------
+| Todo evento de dominio que se emite vive en App\Broadcasting y cumple las
+| dos reglas de la decisión: implements ShouldBroadcast (el BroadcastEvent
+| va a la cola `broadcast`; nunca se emite en el request HTTP) y
+| ShouldDispatchAfterCommit (nada se emite dentro de una transacción sin
+| commit). La prohibición de canales públicos genéricos la custodia
+| routes/channels.php: solo event.{ulid}.public queda sin guard (ADR-013 §3).
+*/
+
+arch('los eventos de dominio que se emiten van en cola y se despachan tras commit')
+    ->expect('App\Broadcasting')
+    ->classes()
+    ->toImplement(ShouldBroadcast::class)
+    ->toImplement(ShouldDispatchAfterCommit::class);

@@ -4,6 +4,9 @@ import { bunny } from 'laravel-vite-plugin/fonts';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
+    // VITE_REVERB_* viaja al cliente Echo (resources/js/echo.js, TQ-017):
+    // clave pública y host/puerto/esquema del WS. Nada de secretos aquí.
+    envPrefix: 'VITE_',
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],

@@ -49,11 +49,21 @@ function routeInspectionNoPermissionNames(): array
 
 /**
  * Prefijos registrados fuera de web.php: framework (el prefijo de rutas de
- * Livewire lleva un hash: livewire-xxxx/…), api.php, sanctum, salud.
+ * Livewire lleva un hash: livewire-xxxx/…), api.php, sanctum, salud, más
+ * dos excepciones documentadas del sustrato de operación (TQ-017):
+ *
+ * · horizon/* — el dashboard de colas trae SU autenticación propia
+ *   (Laravel\Horizon\Http\Middleware\Authenticate), que exige la puerta
+ *   viewHorizon (solo superadmin fuera de local): auth con otro nombre.
+ * · broadcasting/auth — endpoint de autorización de canales (ADR-013):
+ *   acepta invitados porque el contrato del canal público
+ *   event.{ulid}.public se autoriza anónimo; los canales privados
+ *   rechazan al invitado DENTRO del broadcaster (403, ChannelsTest),
+ *   no por middleware.
  */
 function routeInspectionIsExternal(string $uri): bool
 {
-    return (bool) preg_match('#^(livewire[^/]*|api|sanctum|storage|up)(/|$)#', $uri);
+    return (bool) preg_match('#^(livewire[^/]*|api|sanctum|storage|up|horizon|broadcasting/auth)(/|$)#', $uri);
 }
 
 /** @return list<string> */

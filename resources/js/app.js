@@ -7,6 +7,12 @@
  */
 import { createIcons, icons } from 'lucide';
 
+/* Cliente Echo global sobre Reverb (TQ-017): solo lo instancia — las
+ * pantallas se conectan en TQ-018. Sin VITE_REVERB_APP_KEY no arranca y
+ * todo sigue por sondeo (degradación O1). */
+import './echo.js';
+
+
 window.tcRenderIcons = (root = document) => {
     if (typeof createIcons !== 'function') {
         return;

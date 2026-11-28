@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.18.0] - 2026-11-27
+### 🚀 Agregado
+- **Infraestructura de tiempo real** (TQ-017 · EP-26 fase 1, ADR-013/010): Reverb operativo con colas Redis + Horizon (gate superadmin), canales por evento autorizados — `event.{ulid}.public` anónimo sin PII (valida el evento) y `event.{ulid}.ops` privado para roles operativos (RF-75, probado vía `/broadcasting/auth`) —, evento piloto `WaveStarted` (`ShouldDispatchAfterCommit`, cola broadcast; rollback no emite, INV-08), cliente `tcEcho` (Echo + Pusher, evento `tc-echo-status`) y componente `x-ui.live-indicator` (G13, tres estados accesibles). E2E real verificada: navegador suscrito recibió `wave.started` tras marcar salida; sin WS todo degrada sin errores.
+- Suite a **266 tests** (14 nuevas + regla Arch: los eventos de dominio siempre `ShouldBroadcast` + afterCommit). `composer audit` limpio.
+
 ## [0.17.0] - 2026-11-27
 ### 🚀 Agregado
 - **Ranking del panel** (TQ-015 · ISSUE-137 variante panel, cierra el plan TQ-011): `/events/{ulid}/results` con KPIs de llegadas/pendientes, filtros por carrera y categoría (en URL), posiciones general/categoría/género y diferencia contra el líder real de la carrera — todo leído de `results`, cero cálculo en pantalla (INV-07, conciliación probada Action↔tabla↔HTML); badge provisional/oficial y enlace a la pública.

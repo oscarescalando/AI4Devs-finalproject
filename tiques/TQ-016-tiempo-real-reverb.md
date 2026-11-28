@@ -30,13 +30,13 @@ mínimas de ISSUE-145 (la marca jamás falla por el broadcast).
 
 ## Fases
 
-- [ ] [TQ-017](TQ-017-infra-reverb.md) — Infra: Reverb + Redis/Horizon + canales autorizados + Echo base + live-indicator
+- [x] [TQ-017](TQ-017-infra-reverb.md) — Infra: Reverb + Redis/Horizon + canales autorizados + Echo base + live-indicator
 - [ ] [TQ-018](TQ-018-eventos-y-pantallas.md) — Eventos de dominio afterCommit y pantallas escuchando (con respaldo)
 - [ ] [TQ-019](TQ-019-caos-minimo.md) — Caos mínimo: fallos de broadcast no bloquean; ráfaga simple
 
 ## Siguiente paso
 
-Ejecutar TQ-017 (infraestructura de tiempo real).
+Ejecutar TQ-018 (eventos de dominio y pantallas escuchando).
 
 ## Criterios de aceptación
 

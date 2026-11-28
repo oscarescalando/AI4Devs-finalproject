@@ -4,7 +4,7 @@ titulo: "Infra de tiempo real: Reverb + Redis/Horizon + canales + Echo"
 tipo: chore
 prioridad: P0
 estimacion: L
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-141, ISSUE-143, ISSUE-144
 parte_de: TQ-016
 rama: feature/entrega-2-ol-gt
@@ -36,21 +36,21 @@ evento piloto (`WaveStarted`) emitido afterCommit desde `MarkWaveStart`.
 
 ## Tareas
 
-- [ ] Instalar y configurar Reverb + broadcasting; queue redis + Horizon (gate superadmin).
-- [ ] Canales autorizados: public anónimo sin PII; ops exige rol operativo (pruebas).
-- [ ] WaveStarted afterCommit desde MarkWaveStart (nada emitido en rollback — prueba).
-- [ ] Echo (reverb) en app.js + live-indicator accesible (G13) disponible para pantallas.
-- [ ] Degradación: sin WS, las pantallas actuales siguen operativas por sondeo.
-- [ ] Pruebas + gates completos en verde.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Instalar y configurar Reverb + broadcasting; queue redis + Horizon (gate superadmin).
+- [x] Canales autorizados: public anónimo sin PII; ops exige rol operativo (pruebas).
+- [x] WaveStarted afterCommit desde MarkWaveStart (nada emitido en rollback — prueba).
+- [x] Echo (reverb) en app.js + live-indicator accesible (G13) disponible para pantallas.
+- [x] Degradación: sin WS, las pantallas actuales siguen operativas por sondeo.
+- [x] Pruebas + gates completos en verde.
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] Reverb arranca (`reverb:start`), Horizon sirve el dashboard solo a superadmin, y el
+- [x] Reverb arranca (`reverb:start`), Horizon sirve el dashboard solo a superadmin, y el
       evento piloto llega al canal tras el commit (prueba de cola de broadcast).
-- [ ] Anónimo rechazado en ops y aceptado en public (RF-75).
+- [x] Anónimo rechazado en ops y aceptado en public (RF-75).
 
 ## Bitácora
 
@@ -58,3 +58,4 @@ evento piloto (`WaveStarted`) emitido afterCommit desde `MarkWaveStart`.
 |-------|--------|------|
 | 2026-11-27 | abierto | Creado como fase 1 del plan TQ-016 |
 | 2026-11-27 | en-curso | Delegado a subagent (orquestador) |
+| 2026-11-27 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 266/266 (14 nuevas: canales vía /broadcasting/auth con firma HMAC, WaveStarted commit/rollback, live-indicator, regla Arch de eventos) · reverb/redis activos en config · E2E REAL del agente: navegador suscrito a event.{ulid}.ops recibió wave.started tras MarkWaveStart por tinker; degradación sin WS sin errores JS. Decisiones: ShouldDispatchAfterCommit difiere TODO el dispatch al commit raíz; WaveStarted solo a .ops por ahora; gate Horizon superadmin (local lo autoriza por defecto del paquete) |
