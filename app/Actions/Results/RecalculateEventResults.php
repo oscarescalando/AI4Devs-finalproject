@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Results;
 
 use App\Models\Event;
+use App\Support\EffectiveMarks;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -18,8 +19,10 @@ use Illuminate\Support\Str;
  * nadie edita resultados a mano.
  *
  * La marca es append-only (INV-01): la "primera llegada" de una
- * inscripción es MIN(captured_at) de sus marcas asignadas. Las
- * correcciones de marca (v2) entrarán por su propia vía auditada.
+ * inscripción es MIN(captured_at) sobre sus marcas EFECTIVAS — la marca
+ * jamás se toca; su ÚLTIMA corrección decide (void fuera, reassign
+ * re-atribuido al dorsal destino, adjust con su offset) mediante la
+ * derivación compartida de EffectiveMarks (TQ-014, ISSUE-135).
  */
 final class RecalculateEventResults
 {
@@ -33,25 +36,26 @@ final class RecalculateEventResults
         // provisional en vivo; oficial cuando el evento cierra (conciliación)
         $resultStatus = in_array($event->status, ['finished', 'closed'], true) ? 'official' : 'provisional';
 
+        // Estado efectivo en SQL (EffectiveMarks): la aritmética queda en la
+        // base y no se hidratan marcas en PHP para el cálculo masivo.
+        $effective = EffectiveMarks::query($eventId);
+        $arrivals = EffectiveMarks::arrivalsFromEffective();
+
         // net_ms en SQL con aritmética que no desborda: TIMESTAMPDIFF(MICROSECOND)
         // desborda enteros de MySQL a partir de ~36 minutos, así que se combina
         // la parte entera de segundos con la fracción de milisegundos.
         $ranked = DB::select(
-            <<<'SQL'
-            WITH arrivals AS (
-                SELECT entry_id, MIN(captured_at) AS arrival
-                FROM timing_marks
-                WHERE entry_id IS NOT NULL
-                GROUP BY entry_id
-            ),
+            <<<SQL
+            WITH effective AS ({$effective->toSql()}),
+            arrivals AS ({$arrivals->toSql()}),
             net AS (
                 SELECT
                     e.id AS entry_id,
                     e.race_id,
                     e.category_id,
                     p.gender,
-                    TIMESTAMPDIFF(SECOND, w.actual_start_at, a.arrival) * 1000
-                        + (MICROSECOND(a.arrival) DIV 1000)
+                    TIMESTAMPDIFF(SECOND, w.actual_start_at, a.first_arrival) * 1000
+                        + (MICROSECOND(a.first_arrival) DIV 1000)
                         - (MICROSECOND(w.actual_start_at) DIV 1000)
                         + COALESCE(adj.total_ms, 0) AS net_ms
                 FROM entries e
@@ -77,7 +81,7 @@ final class RecalculateEventResults
             SELECT entry_id, net_ms, rank_general, rank_gender, rank_category
             FROM ranked
             SQL,
-            [$eventId],
+            [...$effective->getBindings(), $eventId],
         );
 
         $now = now()->format('Y-m-d H:i:s');

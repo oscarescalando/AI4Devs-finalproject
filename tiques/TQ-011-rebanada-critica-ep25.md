@@ -32,12 +32,12 @@ EP-26 (Reverb) y el piloto de EP-27 (estación) se miden.
 
 - [x] [TQ-012](TQ-012-captura-de-llegadas.md) — Captura de llegadas en vivo (ISSUE-130)
 - [x] [TQ-013](TQ-013-salidas.md) — Salidas: tablero con reloj y salida real de oleada (ISSUE-132/133)
-- [ ] [TQ-014](TQ-014-bitacora-y-correccion.md) — Registros: bitácora en vivo y corrección 1/2/3 (ISSUE-134/135)
+- [x] [TQ-014](TQ-014-bitacora-y-correccion.md) — Registros: bitácora en vivo y corrección 1/2/3 (ISSUE-134/135)
 - [ ] [TQ-015](TQ-015-ranking-panel.md) — Ranking del panel: clasificación del evento (ISSUE-137, variante panel)
 
 ## Siguiente paso
 
-Ejecutar TQ-014 (Registros: bitácora en vivo y corrección 1/2/3).
+Ejecutar TQ-015 (Ranking del panel): última fase de la rebanada.
 
 ## Criterios de aceptación
 

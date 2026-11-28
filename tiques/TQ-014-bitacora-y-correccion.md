@@ -4,7 +4,7 @@ titulo: "Registros: bitácora en vivo y corrección 1/2/3"
 tipo: feature
 prioridad: P1
 estimacion: XL
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-134, ISSUE-135
 parte_de: TQ-011
 rama: feature/entrega-2-ol-gt
@@ -44,29 +44,29 @@ corrección, con recálculo transaccional.
 
 ## Tareas
 
-- [ ] Motor: marcas efectivas desde la última corrección (void fuera, reassign re-atribuido,
+- [x] Motor: marcas efectivas desde la última corrección (void fuera, reassign re-atribuido,
       adjust con delta) — pruebas nuevas en RecalculateResultsTest.
-- [ ] Action CorrectTimingMark: motivo obligatorio, validaciones (dorsal 1-3 dígitos, distinto,
+- [x] Action CorrectTimingMark: motivo obligatorio, validaciones (dorsal 1-3 dígitos, distinto,
       existe; destino con llegada → requiere confirmación y deja la anterior como duplicada),
       before_after de auditoría, job de recálculo afterCommit.
-- [ ] Bitácora: paginación server-side, estados (asignada/huérfana/duplicada/anulada/corregida)
+- [x] Bitácora: paginación server-side, estados (asignada/huérfana/duplicada/anulada/corregida)
       derivados, contadores por estado coherentes, wire:poll.5s.
-- [ ] Modal de corrección (kit): tres operaciones, motivo siempre, confirmación previa,
+- [x] Modal de corrección (kit): tres operaciones, motivo siempre, confirmación previa,
       historial de correcciones de la marca.
-- [ ] Huérfana asignable desde la bitácora (reassign sobre huérfana, sin error).
-- [ ] Permisos: ver = marks.view; corregir = corrections.manage (403 probado por rol).
-- [ ] Pruebas completas de las tres operaciones + integridad (marca intacta, recálculo origen
+- [x] Huérfana asignable desde la bitácora (reassign sobre huérfana, sin error).
+- [x] Permisos: ver = marks.view; corregir = corrections.manage (403 probado por rol).
+- [x] Pruebas completas de las tres operaciones + integridad (marca intacta, recálculo origen
       y destino, estados derivados).
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-135: tres operaciones funcionan; la marca original queda intacta; el estado
+- [x] ISSUE-135: tres operaciones funcionan; la marca original queda intacta; el estado
       efectivo se deriva de la última corrección; reasignación con confirmación deja la
       anterior como duplicada; recálculo en transacción; huérfana asignable.
-- [ ] ISSUE-134 mínima: bitácora paginada con contadores por estado coherentes y actualización
+- [x] ISSUE-134 mínima: bitácora paginada con contadores por estado coherentes y actualización
       por sondeo (canal privado y cursor diferidos con nota en EP-25).
 
 ## Bitácora
@@ -75,3 +75,4 @@ corrección, con recálculo transaccional.
 |-------|--------|------|
 | 2026-11-27 | abierto | Creado como fase del plan TQ-011 |
 | 2026-11-27 | en-curso | Alcance fijado tras hallar que el motor no deriva estado efectivo; diferidos documentados; delegado a subagent |
+| 2026-11-27 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 247/247 (15 nuevas; motor/API/pantallas intactas). EffectiveMarks como fuente única (CTE en el motor + bitácora/modal), última corrección gana, delta incremental compuesto, confirmación de destino-con-llegada vía error 'confirm' + tcConfirm. El «hallazgo menor» de ms truncados en Wave resultó FALSA ALARMA: roundtrip verificado (10:00:00.123; el modelo tiene dateFormat .v y la Action guarda Carbon). Diferidos: canal privado < 2 s (EP-26), cursor para miles, foto proxy (ISSUE-136) |

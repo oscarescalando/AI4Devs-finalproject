@@ -3,6 +3,12 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.16.0] - 2026-11-27
+### 🚀 Agregado
+- **Bitácora de marcas y corrección 1/2/3** (TQ-014 · ISSUE-134/135): `/events/{ulid}/marks` con contadores por estado derivado (asignada/huérfana/duplicada/anulada/corregida), paginación server-side, sondeo 5 s y modal de corrección con las tres operaciones RF-46…48 (ajustar ±1 s/±0,1 s, reasignar con confirmación cuando el destino ya llegó, anular), motivo obligatorio (INV-11) e historial por marca.
+- **Motor con marcas efectivas**: `EffectiveMarks` como fuente única — la última corrección decide (void excluye, reassign re-atribuye por dorsal, adjust desplaza) en SQL; la marca original jamás se toca (append-like, INV-01). Corrección transaccional con recálculo `afterCommit` de origen y destino.
+- Suite a **247 tests** (15 nuevas: motor, correcciones E2E, bitácora por rol).
+
 ## [0.15.0] - 2026-11-27
 ### 🚀 Agregado
 - **Tablero de salidas** (TQ-013 · ISSUE-132/133, mínima F1): `/events/{ulid}/start` con reloj vivo resincronizado con el servidor cada 60 s (offset, deriva < 1 s/h — RF-42), tabla de oleadas con inscritos sobre el TOTAL (RF-16), «Marcar salida» solo en la primera oleada pendiente guardando programada ≠ real (RF-15) y deshacer confirmado en orden inverso; 403 por rol probado. Diferidos documentados: check-in (ISSUE-052/F2), broadcast `wave.started` (EP-26) y auditoría del deshacer (F2). Suite a **229 tests**.

@@ -11,6 +11,7 @@ use App\Models\Person;
 use App\Models\Race;
 use App\Models\Result;
 use App\Models\TimingMark;
+use App\Models\TimingMarkCorrection;
 use App\Models\Wave;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -76,6 +77,24 @@ function addMark(Event $event, Entry $entry, string $capturedAt): TimingMark
         'captured_at' => CarbonImmutable::parse($capturedAt),
         'device_time_ms' => CarbonImmutable::parse($capturedAt)->getTimestampMs(),
         'source' => 'station',
+    ]);
+}
+
+/**
+ * Corrección directa sobre la marca (el motor no pasa por la Action): solo
+ * importa su `after`, que es lo que deriva EffectiveMarks.
+ *
+ * @param  array<string, mixed>  $after
+ */
+function addCorrection(TimingMark $mark, string $operation, array $after): TimingMarkCorrection
+{
+    return TimingMarkCorrection::query()->create([
+        'ulid' => strtolower((string) str()->ulid()),
+        'timing_mark_id' => $mark->id,
+        'operation' => $operation,
+        'reason' => 'corrección de prueba',
+        'account_id' => null,
+        'before_after' => ['before' => [], 'after' => $after],
     ]);
 }
 
@@ -216,4 +235,92 @@ it('cierra como oficial y concilia con lo mostrado en vivo', function () {
 
     expect(Result::query()->pluck('status')->unique()->all())->toBe(['official'])
         ->and($oficial)->toBe($enVivo); // conciliación: lo de vivo == lo oficial
+});
+
+/*
+|--------------------------------------------------------------------------
+| Estado efectivo: la ÚLTIMA corrección decide (TQ-014, ISSUE-135)
+|--------------------------------------------------------------------------
+*/
+
+it('el ajuste de la última corrección desplaza el net de la llegada', function () {
+    $event = makeEvent();
+    $race = Race::query()->create(['event_id' => $event->id, 'name' => '21K']);
+    $wave = makeWave($race, '2026-11-23 08:00:00.000');
+    $category = Category::query()->create(['event_id' => $event->id, 'name' => 'M 30-39']);
+    $entry = addEntry($event, $race, $wave, $category, 'M', 50);
+    $mark = addMark($event, $entry, '2026-11-23 08:30:05.250'); // neto 1.805.250
+
+    addCorrection($mark, 'adjust', ['captured_at' => '2026-11-23 08:30:06.250', 'delta_ms' => 1000]);
+
+    (new RecalculateEventResults)($event->id);
+
+    expect(Result::query()->where('entry_id', $entry->id)->firstOrFail()->net_ms)->toBe(1_805_250 + 1_000);
+});
+
+it('la marca anulada por corrección queda fuera del cálculo', function () {
+    $event = makeEvent();
+    $race = Race::query()->create(['event_id' => $event->id, 'name' => '21K']);
+    $wave = makeWave($race, '2026-11-23 08:00:00.000');
+    $category = Category::query()->create(['event_id' => $event->id, 'name' => 'M 30-39']);
+    $entry = addEntry($event, $race, $wave, $category, 'M', 51);
+    $mark = addMark($event, $entry, '2026-11-23 08:30:05.250');
+
+    addCorrection($mark, 'void', []);
+
+    (new RecalculateEventResults)($event->id);
+
+    expect(Result::query()->where('entry_id', $entry->id)->exists())->toBeFalse()
+        ->and(Result::query()->count())->toBe(0);
+});
+
+it('la reasignación mueve la llegada del origen al dorsal destino con su oleada', function () {
+    $event = makeEvent();
+    $race = Race::query()->create(['event_id' => $event->id, 'name' => '21K']);
+    $waveOrigen = makeWave($race, '2026-11-23 08:00:00.000');
+    $waveDestino = makeWave($race, '2026-11-23 09:00:00.000');
+    $category = Category::query()->create(['event_id' => $event->id, 'name' => 'M 30-39']);
+    $origen = addEntry($event, $race, $waveOrigen, $category, 'M', 52);
+    $destino = addEntry($event, $race, $waveDestino, $category, 'M', 53);
+
+    $mark = addMark($event, $origen, '2026-11-23 09:30:00.000'); // 90 min en origen, 30 min en destino
+    addCorrection($mark, 'reassign', ['bib' => 53, 'entry_id' => $destino->id, 'captured_at' => '2026-11-23 09:30:00.000']);
+
+    (new RecalculateEventResults)($event->id);
+
+    // La llegada vive en el destino (neto contra SU salida real de las 09:00)
+    // y el origen se queda sin resultado.
+    expect(Result::query()->where('entry_id', $destino->id)->firstOrFail()->net_ms)->toBe(1_800_000)
+        ->and(Result::query()->where('entry_id', $origen->id)->exists())->toBeFalse();
+});
+
+it('la última corrección gana: corregir y volver a corregir', function () {
+    $event = makeEvent();
+    $race = Race::query()->create(['event_id' => $event->id, 'name' => '21K']);
+    $wave = makeWave($race, '2026-11-23 08:00:00.000');
+    $category = Category::query()->create(['event_id' => $event->id, 'name' => 'M 30-39']);
+    $entry = addEntry($event, $race, $wave, $category, 'M', 54);
+    $mark = addMark($event, $entry, '2026-11-23 08:30:05.250'); // neto crudo 1.805.250
+
+    // Primera corrección +1 s… y el juez vuelve a corregir a −250 ms totales.
+    addCorrection($mark, 'adjust', ['captured_at' => '2026-11-23 08:30:06.250', 'delta_ms' => 1000]);
+    addCorrection($mark, 'adjust', ['captured_at' => '2026-11-23 08:30:05.000', 'delta_ms' => -250]);
+
+    (new RecalculateEventResults)($event->id);
+
+    expect(Result::query()->where('entry_id', $entry->id)->firstOrFail()->net_ms)->toBe(1_805_250 - 250);
+
+    // Y si la última es anular, la marca desaparece del cálculo aunque hubo
+    // ajustes previos.
+    $mark->corrections()->create([
+        'ulid' => strtolower((string) str()->ulid()),
+        'operation' => 'void',
+        'reason' => 'lectura falsa al final',
+        'account_id' => null,
+        'before_after' => ['before' => [], 'after' => []],
+    ]);
+
+    (new RecalculateEventResults)($event->id);
+
+    expect(Result::query()->where('entry_id', $entry->id)->exists())->toBeFalse();
 });
