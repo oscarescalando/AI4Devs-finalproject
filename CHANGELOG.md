@@ -3,6 +3,12 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.24.0] - 2026-11-28
+### 🚀 Agregado
+- **CRUD de eventos y carreras** (TQ-025 · ISSUE-160 fase 1): listado real con búsqueda/orden/paginación y counts, modal de alta/edición con repeater de carreras (mismo nombre de ruta, clase Livewire por convención CRUD), slug autogenerado en servidor, carreras en la misma transacción con retiro bloqueado por inscripciones u oleadas (rollback total y error de negocio), estado validado contra `EventStatus::STATUSES` y edición desde el hub. Sin borrado de eventos (se cierran — DEFER).
+- Hallazgo documentado: `races` solo tiene nombre (distancia/tipo viajan en él); columnas propias exigirían cambio de esquema con spec.
+- Suite a **313 tests** (24 nuevas).
+
 ## [0.23.0] - 2026-11-28
 ### ✅ Pruebas
 - **Suite E2E `estacion-offline`** (TQ-023 · ISSUE-152 mínima, cierra EP-27 y TODO el alcance F1 de la sesión): 3 specs con Playwright — captura offline → sync al volver con assert en BD, **reenvío idempotente del mismo lote sin filas nuevas (INV-02)** y desempareje por token revocado. Script `test:e2e:station` separado del smoke (CI nocturno diferido).

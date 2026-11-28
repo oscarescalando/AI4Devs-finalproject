@@ -18,4 +18,16 @@ final class FormatDate
     {
         return $date->format('d/m/Y');
     }
+
+    /**
+     * ISO `Y-m-d` (el formato de almacenamiento de ADR-015) para inputs de
+     * fecha y payloads — la inversa de date(). Acepta también la cadena cruda
+     * que devuelven los atributos de fecha del modelo (TQ-025).
+     */
+    public static function iso(DateTimeInterface|string $date): string
+    {
+        return $date instanceof DateTimeInterface
+            ? $date->format('Y-m-d')
+            : substr($date, 0, 10);
+    }
 }

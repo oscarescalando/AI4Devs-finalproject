@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Auth\LogoutController;
 use App\Livewire\Directory\ManageOrganizations;
+use App\Livewire\Events\EventList;
 use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
@@ -55,7 +56,10 @@ Route::get('/directory/organizations', ManageOrganizations::class)
 
 Route::pattern('event', '[0-9A-Za-z]{26}');
 
-Volt::route('/events', 'events.event-list')->name('events.index')
+// Listado y CRUD de eventos (ISSUE-160 fase 1, TQ-025): deja de ser el
+// placeholder Volt — CRUD con acciones = clase Livewire (convención del
+// proyecto), mismo nombre de ruta y misma vista para el resto del panel.
+Route::get('/events', EventList::class)->name('events.index')
     ->middleware(['auth', 'permission:events.view']);
 Volt::route('/events/{event}', 'events.event-hub')->name('events.show')
     ->middleware(['auth', 'permission:events.view']);

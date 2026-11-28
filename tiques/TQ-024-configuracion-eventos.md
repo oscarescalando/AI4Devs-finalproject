@@ -28,12 +28,12 @@ servidor.
 
 ## Fases
 
-- [ ] [TQ-025](TQ-025-crud-eventos-carreras.md) — CRUD de eventos y carreras
+- [x] [TQ-025](TQ-025-crud-eventos-carreras.md) — CRUD de eventos y carreras
 - [ ] [TQ-026](TQ-026-categorias-oleadas.md) — Editor de categorías y oleadas + reprogramación en bloque
 
 ## Siguiente paso
 
-Ejecutar TQ-025 (CRUD de eventos y carreras).
+Ejecutar TQ-026 (categorías, oleadas y reprogramación en bloque).
 
 ## Criterios de aceptación
 

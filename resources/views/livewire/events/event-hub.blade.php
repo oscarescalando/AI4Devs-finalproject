@@ -40,6 +40,15 @@ new #[Layout('components.layouts.panel')] #[Title('Evento')] class extends Compo
         :subtitle="__('ui.events.hub_date', ['date' => \App\Support\FormatDate::date($event->date)])"
     >
         <x-slot:actions>
+            {{-- Editor del evento (ISSUE-160 fase 1, TQ-025): abre el listado
+                 con el modal de edición precargado (?edit=ULID). --}}
+            @can('events.manage')
+                <x-ui.icon-button
+                    icon="pencil"
+                    :tip="__('ui.events.edit')"
+                    :href="route('events.index', ['edit' => $event->ulid])"
+                />
+            @endcan
             <x-ui.badge
                 :variant="EventStatus::badgeVariant($event->status)"
                 :dot="$event->status === 'live'"

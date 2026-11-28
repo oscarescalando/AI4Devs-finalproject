@@ -12,6 +12,15 @@ namespace App\Support\Ui;
  */
 final readonly class EventStatus
 {
+    /**
+     * Catálogo de estados del esquema (events.status, ISSUE-157): única
+     * fuente para validar en las Actions del CRUD (TQ-025) y para pintar
+     * el selector de estado del formulario del evento.
+     *
+     * @var list<string>
+     */
+    public const STATUSES = ['draft', 'registration', 'live', 'finished', 'closed'];
+
     /** @var array<string, string> */
     private const BADGES = [
         'draft' => 'neutral',

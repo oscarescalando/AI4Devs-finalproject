@@ -4,7 +4,7 @@ titulo: "CRUD de eventos y carreras"
 tipo: feature
 prioridad: P1
 estimacion: L
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-160
 parte_de: TQ-024
 rama: feature/entrega-2-ol-gt
@@ -36,17 +36,17 @@ evento — validación de servidor, permiso events.manage, sin tocar lo operativ
 
 ## Tareas
 
-- [ ] ListEvent real (paginado, búsqueda por nombre, orden whitelist).
-- [ ] Create/Update evento con validaciones (slug único, fecha) + carreras anidadas.
-- [ ] Permisos y 403; toasts; estados de carga del kit.
-- [ ] Pruebas por rol + validaciones + slug duplicado rechazado.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] ListEvent real (paginado, búsqueda por nombre, orden whitelist).
+- [x] Create/Update evento con validaciones (slug único, fecha) + carreras anidadas.
+- [x] Permisos y 403; toasts; estados de carga del kit.
+- [x] Pruebas por rol + validaciones + slug duplicado rechazado.
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] Evento nuevo nace desde el panel con sus carreras y es editable; slug duplicado
+- [x] Evento nuevo nace desde el panel con sus carreras y es editable; slug duplicado
       rechazado en servidor.
 
 ## Bitácora
@@ -55,3 +55,4 @@ evento — validación de servidor, permiso events.manage, sin tocar lo operativ
 |-------|--------|------|
 | 2026-11-28 | abierto | Creado como fase 1 del plan TQ-024 |
 | 2026-11-28 | en-curso | Delegado a subagent (orquestador); noche autónoma |
+| 2026-11-28 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 313/313 (24 nuevas) · humo HTTP. HALLAZGO de esquema: races solo tiene name — distancia/tipo viven en el nombre (documentado en la migración); el CRUD valida nombre distinct y no se tocaron migraciones. Si F2 quiere columnas propias de distancia/tipo, es cambio de esquema con spec (anotado para ISSUE-160 completa). Decisiones: clase Livewire (convención CRUD), slug autogenerado en servidor, carreras en la misma transacción con retiro bloqueado por inscripciones/oleadas (rollback total), EventStatus::STATUSES única fuente, bug de colisión ui.events.status corregido |

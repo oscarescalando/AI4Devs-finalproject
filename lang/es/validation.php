@@ -35,5 +35,11 @@ return [
         'q' => 'búsqueda',
         'region_id' => 'región',
         'sort' => 'orden',
+
+        // CRUD de eventos y carreras (ISSUE-160 fase 1, TQ-025).
+        'slug' => 'slug',
+        'date' => 'fecha',
+        'status' => 'estado',
+        'races.*.name' => 'nombre de la carrera',
     ],
 ];
