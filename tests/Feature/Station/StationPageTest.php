@@ -28,6 +28,16 @@ it('sirve el shell de la estación sin sesión, con emparejamiento y noindex', f
         ->toContain(__('ui.station.capture_text'))
         ->toContain(__('ui.station.status_pending'))
         ->toContain(__('ui.station.queue_empty_title'))
+        // TQ-022: indicador de red, botón de sync y estados finales por
+        // marca (el aviso de token muerto es texto servido, no dato JS).
+        ->toContain(__('ui.station.net_online'))
+        ->toContain(__('ui.station.net_offline'))
+        ->toContain(__('ui.station.sync'))
+        ->toContain(__('ui.station.sync_err_auth'))
+        ->toContain(__('ui.station.status_assigned'))
+        ->toContain(__('ui.station.status_orphan'))
+        ->toContain(__('ui.station.status_duplicate'))
+        ->toContain(__('ui.station.clock_skew'))
         // El componente Alpine recibe los textos de lang vía @js (TQ-021).
         ->toContain('tcStation(')
         // No indexado: pantalla operativa de campo.

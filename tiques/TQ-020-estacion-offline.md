@@ -32,12 +32,12 @@ en IndexedDB con `client_mark_id` generado en cliente, sincroniza de forma idemp
 ## Fases
 
 - [x] [TQ-021](TQ-021-shell-y-captura.md) — Shell de la estación: emparejamiento + captura local en IndexedDB
-- [ ] [TQ-022](TQ-022-sync-idempotente.md) — Sync idempotente por lotes + reloj con offset
+- [x] [TQ-022](TQ-022-sync-idempotente.md) — Sync idempotente por lotes + reloj con offset
 - [ ] [TQ-023](TQ-023-e2e-offline.md) — E2E offline (Playwright) y doble envío
 
 ## Siguiente paso
 
-Ejecutar TQ-022 (sync idempotente + reloj con offset).
+Ejecutar TQ-023 (E2E offline con Playwright): última fase de EP-27/F1.
 
 ## Criterios de aceptación
 

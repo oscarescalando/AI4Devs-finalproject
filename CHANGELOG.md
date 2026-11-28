@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.22.0] - 2026-11-28
+### 🚀 Agregado
+- **Sync idempotente y reloj de la estación** (TQ-022 · ISSUE-149/150 mínima F1): flush por lotes de 50 ordenados por `captured_at` (disparo manual, al volver online y cada 30 s con pendientes), estado final por marca persistido en la cola (asignada/huérfana/duplicada), backoff exponiente con reintento manual siempre disponible, desempareje limpio ante 401/403, reloj corregido por mediana de 3 muestras contra `/time` (alerta de desfase > 500 ms) y aviso al cerrar con pendientes. Hallazgo real corregido: los booleanos no son claves IndexedDB → `synced` 0/1 con migración v1→v2. Verificado en Chromium: ciclo offline→online con reenvío idempotente (INV-02).
+- Suite **289/289** (contrato HTML servido ampliado).
+
 ## [0.21.0] - 2026-11-28
 ### 🚀 Agregado
 - **Shell de la estación de cronometraje** (TQ-021 · ISSUE-147/148 mínima F1, ADR-014): `/station` sin sesión web con emparejamiento por token de dispositivo (`device:marks`) validado contra `/time`, captura 100 % local en IndexedDB (`client_mark_id` UUIDv7 generado en cliente, cola persistente que sobrevive recargas) y service worker que abre la estación offline tras la primera visita. Comando artesanal `station:token {ulid}` (cuenta sintética sin roles) para el emparejamiento.

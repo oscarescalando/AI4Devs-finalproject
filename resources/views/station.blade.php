@@ -26,8 +26,8 @@
      dark activa los tokens de superficie del kit sobre el fondo propio. --}}
 <body class="tc-shell public-body dark min-h-screen bg-neutral-950 font-sans text-neutral-100 antialiased">
     <main class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8" x-data="tcStation(@js(__('ui.station')))">
-        {{-- Cabecera: título + reloj local mono tabular (el offset contra
-             GET /time llega con TQ-022; hoy hora del equipo). --}}
+        {{-- Cabecera: título + reloj corregido contra GET /time (TQ-022:
+             hora local + offset del servidor, mono tabular, ISSUE-150). --}}
         <header class="flex flex-wrap items-end justify-between gap-4">
             <div class="min-w-0">
                 <h1>{{ __('ui.station.title') }}</h1>
@@ -38,6 +38,20 @@
                 <p class="mono text-3xl font-semibold leading-tight" x-text="clock"></p>
             </div>
         </header>
+
+        {{-- Avisos persistentes (TQ-022): desfase del reloj > 500 ms contra
+             el servidor (ISSUE-150) y token muerto detectado al sincronizar
+             (ISSUE-149): desempareja y pide emparejar de nuevo. --}}
+        <div x-show="skewVisible" x-cloak>
+            <x-ui.alert type="warning">
+                <p class="mono" x-text="skewLabel"></p>
+            </x-ui.alert>
+        </div>
+        <div x-show="authError" x-cloak>
+            <x-ui.alert type="danger">
+                <p>{{ __('ui.station.sync_err_auth') }}</p>
+            </x-ui.alert>
+        </div>
 
         {{-- Sin emparejar: SOLO el formulario (ISSUE-147). --}}
         <section class="card" x-show="!paired" x-cloak>
@@ -91,8 +105,17 @@
                        x-model="bib" :readonly="!dbReady">
                 <p class="form-error text-center" role="alert" x-show="bibError" x-text="t.bib_invalid" x-cloak></p>
                 <p class="text-center text-sm text-neutral-400">{{ __('ui.station.capture_text') }}</p>
-                <p class="text-center text-sm" role="status">
+                <p class="flex flex-wrap items-center justify-center gap-2 text-sm" role="status">
                     <span class="badge badge-warning badge-dot" x-text="pendingLabel"></span>
+                    {{-- Indicador de red (TQ-022): junto al contador de pendientes. --}}
+                    <span class="badge badge-success" x-show="online">
+                        <x-ui.icon name="wifi" class="h-3 w-3" />
+                        {{ __('ui.station.net_online') }}
+                    </span>
+                    <span class="badge badge-danger" x-show="!online" x-cloak>
+                        <x-ui.icon name="cloud-off" class="h-3 w-3" />
+                        {{ __('ui.station.net_offline') }}
+                    </span>
                 </p>
             </form>
 
@@ -101,7 +124,15 @@
                     <div class="min-w-0">
                         <h2 class="card-title">{{ __('ui.station.queue_title') }}</h2>
                     </div>
-                    <span class="badge badge-warning badge-dot" x-text="pendingLabel"></span>
+                    <div class="flex items-center gap-2">
+                        <span class="badge badge-warning badge-dot" x-text="pendingLabel"></span>
+                        {{-- Sync manual (ISSUE-149): ignora el backoff; se
+                             deshabilita mientras corre un flush. --}}
+                        <x-ui.button variant="secondary" size="sm" icon="refresh-cw"
+                                     x-bind:disabled="syncing || pending === 0" @click="synchronize()">
+                            <span x-text="syncLabel"></span>
+                        </x-ui.button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <x-ui.empty-state icon="timer" :title="__('ui.station.queue_empty_title')" :text="__('ui.station.queue_empty_text')" x-show="dbReady && marks.length === 0" x-cloak />
@@ -110,7 +141,11 @@
                             <li class="flex items-center gap-3 py-2.5">
                                 <span class="mono w-24 text-right text-2xl font-bold" x-text="mark.bib"></span>
                                 <span class="mono text-sm text-neutral-400" x-text="clockOf(mark.captured_at)"></span>
-                                <span class="badge badge-warning badge-dot ml-auto">{{ __('ui.station.status_pending') }}</span>
+                                {{-- Estado por marca (TQ-022): pendiente hasta
+                                     respuesta definitiva; después asignada
+                                     (éxito) / huérfana (alerta) / duplicada
+                                     (info) — spec/09-ui-estilo §3. --}}
+                                <span class="badge badge-dot ml-auto" :class="'badge-' + badgeVariant(mark)" x-text="badgeLabel(mark)"></span>
                                 <button type="button" class="btn btn-ghost btn-sm" :aria-label="t.delete_tip" @click="removeMark(mark)">
                                     <x-ui.icon name="trash-2" class="h-4 w-4" />
                                 </button>

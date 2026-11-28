@@ -415,7 +415,7 @@ return [
     'station' => [
         'title' => 'Estación de cronometraje',
         'subtitle' => 'Captura local de dorsales: funciona sin conexión.',
-        'clock_label' => 'Reloj local',
+        'clock_label' => 'Reloj de carrera',
         'pair_title' => 'Emparejar estación',
         'pair_text' => 'Pega el ULID del evento y el token que emitió el comando station:token.',
         'event_ulid' => 'ULID del evento',
@@ -442,10 +442,22 @@ return [
         'queue_empty_title' => 'Sin marcas todavía',
         'queue_empty_text' => 'La primera marca que captures quedará guardada en este dispositivo.',
         'status_pending' => 'Pendiente',
+        'status_assigned' => 'Asignada',
+        'status_orphan' => 'Huérfana',
+        'status_duplicate' => 'Duplicada',
         'pending_count' => ':count pendiente|:count pendientes',
         'delete_tip' => 'Eliminar marca pendiente',
         'delete_confirm' => '¿Eliminar la marca del dorsal :bib de las :time? Se pierde para siempre.',
         'sync_hint' => 'Sin red se captura igual: las marcas se sincronizan cuando vuelva la conexión.',
+        // Sincronización (TQ-022, ISSUE-149): botón manual, indicador de red
+        // y aviso de token muerto detectado al sincronizar.
+        'sync' => 'Sincronizar',
+        'syncing' => 'Sincronizando :count…',
+        'sync_err_auth' => 'Token de estación inválido: vuelve a emparejar.',
+        'net_online' => 'En línea',
+        'net_offline' => 'Sin conexión',
+        // Reloj (ISSUE-150): aviso persistente de desfase con el servidor.
+        'clock_skew' => 'Desfase del reloj: :offset ms con el servidor. Verifica la hora de este dispositivo.',
     ],
 
     // Páginas de error propias (403/404/419/500).

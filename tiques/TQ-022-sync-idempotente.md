@@ -4,7 +4,7 @@ titulo: "Sync idempotente por lotes + reloj con offset"
 tipo: feature
 prioridad: P0
 estimacion: L
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-149, ISSUE-150
 parte_de: TQ-020
 rama: feature/entrega-2-ol-gt
@@ -37,24 +37,24 @@ periódica, alerta si el desfase supera 500 ms).
 
 ## Tareas
 
-- [ ] Sync: botón manual «Sincronizar» + auto al volver online (evento online) + cada 30 s si
+- [x] Sync: botón manual «Sincronizar» + auto al volver online (evento online) + cada 30 s si
       hay pendientes; lotes de 50 en orden captured_at; por marca: synced=true y estado final
       (assigned/orphan/duplicate) visible en la cola; error de red ⇒ queda pendiente con
       attempts++ y backoff; 401 ⇒ desempareja con aviso claro.
-- [ ] Reloj: offset medido contra /time (3 muestras, mediana) al emparejar y cada 5 min;
+- [x] Reloj: offset medido contra /time (3 muestras, mediana) al emparejar y cada 5 min;
       display con hora corregida mono tabular; aviso persistente si |offset| > 500 ms.
-- [ ] Aviso beforeunload con pendientes sin sincronizar.
-- [ ] Pruebas Pest posibles (comando/lógica PHP afectada si hubiera); la lógica JS se valida
+- [x] Aviso beforeunload con pendientes sin sincronizar.
+- [x] Pruebas Pest posibles (comando/lógica PHP afectada si hubiera); la lógica JS se valida
       en TQ-023 con Playwright (online/offline/reenvío).
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-149 mínima: idempotencia extrema a extremo — reenviar todo el lote tras fallo no
+- [x] ISSUE-149 mínima: idempotencia extrema a extremo — reenviar todo el lote tras fallo no
       duplica nada y cada marca acaba synced con su estado final.
-- [ ] ISSUE-150 mínima: reloj con desfase corregido y alerta > 500 ms.
+- [x] ISSUE-150 mínima: reloj con desfase corregido y alerta > 500 ms.
 
 ## Bitácora
 
@@ -62,3 +62,4 @@ periódica, alerta si el desfase supera 500 ms).
 |-------|--------|------|
 | 2026-11-28 | abierto | Creado como fase 2 del plan TQ-020 |
 | 2026-11-28 | en-curso | Delegado a subagent (orquestador) |
+| 2026-11-28 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 289/289 (2411 aserciones) · build ✓. Verificación REAL en Chromium del agente: offline→capturas→online→flush con estados [Asignada/Huérfana/Asignada], reenvío idéntico ⇒ duplicate (INV-02), 401 ⇒ desempareje, migración v1→v2 de la BD IndexedDB. HALLAZGO REAL corregido: los booleanos no son claves IndexedDB (el índice synced era inconsultable) → synced 0/1 con migración. Wire: device_time_ms + clock_offset_ms para que el servidor reconstruya la hora oficial sin doble corrección. La BD dev quedó con ~9 marcas sintéticas del humo (renace con migrate:fresh --seed) |
