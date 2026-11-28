@@ -3,6 +3,10 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.29.0] - 2026-11-28
+### 🚀 Agregado
+- **Cierre y publicación del evento + planilla PDF** (TQ-034 · ISSUE-163 rebanada): `PreviewCloseEvent` como única fuente de guardas accionables (ya cerrado, oleada sin salida nombrada, cero llegadas), `CloseEvent` transaccional que oficializa sincrónicamente (conciliación provisional == official probada) y emite `event.closed` dual sin PII — la pública pasa a OFICIAL al instante; botón en el hub con confirmación y blockers visibles (permiso `results.publish`). **Planilla PDF por inscripción** con dompdf ^3.1 (ADR-017): `/entries/{ulid}/planilla`, dorsal grande mono, nombre público (iniciales si menor), tiempos/posiciones si llegò — sin documento ni nacimiento jamás (probado en binario y vista). Suite a **457 tests** (24 nuevas).
+
 ## [0.28.0] - 2026-11-28
 ### 🚀 Agregado
 - **EP-26 completo** (TQ-032 · ISSUE-141/142/143 en su versión de sesión): la pantalla pública reacciona **por push** a `mark.recorded` (refetch dirigido — nada se calcula en cliente; resaltado 30 s sellado), `wave.started` también al canal público sin PII con cronómetro de carrera, reloj con offset contra `/time` y **resync por gap de seq** con un único refetch (debounce + reconexión). Puente `tcBridge` con auto-resuscripción (hallazgo E2E: pusher-js dejaba canales muertos). E2E real: push→fila en 758 ms; reconexión con exactamente 1 refetch.

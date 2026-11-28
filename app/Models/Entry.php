@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Category $category
  * @property Race $race
  * @property Wave $wave
+ * @property Person|null $person
+ * @property Team|null $team
  */
 final class Entry extends Model
 {

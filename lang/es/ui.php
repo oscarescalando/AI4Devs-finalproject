@@ -423,6 +423,21 @@ return [
         'arrivals_toast_orphan_no_bib' => 'Llegada sin dorsal — queda como huérfana.',
         'arrivals_toast_duplicate' => 'Dorsal :bib ya tenía llegada.',
 
+        // Cierre/publicación del evento (ISSUE-163, TQ-034): botón del hub,
+        // confirmación con guardas y toasts. El permiso es results.publish
+        // (matriz ISSUE-159: organizer/superadmin publican; official no).
+        'close_btn' => 'Cerrar evento',
+        'close_confirm_title' => 'Cerrar evento',
+        'close_confirm' => '¿Cerrar «:name»? La clasificación pasará a oficial y el evento dejará de operar.',
+        'close_blockers_prefix' => 'Antes de cerrar falta:',
+        'close_toast' => 'Evento cerrado: clasificación oficial (:count resultados).',
+        'close_err_closed' => 'El evento ya está cerrado.',
+        'close_err_not_live' => 'Solo un evento en vivo o finalizado puede cerrarse (está en estado :status).',
+        'close_err_no_waves' => 'El evento no tiene oleadas configuradas: configura sus carreras y oleadas antes de cerrar.',
+        'close_err_wave_pending' => 'La oleada «:name» sigue pendiente: marca su salida real antes de cerrar.',
+        'close_err_no_arrivals' => 'El evento no tiene llegadas registradas: captura al menos una antes de cerrar.',
+        'entry_planilla_tip' => 'Descargar planilla PDF',
+
         // Origen de una marca (timing_marks.source, ISSUE-156).
         'source' => [
             'station' => 'Estación',
@@ -436,6 +451,25 @@ return [
             'finished' => 'Finalizado',
             'closed' => 'Cerrado',
         ],
+    ],
+
+    // Planilla PDF por inscripción (ISSUE-163, TQ-034, ADR-017): la vista
+    // pdf/entry-sheet es autónoma (sin kit ni Vite) y todo su texto vive
+    // aquí; sin PII (INV-06): documento y nacimiento jamás se pintan.
+    'entries' => [
+        'sheet_title' => 'Planilla de inscripción',
+        'sheet_bib' => 'Dorsal',
+        'sheet_athlete' => 'Atleta',
+        'sheet_category' => 'Categoría',
+        'sheet_race' => 'Carrera',
+        'sheet_wave' => 'Oleada',
+        'sheet_entry_status' => 'Estado de la inscripción',
+        'sheet_result' => 'Resultado',
+        'sheet_net' => 'Tiempo neto',
+        'sheet_rank_general' => 'Posición general',
+        'sheet_rank_category' => 'Posición en categoría',
+        'sheet_no_result' => 'Sin llegada registrada.',
+        'sheet_footer' => 'TDChronos · planilla de inscripción · sin datos sensibles',
     ],
 
     // Directorio: personas, organizaciones (CRUD demo), equipos y liga.

@@ -16,12 +16,12 @@ actualizado: 2026-11-28
 
 ## Fases
 
-- [ ] [TQ-034](TQ-034-cierre-y-pdf.md) — Cierre/publicación del evento + planilla PDF por inscripción
+- [x] [TQ-034](TQ-034-cierre-y-pdf.md) — Cierre/publicación del evento + planilla PDF por inscripción
 - [ ] [TQ-035](TQ-035-runbook.md) — Runbook de operación y backups
 
 ## Siguiente paso
 
-Ejecutar TQ-034.
+Ejecutar TQ-035 (runbook de operación y backups): última fase.
 
 ## Criterios de aceptación
 

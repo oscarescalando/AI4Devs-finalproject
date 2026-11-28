@@ -182,6 +182,24 @@ new #[Layout('components.layouts.public')] class extends Component
     }
 
     /**
+     * Puente WS→Livewire: el evento cerró (tc-closed, TQ-034/ISSUE-163).
+     * event.closed llega SIN seq (la versión fina de la clasificación vive
+     * en results.updated): refresco directo — el contrato del leaderboard
+     * devuelve results ya `official` y el encabezado pasa a modo OFICIAL
+     * al instante, sin esperar al sondeo de 15 s que igual lo recogería
+     * (RF-76).
+     */
+    #[On('tc-closed')]
+    public function onEventClosed(array $payload = []): void
+    {
+        if (($payload['eventUlid'] ?? null) !== $this->eventUlid) {
+            return; // cierre de otro evento (dos pantallas abiertas): ignorar
+        }
+
+        $this->refresh();
+    }
+
+    /**
      * Single-flight de la sonda de tc-mark (TQ-032): una ráfaga de marcas
      * que caiga dentro de los 500 ms posteriores a un refetch no acumula
      * peticiones — queda pendiente y la resuelve el siguiente disparo (el
@@ -289,13 +307,15 @@ new #[Layout('components.layouts.public')] class extends Component
          colapsado a 500 ms por ráfaga) y wave.started (relay de CLIENTE
          tc-wave-started para el reloj); tc-resync tras reconexión del WS
          dispara el único refetch de resync (opciones opt-in del tcBridge,
-         ver resources/js/app.js). --}}
+         ver resources/js/app.js). TQ-034: event.closed (tc-closed → refetch
+         directo) pasa la pantalla a modo OFICIAL al cerrar el evento. --}}
     x-data="tcBridge(@js([
         'channel' => 'event.'.$eventUlid.'.public',
         'private' => false,
         'events' => [
             '.mark.recorded' => 'tc-mark',
             '.results.updated' => 'tc-results',
+            '.event.closed' => 'tc-closed',
         ],
         'debounce' => ['tc-mark' => 500, 'tc-results' => 500],
         'resync' => 'tc-resync',

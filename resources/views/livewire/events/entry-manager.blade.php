@@ -142,8 +142,18 @@
                                 @endif
                             </td>
                             <td class="td-right">
-                                @can('entries.manage')
-                                    <span class="inline-flex items-center justify-end gap-1">
+                                <span class="inline-flex items-center justify-end gap-1">
+                                    {{-- Planilla PDF (ISSUE-163, TQ-034): descarga directa
+                                         por <a href> — sin JS; la ruta autoriza con
+                                         entries.view, el mismo permiso de la pantalla. --}}
+                                    @can('entries.view')
+                                        <x-ui.icon-button
+                                            icon="file-text"
+                                            :tip="__('ui.events.entry_planilla_tip')"
+                                            :href="route('entries.planilla', $entry->ulid)"
+                                        />
+                                    @endcan
+                                    @can('entries.manage')
                                         @if ($entry->status === 'cancelled')
                                             <x-ui.icon-button
                                                 icon="rotate-ccw"
@@ -159,8 +169,8 @@
                                                 wire:confirm="{{ __('ui.events.entry_cancel_confirm', ['name' => $entry->person?->publicName() ?? $entry->team?->name ?? '—', 'bib' => $entry->bib]) }}"
                                             />
                                         @endif
-                                    </span>
-                                @endcan
+                                    @endcan
+                                </span>
                             </td>
                         </tr>
                     @endforeach

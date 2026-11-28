@@ -4,7 +4,7 @@ titulo: "Cierre/publicación del evento + planilla PDF por inscripción"
 tipo: feature
 prioridad: P1
 estimacion: L
-estado: en-curso
+estado: hecho
 refiere_a: ISSUE-163
 parte_de: TQ-033
 rama: feature/entrega-2-ol-gt
@@ -28,22 +28,22 @@ descarga de planilla PDF por inscripción con dompdf (ADR-017) desde el listado.
 
 ## Tareas
 
-- [ ] Action CloseEvent: guardas (toda oleada con salida real, ≥1 llegada; eventos sin carreras
+- [x] Action CloseEvent: guardas (toda oleada con salida real, ≥1 llegada; eventos sin carreras
       → error accionable), estado → cerrado, recálculo oficial, evento event.closed tras commit
       (ops+public sin PII); botón en el hub con confirmación mostrando consecuencias.
-- [ ] Planilla PDF por inscripción: ruta firmada o autenticada (entries.view), dompdf, vista
+- [x] Planilla PDF por inscripción: ruta firmada o autenticada (entries.view), dompdf, vista
       blade dedicada (dorsal, atleta público, categoría, carrera, estado, net/pos si llegò);
       icon-button download en el listado.
-- [ ] Pruebas: cierre con guardas (ok y rechazos), oficialización (results estado oficial),
+- [x] Pruebas: cierre con guardas (ok y rechazos), oficialización (results estado oficial),
       emisión event.closed, PDF 200 con content-type pdf y contenido sin PII (assert texto),
       403 por rol.
-- [ ] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
+- [x] Verificar: ./vendor/bin/pint && ./vendor/bin/phpstan analyse && ./vendor/bin/pest
 - [ ] DETENERSE: presentar los cambios para revisión y sugerir mensaje de commit;
       no continuar con otra actividad sin aprobación
 
 ## Criterios de aceptación
 
-- [ ] ISSUE-163 rebanada: cierre seguro + PDF funcional sin PII.
+- [x] ISSUE-163 rebanada: cierre seguro + PDF funcional sin PII.
 
 ## Bitácora
 
@@ -51,3 +51,4 @@ descarga de planilla PDF por inscripción con dompdf (ADR-017) desde el listado.
 |-------|--------|------|
 | 2026-11-28 | abierto | Creado como fase del plan TQ-033 |
 | 2026-11-28 | en-curso | Delegado a subagent (orquestador); noche autónoma |
+| 2026-11-28 | hecho | Verificado por el orquestador: Pint ✓ · Larastan 8 con 0 errores · Pest 457/457 (24 nuevas) · PDF real generado (24,5 KB, %PDF, sin documento/nacimiento en el binario) · humo 302/404. Decisiones: cierre con results.publish (organizer/superadmin; official 403), PreviewCloseEvent como única fuente de guardas (SIN mutar), oficialización síncrona en transacción con conciliación provisional==official, event.closed dual sin PII y pública a OFICIAL al instante. NOTA v1: cierre irreversible (sin reopen — documentar en runbook) |

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Registration\EntrySheetPdfController;
 use App\Livewire\Directory\ManageOrganizations;
 use App\Livewire\Directory\PersonManager;
 use App\Livewire\Directory\TeamManager;
@@ -92,6 +93,15 @@ Route::get('/events/{event}/categories', CategoryManager::class)->name('events.c
     ->middleware(['auth', 'permission:events.manage']);
 Route::get('/events/{event}/waves', WaveManager::class)->name('events.waves')
     ->middleware(['auth', 'permission:events.manage']);
+
+// Planilla PDF por inscripción (ISSUE-163, TQ-034, ADR-017): descarga
+// directa por <a href> desde el listado (sin JS), con el ULID público de
+// la inscripción en el path (ADR-015) — el patrón acota el segmento a 26
+// caracteres y el binding implícito (getRouteKeyName = ulid) devuelve la
+// 404 propia si no existe. Solo lectura: basta entries.view (ISSUE-159).
+Route::pattern('entry', '[0-9A-Za-z]{26}');
+Route::get('/entries/{entry}/planilla', EntrySheetPdfController::class)->name('entries.planilla')
+    ->middleware(['auth', 'permission:entries.view']);
 
 // Directorio de personas y equipos (ISSUE-161, TQ-028): dejan de ser los
 // placeholders Volt — CRUD con acciones = clase Livewire (convención del
