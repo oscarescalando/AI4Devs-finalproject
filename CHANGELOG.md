@@ -3,6 +3,11 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/); versionado SemVer.
 
+## [0.17.0] - 2026-11-27
+### 🚀 Agregado
+- **Ranking del panel** (TQ-015 · ISSUE-137 variante panel, cierra el plan TQ-011): `/events/{ulid}/results` con KPIs de llegadas/pendientes, filtros por carrera y categoría (en URL), posiciones general/categoría/género y diferencia contra el líder real de la carrera — todo leído de `results`, cero cálculo en pantalla (INV-07, conciliación probada Action↔tabla↔HTML); badge provisional/oficial y enlace a la pública.
+- Con esto la **rebanada crítica de EP-25 queda completa**: dar salida → capturar llegadas → corregir marcas → ver clasificación (panel y pública). Suite a **253 tests**.
+
 ## [0.16.0] - 2026-11-27
 ### 🚀 Agregado
 - **Bitácora de marcas y corrección 1/2/3** (TQ-014 · ISSUE-134/135): `/events/{ulid}/marks` con contadores por estado derivado (asignada/huérfana/duplicada/anulada/corregida), paginación server-side, sondeo 5 s y modal de corrección con las tres operaciones RF-46…48 (ajustar ±1 s/±0,1 s, reasignar con confirmación cuando el destino ya llegó, anular), motivo obligatorio (INV-11) e historial por marca.

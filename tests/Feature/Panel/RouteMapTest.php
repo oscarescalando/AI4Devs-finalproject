@@ -168,14 +168,14 @@ it('inscripciones lista dorsales y atletas con el contrato público del roster',
         ->and($html)->not->toContain((string) $first->person->document);
 });
 
-it('las operativas y configuraciones sin pantalla avisan que llegan con EP-25', function (string $name) {
+it('las configuraciones sin pantalla avisan que llegan con EP-25', function (string $name) {
     $event = routeMapEvent();
     $organizer = routeMapAccount('organizer');
 
     $this->actingAs($organizer)->get(route($name, $event))
         ->assertOk()
         ->assertSee('Llega con su pantalla completa en EP-25');
-})->with(['events.results', 'events.categories', 'events.waves']);
+})->with(['events.categories', 'events.waves']);
 
 it('las pantallas de directorio y liga avisan su llegada', function () {
     $superadmin = routeMapAccount('superadmin');
